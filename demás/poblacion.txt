@@ -1,0 +1,58 @@
+generar_poblacion_inicial=function(nro_desc, popSize, max ){ 
+	#nro_desc es cantidad de descriptores
+	# generar popSize individuos aleatorios, de tamaño nro_desc, con max cantidad de locis seteados a 1 
+	# genero una población que tiene popSize cantidad de individuos.
+	# cada individuo tiene nro_desc cantidad de cromosomas
+	# cada individuo tiene max cantidad de cromosomas seteados a 1
+	
+	pop=matrix(nrow=popSize, ncol=nro_desc)
+	 
+
+	for (i in 1:popSize){
+		ind=runif(nro_desc, 0, 1)
+		ind=round(ind)
+		cat('individuo ' );cat(i);cat(" : ")
+		while(cardinalidad(ind)>max){
+			ind=ajustar(ind)
+		}
+		pop[i,]=ind
+		print(" ")
+		print("----")
+	} 
+
+	pop
+}
+
+ajustar=function(ind){
+	max=length(ind)
+	i=runif(1, 1, max)
+	#print("longitud "); print(length(ind))
+	ind[round(i)]=0
+	cat(round(i)); cat(" , ")
+	 
+	ind
+}
+
+
+cardinalidad=function( individuo ){  #F1 en la tesis
+	largo=length(individuo)
+	iters=c(1:largo)
+	total=0
+	for(i in iters){
+		if( individuo[i]!=0 )
+			total=total+1
+	}
+	total
+}
+
+
+elegidos=function(pop){
+	cant_d=length(pop[1,])
+	elegidos=c(1:cant_d)
+
+	for(i in 1:cant_d){
+		elegidos[i]=cardinalidad(pop[,i])	
+	}
+
+	elegidos
+}

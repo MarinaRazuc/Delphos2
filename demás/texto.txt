@@ -1,0 +1,4 @@
+Matrix of values of descriptors ----> Size:( 122 x 1391 )           
+Vector of experimental values ----> Size: ( 122 x 1 )           
+Vector of descriptors names ----> Size: ( 1391 x 1 )            
+Vector of compounds names ----> Size: ( 0 x 0 )            

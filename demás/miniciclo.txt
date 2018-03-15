@@ -1,0 +1,23 @@
+#numeros=c(2:4)
+#base=dfr[,5]
+#resto="dfr[,1]"
+
+#for(n in numeros){
+#	resto=paste(resto, "+dfr[,")
+#	resto=paste(resto, n)
+#	resto=paste(resto, "]")
+#}
+
+#formula2=base~'resto'
+
+
+numeros=c(2:4)
+
+formula3=dfr[[5]]
+base=as.formula(dfr[[1]])
+for(n in numeros){
+	base=base+as.formula(+dfr[[n]])
+
+}
+
+formula4=formula3~base

@@ -1,0 +1,18 @@
+
+
+vnam=paste0("V", 1:(nCols-1) )
+fmla=as.formula(
+	paste(
+		paste(
+			paste0( 
+				"V", nCols 
+			), "~"
+		) , 
+		paste(
+			vnam, collapse="+" 
+		)
+	)
+	
+)
+
+LR=LinearRegression(fmla, data=dfr3)

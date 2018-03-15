@@ -1,0 +1,18 @@
+#setwd("C:/Users/Lenovo/Desktop")
+#source("script2.txt")
+#archivo=read.csv("valores descriptores.txt", sep="\t", header = FALSE)
+#datos_3=read.table(file="valores descriptores.txt", sep = "\t", header = FALSE) #OTRA FORMA
+
+archivo=read.table(file="valores descriptores.txt", sep = "\t", header = FALSE)
+	
+print("archivo cargado")
+print("clase del archivo:")
+print(class(archivo))
+library(caret)
+cantFilas=nrow(archivo)
+cantCols=ncol(archivo)
+npart=ceiling(cantCols/3)
+
+folds1=createFolds(archivo, k=3, list=TRUE)
+#para acceder a una columna:
+#colx=archivo[folds$Fold1[1]]

@@ -1,0 +1,18 @@
+nombres=read.csv("Nombres_dfr4.csv", sep=" ", header=FALSE)
+propiedad=read.csv("prop_dfr4.csv", sep=" ", header=FALSE)
+dfr4=read.csv("dfr4.csv", header=FALSE, sep=" ")
+names(dfr4)=nombres[,1]
+ndfr4=cbind(dfr4,propiedad)
+set.seed(2) #sale de parametros
+
+iterwrap=c(1:trials) #trials x parametros
+for(i in iterwrap){
+	indices4=createDataPartition(ndfr4$V1, p=0.75, list=FALSE)
+	testeo=ndfr4[-indices4, ]
+	entrenamiento=datos[indices4, ]
+	
+	
+	
+	
+	#correr GA con entrenamiento y testeo
+}

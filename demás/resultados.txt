@@ -1,0 +1,20 @@
+=== 10 Fold Cross Validation ===
+
+=== Summary ===
+
+Correctly Classified Instances          16               80      %
+Incorrectly Classified Instances         4               20      %
+Kappa statistic                          0     
+Mean absolute error                      0.237 
+Root mean squared error                  0.3525
+Relative absolute error                 88.8889 %
+Root relative squared error             99.7643 %
+Total Number of Instances               20     
+
+=== Confusion Matrix ===
+
+  a  b  c   <-- classified as
+  0  2  0 |  a = affinity to blood
+  0 16  0 |  b = affinity to liver
+  0  2  0 |  c = gray zone
+

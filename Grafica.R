@@ -1,0 +1,143 @@
+require("gWidgets")
+#require("genalg")
+require("RWeka")
+require("gWidgetsRGtk2")
+require("RGtk2")
+require("cairoDevice")
+require("caret")
+require("gWidgets2RGtk2")
+require("gWidgets2")
+
+source("DataInput.R")
+source("SegundaFase.r")
+source("AG.R")
+
+nroExp<<-1
+expActual<<-1
+archivo=NULL
+
+cantExp=function(x){
+	nroExp<<-x
+	#print(nroExp)
+	
+} 
+
+iniciar=function(){
+	#win=gtkWindow()
+	win=gwindow(title = "DELPHOS.R", visible=FALSE, width=190, height=200, parent=c(575,230), toolkit="RGtk2")
+	group=ggroup(horizontal = FALSE, container=win, spacing=2)
+	glabel("  ", container=group)
+	frame1=gframe(container=group, text="Experiment Design", horizontal=FALSE, spacing=5, pos=0, expand=TRUE)
+	lay1=glayout(container=frame1)
+	font(frame1)<-list(weight="bold", style="oblique", size=20)
+		
+	group1=ggroup(horizontal = TRUE, spacing=15)
+	label1=glabel("             ")
+	lay1[1,1:5]=label1
+	obj=glabel("  Number of experiments", container=group1, width=10 )
+	obj_gedit=gedit(c(1), container = group1, width=3, coerce.with =as.numeric, handler=function(h,...){ cantExp(svalue(obj_gedit)) })
+	lay1[2,1:5]=group1
+	
+	
+	group2=ggroup(horizontal = FALSE, spacing=15)
+	lay2=glayout(container=group2)
+	
+	obj_button_1=gbutton("First Phase", width=10, 
+						handler=function(h, ...){
+							nroExp=svalue(obj_gedit)
+							primeraFase(nroExp)
+							
+						})
+	lay2[1,4:11]=obj_button_1
+	objb2=gbutton("Second Phase", handler=(function(h,...){
+																segundaFase(nroExp)
+																
+															}), width=10)
+	lay2[2,4:11]=objb2
+	objb3=gbutton("First and Second Phase", handler=(function(h,...){
+																primerasegunda(nroExp)
+																
+															}), width=10)
+	lay2[3,4:11]=objb3
+	lay2[4:5, 1:5]=glabel("       ")
+	lay1[3, 1:5]=group2
+	
+	group3=ggroup(container=group, spacing=15)
+	lay3=glayout(container=group3)
+	
+	objla2=glabel("Results")
+	lay3[2,4:10]=objla2
+	objsep2=gseparator()
+	lay3[3,3:11]=objsep2
+	objb3=gbutton("View saved selections", handler=function(h,...){
+																	ver_resultados()
+																}, width=10)
+	lay3[4,4:10]=objb3
+	lay3[5, 1]=glabel(" ")
+	visible(win)=TRUE
+}
+#----------------------------------------------------------------
+
+
+#solamente la primera fase
+primeraFase=function(experimentos){
+	for(i in 1:experimentos){
+		expActual<<-i
+		data_input(i, experimentos, "P") #P primera fase
+	}
+}
+
+#solamente la segunda fase
+segundaFase=function(experimentos){ #S segunda fase
+	for(i in 1:experimentos){
+		expActual<<-i
+		obtener_archivo_entrada()
+	}
+}
+
+#primera y segunda fase en secuencia
+primerasegunda=function(experimentos){ #PS primera y segunda fase
+	for(i in 1:experimentos){
+		expActual<<-i
+		data_input(i, experimentos, "PS")
+	}
+}
+
+
+#cargar_archivo
+ver_resultados=function(){
+	win=gwindow(title="Ver Resultados", visible=FALSE, width=200,  height=70, parent=c(200,200))
+	
+	group2=ggroup(container=win, spacing=15, horizontal=FALSE)
+	group1=ggroup(container=group2, spacing=15, horizontal=TRUE)
+	label1=glabel("Ingrese archivo...", container=group1)
+	text1=gedit("Ingrese archivo", container=group1, width=20)
+	button5=gbutton("Browse...", container=group1, 
+					handler=function(h,...){
+						file5=gfile(type="open")
+						if(length(file5)>0){
+							if(is.na(file5)){
+								svalue(text1)="Ingrese archivo"
+							}else{
+								svalue(text1)=file5
+							}
+						}
+						print(file5)
+					}, width=15)
+	
+	buttonok=gbutton("OK", container=group2, handler=function(h,...){
+												
+												mostrar_resultados(svalue(text1))
+												dispose(win)
+												})
+	
+	visible(win)=TRUE
+}
+
+
+
+
+
+
+
+

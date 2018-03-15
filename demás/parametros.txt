@@ -1,0 +1,95 @@
+parametros
+---------------------
+valInterna: 0.75
+valExterna: 0.25
+metodo: k-Nearest Neighbours
+seed: 1
+trials: 3
+maxSelectVars: 0
+alpha: 0.6
+popSize: 30
+eliteSize: 5
+tourSize: 3
+pxo: 0.6
+pmut: 0.2
+nroGens: 20
+stallGens: 10
+umbral: 1e-05
+archivo:  FP.csv
+---------------------
+parametros
+---------------------
+valInterna: 0.75
+valExterna: 0.25
+metodo: k-Nearest Neighbours
+seed: 1
+trials: 3
+maxSelectVars: 0
+alpha: 0.6
+popSize: 30
+eliteSize: 6
+tourSize: 3
+pxo: 0.6
+pmut: 0.2
+nroGens: 10
+stallGens: 5
+umbral: 1e-05
+archivo:  FP.csv
+---------------------
+parametros
+---------------------
+valInterna: 0.75
+valExterna: 0.25
+metodo: Linear Regression
+seed: 1
+trials: 3
+maxSelectVars: 0
+alpha: 0.6
+popSize: 20
+eliteSize: 5
+tourSize: 3
+pxo: 0.6
+pmut: 0.2
+nroGens: 20
+stallGens: 5
+umbral: 1e-05
+archivo:  resultados.csv
+---------------------
+parametros
+---------------------
+valInterna: 0.75
+valExterna: 0.25
+metodo: Regression Trees
+seed: 1
+trials: 3
+maxSelectVars: 0
+alpha: 0.6
+popSize: 100
+eliteSize: 10
+tourSize: 6
+pxo: 0.6
+pmut: 0.2
+nroGens: 100
+stallGens: 10
+umbral: 1e-05
+archivo:  resultados.csv
+---------------------
+parametros
+---------------------
+valInterna: 0.75
+valExterna: 0.25
+metodo: Linear Regression
+seed: 1
+trials: 3
+maxSelectVars: 0
+alpha: 0.6
+popSize: 30
+eliteSize: 5
+tourSize: 2
+pxo: 0.6
+pmut: 0.2
+nroGens: 20
+stallGens: 5
+umbral: 1e-05
+archivo:  FirstPhase.csv
+---------------------

@@ -1,0 +1,31 @@
+#Regresión lineal múltiple
+
+#Tengo x que es mi partición de descriptores
+#Tengo y que es la partición correspondiente de la propiedad a predecir
+
+#modelo10=lsfit(x,y)
+#ncols=length(x[1,])
+RLM=function(equis){ #partición de validación
+	if(length(equis[1,])==ncols){
+		columnas=c(1:ncols)
+		nfilas=length(equis[,1])
+		filas=c(1:nfilas)
+		rta=matrix(0,nfilas,1)
+		for(m in filas){
+			sumatoria=modelo10$coefficients["Intercept"]
+			print("sumatoria inciial:")
+			print(sumatoria)
+			for(n in columnas){
+				sumatoria=sumatoria+modelo10$coefficients[n]*equis[m,n]
+			}
+			rta[m,]=sumatoria
+		}
+		#print(rta) #??
+		return (rta) #??
+		
+	}else{
+		warning("El número de columnas del dato de entrada no es correcto.")
+		#VER COMO PONER ESTE MSJ DE ERROR
+	}
+	
+}

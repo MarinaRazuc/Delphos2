@@ -1,0 +1,50 @@
+require("RWeka")
+
+
+construir_modelo=function(metodo, datos){
+	sapply(metodo, switch, 
+		'1'=regresionLineal2(datos),
+		'2'=regresionNoLineal(datos)Stacking() #con GaussProcesses y MultilayerPerceptron
+	)
+
+}
+
+
+regresionNoLineal=function(datos){
+	#Stacking() #con GaussProcesses y MultilayerPerceptron
+}
+
+
+regresionLineal=function(datos){
+	nCols=ncol(datos)
+	vnam=paste0("V", 1:(nCols-1) )
+	fmla=as.formula(
+		paste(
+			paste(
+				paste0( 
+					"V", nCols 
+				), "~"
+			) , 
+			paste(
+				vnam, collapse="+" 
+			)
+		)
+	
+	)
+	print(fmla)
+	LR=LinearRegression(fmla, data=datos)
+	print(class(LR))
+	print(LR2)
+	LR
+	
+}
+
+
+regresionLineal2=function(datos){
+	fmla=as.formula("V5~.")
+	LR=LinearRegression(fmla, data=datos)
+	print(class(LR))
+	print(LR2)
+	LR
+
+}

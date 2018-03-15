@@ -1,0 +1,17 @@
+#modelo (sacado de la tesis)
+
+cantVars=c(1:nCols)   #nro de descriptores 
+cuatro=c(1:4)
+B0=1 #solo para poner algo, esto despues toma algun valor
+RNoL=function(X, B){
+	sumatoria=B0 #o B[nCols+1]
+	for (n in cantVars){
+		print(n)
+		for(m in cuatro){
+			print(m)
+			sumatoria=sumatoria+(B[n,m])*((X[n])^m)
+		}
+
+	}
+
+}

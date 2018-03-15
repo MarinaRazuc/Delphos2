@@ -1,0 +1,52 @@
+#require("gWidgets")
+#require("genalg")
+#require("RWeka")
+#require("gWidgetsRGtk2")
+#require("RGtk2")
+#require("cairoDevice")
+#require("caret")
+nroExp=1
+cantExp=function(x){
+	nroExp=x
+	
+} 
+
+primeraFase=function(){
+	print(nroExp)
+
+}
+
+
+
+win=gwindow(title = "DELPHOS.R", visible=TRUE, width=40, heigth=70)
+group=ggroup(horizontal = FALSE, container=win)
+obj=glabel("Experiment Design", container = group, width=10 )
+group2=ggroup(horizontal = TRUE, container=group)
+obj=glabel("Number of experiments", container=group2, width=10 )
+obj_gedit=gedit(c(1), container = group2, width=5, coerce.with =as.numeric )
+
+nroExp=svalue(obj_gedit)
+print(nroExp)
+
+obj_button_1=gbutton("First Phase", container=group, width=10)
+
+addhandlerchanged(obj_button_1, handler=function(h,...)  cat("You typed", svalue(h$obj_bu),"\n"))
+
+obj=gbutton("Second Phase", container=group, handler=(function(h,...)gmessage("segunda fase")), width=10)
+obj=gbutton("First and Second Phase", container=group, handler=(function(h,...)gmessage("primera y segunda fase")), width=10)
+obj=glabel(" ", container=group)
+obj=glabel("Results", container=group)
+obj=gbutton("View saved selections", container=group, handler=(function(h,...)gmessage("resultados")), width=10)
+
+
+
+
+
+
+
+
+
+
+
+
+

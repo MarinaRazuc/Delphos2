@@ -1,0 +1,4 @@
+#usando data dfr con a b c d e
+
+require(RWeka)
+RLW=LinearRegression(formula=e~., data=dfr)
