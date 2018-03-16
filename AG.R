@@ -21,6 +21,7 @@ popTam=0
 PromFit=0
 PromFitViejo<<-0
 convergencia=FALSE
+MejorFitness<<-0
 #F1
 cardinalidad<-function( individuo ){  #F1 en la tesis
 	largo<-length(individuo)
@@ -262,39 +263,6 @@ fitness2=function(x){
 }
 
 
-#PERMUTACION (para ga)
-#Return a list with two elements:
-#children: a matrix of dimension 2 times the number of decision variables 
-# 			containing the generated offsprings;
-#fitness: a vector of length 2 containing the fitness values for the offsprings. 
-#			A value NA is returned if an offspring is different (which is usually the case) from the two parents.
-# permutacion= function(objeto, parents){ #parents: A two-rows matrix of values indexing the parents from the current population.
-	# padre1=objeto@population[parents[1], ]
-	# padre2=objeto@population[parents[2], ]
-	# largo=length(padre1)
-	# punto=round(runif(1,1,largo-2)) #punto de cruce
-	# h1p1= padre1[1:punto] #hijo 1 parte 1
-	# h1p2= padre2[(punto+1):largo]
-	# h2p1=padre2[1:punto]
-	# h2p2=padre1[(punto+1):largo]
-	
-	# hijo1=c(h1p1, h1p2)
-	# hijo2=c(h2p1, h2p2)
-	
-	# if(cardinalidad(hijo1)>pmG)
-		# hijo1=ajustar(hijo1, pmG)
-	# if(cardinalidad(hijo2)>pmG)
-		# hijo2=ajustar(hijo2, pmG)
-	
-	# children=matrix(NA, 2, largo)
-	# children[1,]=hijo1
-	# children[2,]=hijo2
-	
-	# resultado=list()
-	# resultado$children=children
-	# resultado$fitness=c(NA, NA)
-	# resultado
-# }
 
 #permutación2
 permutacion2=function(padre1, padre2){
@@ -326,25 +294,6 @@ permutacion2=function(padre1, padre2){
 
 }
 
-#MUTACION----(para ga)----------------
-# mutacion=function(objeto, parent){
-	# individuo=objeto@population[parent, ]
-	# largo=cardinalidad(individuo)
-	# # print("-----> MUTACIÓN:   cardinalidad individuo:")
-	# # print(largo)
-	
-	# if(largo>0){
-		# rnd=round(runif(1,1,largo))
-		# valor=individuo[rnd]
-		
-		# valor=1-valor
-		# individuo[rnd]=valor
-		# if(cardinalidad(individuo)>pmG)
-			# individuo=ajustar(individuo, pmG)
-	# }
-	# individuo
-# }
-
 #Mutación 2
 mutacion2=function(individuo){
 	largo=cardinalidad(individuo)
@@ -361,84 +310,21 @@ mutacion2=function(individuo){
 	individuo
 }
 
-#ALGORITMO GENÉTICO
-# algoritmo_genetico<-function(metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pMut, eliteSize, nroGens, stallGens, stallThres){
-	
-	# PromFit<<-0 #VER SI ESTO ES ASI
-	# nroIter<<-0
-	# popTam<<-popSize
-	# numcols=ncol(entrenamiento) #entrenamiento y testeo tienen el mismo nro de cols
-	# if(pm==0 || pm>numcols){
-		# pm<-numcols-1
-	# }
-	 
-	# conver<<-0
-	# mejor<<-0
-	# maxConver<<-nroGens *0.2 #el 20% de la max cant de generaciones
-	# # print("MAXCONVER------------------")
-	# # print(maxConver)
-	# entrenamientoG<<-entrenamiento
-	# testeoG<<-testeo
-	# alphaG<<-alpha
-	# pmG<<-pm
-	# metodoG<<-metodo
-	# funcionFitnessG<<-clase_propiedad
-	# umbralFitness<<-stallThres
-	# pobl=generar_poblacion_inicial(numcols-1,  popSize, pm) #ver si esta bien ese -1
-	# # individuo=Pop[i,],
-	# # defaultControl=gaControl()
-	# # gaControl("binary", list(selection="gabin_tourSelection"))
-	# resus<-ga( 
-		# type="binary", nBits=numcols-1, #nBits: a value specifying the number of bits to be used in binary encoded optimizations.
-		# # fitness=fitness1,
-		# fitness=mfitness,
-		# # population = gabin_Population,
-	   # selection = gabin_tourSelection,k=tourSize,#(object, k = 3, ...), ver como hay que llamar a esto 
-	  # crossover = permutacion, #gaControl("binary")$crossover, 
-	   # mutation = mutacion, 
-	   # popSize = popSize, 
-	   # pcrossover = pxo, 
-	   # pmutation = pMut, 
-	   # elitism = eliteSize, 
-	  # # updatePop = TRUE,
-	  # # postFitness = NULL,
-	   # maxiter =nroGens,
-	   # run =stallGens,
-	  # # maxFitness = Inf,
-	  # # names = NULL,
-	   # suggestions = pobl, 
-	   # optim = TRUE,
-	   # optimArgs = list( method = "L-BFGS-B", 
-						 # poptim = 0.05,
-						 # pressel = 0.5,
-						 # control = list(fnscale = -1, maxit = 100)
-						# ),
-	  # # keepBest = FALSE,
-	 # # parallel =TRUE,
-	   # # monitor = if(interactive()) 
-				   # # { if(is.RStudio()) gaMonitor else gaMonitor2 } 
-				 # # else FALSE,
-	# monitor=FALSE,
-	  # # seed = NULL
-	   # )
-
-	# # forget(mfitness) #limpiar cache?
-	# # gaControl(defaultControl)
-	
-	# resus
-
-# }
-
 #promedio de los valores de un vector
 calcular_promedio=function(valores){
 	
 	largo=length(valores)
+	 
 	suma=0
 	for(i in 1:largo){
+		val=valores[i]
+		write(val, "fitnesis.txt",append=TRUE)
 		suma=suma+valores[i]
 	}
 	resu=suma/largo
-	
+	write("-------", "fitnesis.txt", append=TRUE)
+	print("PROMEDIO CALCULADO")
+	print(resu)
 	resu
 	
 }
@@ -575,6 +461,8 @@ pertenece=function(poblacion, individuo){
 
 #algoritmo genético casero
 algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens, stallThres){	
+	
+	grafico=data.frame()
 	empeora<<-0
 	PromFit<<-0 
 	nroIter<<-0
@@ -596,38 +484,59 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	poblacion_actual<<-generar_poblacion_inicial(numcols-1,  popSize, pm) #ver si esta bien ese -1
 	fit_vals=c()
 	
-	PromFit<<-0
-	PromFitAnterior<<-0
+	
+	promfit=c()
+	promfit[1]=0
+	promfit[2]=0
 	bandera=FALSE
 	
 	
 	nueva_poblacion=matrix(0, popSize, numcols-1) #no considero propiedad
 		
 	i=1
+	G=1
+	# print("NRO GENS : -------------")
+	# print(nroGens)
+	# print("BANDERA")
+	# print(bandera)
+	
 	while(i<=nroGens && !bandera){
+		
 		#tomar poblacion
 		#calcular fitness de cada uno
-		
+		#print("voy a calcular el fitness")
 		for(j in 1:popSize){
+			#print(j)
 			individuo=poblacion_actual[j,]
 			fit_vals[j]=mfitness(individuo)
 		}
 		
-		PromFitAnterior<<-PromFit
-		PromFit<<-calcular_promedio(fit_vals)		
+		promfit[1]=promfit[2]
+		promfit[2]=calcular_promedio(fit_vals)
+		# PromFitAnterior<<-PromFit
+		# PromFit<<-calcular_promedio(fit_vals)		
+		
+		print("PromFitAnterior")
+		print(promfit[1])
+		print("PromFit")
+		print(promfit[2])
 		
 		
-		if((abs(PromFitAnterior-PromFit)<=umbralFitness)||(PromFit<PromFitAnterior)){
+		if((abs(promfit[1]-promfit[2])<=umbralFitness)||(promfit[2]<promfit[1])){
 			#estanco o empeora
 			empeora<<-empeora+1
 		}else{
-			if(PromFitAnterior<PromFit){
+			if(promfit[1]<promfit[2]){
 				#mejora significativa
 				empeora<<-0
 			}
 		}
 		
+		print("empeora")
+		print(empeora)
+		
 		if(empeora==stallGens){
+			print("empeora es igual a stallgens")
 			resultado=determinar_mejor_individuo(fit_vals)
 			bandera=TRUE
 			str2=paste(paste0("No hubo mejora significativa del fitness en ", stallGens), "generaciones.")
@@ -635,14 +544,49 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 		}
 		
 		if(!bandera){
+			
 			#elegir los mejores eliteSize individuos y ponerlos en la nueva población
 			valores=fit_vals
 			for(k in 1:eliteSize){
+				
 				mejor=determinar_mejor_individuo(valores)
 				nueva_poblacion[k,]=mejor$individuo
-				valores[mejor$indice]=0
+					
+				if(k==1){
+					MejorFitness<<-valores[mejor$indice]
+					print("MejorFitness")
+					print(MejorFitness)
+				}
 				
+				valores[mejor$indice]=0
 			}
+			
+			# print("I ES : ------------------------")
+			# print(i)
+			
+			
+			# print(grafico)
+			# grafico[G,1]=i
+			# grafico[G,2]="promedio"
+			# grafico[G,3]=PromFit
+			# G=G+1
+			# grafico[G,1]=i
+			# grafico[G,2]="mejor"
+			# grafico[G,3]=MejorFitness
+			# G=G+1
+			# print(grafico)
+			# names(grafico)=c("generaciones", "vals", "fitness")
+			# if(i!=1){ #no es la primera generación
+				# dev.off()
+			# }else{
+				# names(grafico)=c("generaciones", "vals", "fitness")
+			# }
+			
+			# print(grafico)
+			
+			# x11()
+			# ggplot(grafico, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=vals, group=vals)) + geom_point(aes(colour=vals), size=3)
+			
 				
 			#tomar de a tourSize individuos y hacer un torneo, el que gane pasa a formar parte del pool de apareamiento
 			pool=generar_pool(tourSize, fit_vals, poblacion_actual, pxo)
@@ -653,6 +597,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			k=eliteSize+1 #la siguiente posición libre en nueva_población luego de haber acomodado la elite
 			
 			while(k<=popSize){
+				 
 				p1=poblacion_actual[pool[m],]
 				#print(length(p1))
 				p2=poblacion_actual[pool[m+1],]
@@ -669,14 +614,28 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 				if(mutar){
 					h2=mutacion2(h2)
 				}
-				while(pertenece(nueva_poblacion, h1)){
+				p=1
+				salgo=FALSE
+				while(pertenece(nueva_poblacion, h1) && !salgo){
+					 
 					h1=mutacion2(h1)
+					p=p+1
+					if(p==10){
+						salgo=TRUE
+					}
 				}
 				nueva_poblacion[k, ]=h1
 				k=k+1
 				if(k<=popSize){
-					while(pertenece(nueva_poblacion, h2)){
+					p=1
+					salgo=FALSE
+					while(!salgo && pertenece(nueva_poblacion, h2)){
+						 
 						h2=mutacion2(h2)
+						p=p+1
+						if(p==10){
+							salgo=TRUE
+						}
 					}
 					nueva_poblacion[k,]=h2
 				}
@@ -685,11 +644,13 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			#print(proc.time()-npop)
 			#print("Poblacion generada")
 		}
+		poblacion_actual=nueva_poblacion
 		i=i+1
 	}#FIN WHILE
 	
 	if(!bandera){ #se ejecutaron todas las generaciones
-		resultado=determinar_mejor_individuo(fit_vals)$individuo #????????
+		print("se ejecutaron todas las generaciones")
+		resultado=determinar_mejor_individuo(fit_vals) 
 		#devuelvo el mejor individuo de la poblacion vieja
 		#que seria el primero de la nueva ya que fue elegido por elitismo
 		

@@ -679,4 +679,25 @@ generar_particiones=function(ndfr4, pex, pin){
 		resultados$testeo=testeo
 		
 		resultados
-}		
+}	
+
+
+grafiquitos=function(datos){
+	#win=gwindow(title = "Graficos", visible=FALSE, width=190, height=200, parent=c(575,230), toolkit="RGtk2")
+	#grupo1=ggroup(horizontal = FALSE, container=win, spacing=2)
+	dev.flush()
+	dev.off()
+	x11()
+	ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
+	
+	#add(win, graf)
+	#visible(win)=TRUE
+	
+	#ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
+}	
+
+
+
+
+
+
