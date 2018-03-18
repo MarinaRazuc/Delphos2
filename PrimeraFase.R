@@ -28,11 +28,8 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 		
 		dataframe1=partir(interna, valInterna, i)
 	
-		#correr GA con entrenamiento (dataframe1$it) y testeo (dataframe$et)
 		convergencia<<-FALSE
 		algogenet=algoritmo_genetico_2(archivo, metodo, dataframe1$it, dataframe1$et, clase_propiedad, alpha, pm, popSize,  tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral) #... etc
-		#print("-------ALGOGENET------")
-		#print(algogenet)
 		
 		soluciones[i,]=algogenet$individuo
 		#soluciones[i,]=algogenet@solution[1,]

@@ -109,8 +109,9 @@ ver_resultados=function(){
 	win=gwindow(title="Ver Resultados", visible=FALSE, width=200,  height=70, parent=c(200,200))
 	
 	group2=ggroup(container=win, spacing=15, horizontal=FALSE)
-	group1=ggroup(container=group2, spacing=15, horizontal=TRUE)
-	label1=glabel("Ingrese archivo...", container=group1)
+	group1=ggroup(container=group2, spacing=10, horizontal=TRUE)
+	#glabel("  ", container=group1)
+	label1=glabel(" Ingrese archivo...(Resultado Fase Dos)", container=group1)
 	text1=gedit("Ingrese archivo", container=group1, width=20)
 	button5=gbutton("Browse...", container=group1, 
 					handler=function(h,...){
@@ -124,12 +125,18 @@ ver_resultados=function(){
 						}
 						print(file5)
 					}, width=15)
+	#glabel("  ",container=group1)
 	
-	buttonok=gbutton("OK", container=group2, handler=function(h,...){
+	lay3=glayout(container=group2)
+	#glabel("            ", container=group3)
+	buttonok=gbutton("OK",handler=function(h,...){
 												
 												mostrar_resultados(svalue(text1))
 												dispose(win)
-												})
+											})
+	#glabel("                                                                    ", container=group3)
+	
+	lay3[1, 17:24]=buttonok
 	
 	visible(win)=TRUE
 }

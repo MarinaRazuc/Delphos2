@@ -80,23 +80,8 @@ data_input=function(i, experimento, cod){
 						print(file6)
 					}, width=15)
 					
-	#check7=gcheckboxgroup(c("CSV file with separator semicolon"), container=group_7, checked=TRUE)
-	#label4in=glabel(" ", container=group_7, width=5)
-	#label4=glabel("    Vector of compounds names    ", container = group_7,width=70)
-	#text7=gedit("Ingrese archivo", container=group_7, font.attr=list(style="bold"), width=70)
-	#label4in=glabel(" ", container=group_7, width=5)
-	# button7=gbutton("Browse...", container=group_7, 
-					# handler=function(h,...){
-						# file7=gfile()
-						# if(length(file7)>0){
-							# if(is.na(file7)){
-								# svalue(text7)="Ingrese archivo"
-							# }else{
-								# svalue(text7)=file7
-							# }
-						# }
-						# print(file7)
-					# }, width=15)
+	
+					
 
 	lay1[2,1:10]=group_2
 	#lab=glabel(container=group_2)
@@ -105,10 +90,7 @@ data_input=function(i, experimento, cod){
 	glabel(container=group_3)			
 	button8=gbutton("OK", container=group_3, width=5, 
 					handler=function(h,...){
-						
 						carga_y_control(win2, svalue(text4), svalue(text5), svalue(text6), svalue(check4), svalue(check5), svalue(check6), cod)
-						
-						#gmessage("OKEI")
 					})
 	button9=gbutton("Cancel", container=group_3, width=5, 
 					handler=function(h,...){
@@ -121,11 +103,6 @@ data_input=function(i, experimento, cod){
 #carga_y_control
 carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){ 
 
-#	descriptores=data.frame()
-#	propiedad=data.frame()
-#	nombresD=data.frame()
-#	nombresP=data.frame()
-
 	bandera=TRUE
 	
 	if(A2!="Ingrese archivo"){
@@ -134,11 +111,10 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 		}else{
 			sep=" "
 		}
-		#print("sep es")
-		#print(sep)
+		
 		propi=read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=",")
 		clase=class(propi[1,1])
-		print(clase)
+		
 		
 		if(clase=="numeric"){
 			propiedad<<-read.csv(A2, sep, header=FALSE, dec=",", stringsAsFactors=FALSE)
@@ -146,47 +122,18 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 			if(clase=="character"){
 				propiedad<<-read.csv(A2, sep, header=FALSE)
 			}else{
-				print("no sep")
+				
 			}
 		}
 		
 		
-		# elem=as.numeric(propi[1,1])
-		# print("ELEM")
-		# print(elem)
-		# print("CLASE")
-		# print(class(elem))
-		
-		# #elem=as.numeric(propi[1,1])
-		# if(is.character(elem)){
-			# print("IS CHARACTER")
-			# propiedad=read.csv(A2, sep, header=FALSE)
-			# propiedad<<-as.factor(propiedad)
-		# }else{
-			# if(is.numeric(elem)){
-				# print("IS NUMERIC")
-				# propiedad<<-read.csv(A2, sep, header=FALSE, dec=",", stringsAsFactors=FALSE)
-			# }else{
-				# if(is.factor(elem)){
-					# print("FACTOR")
-					# propiedad<<-read.csv(A2, sep, header=FALSE)
-					# #propiedad<<-as.factor(propiedad)
-				# }
-			# }
-		# }
-		
-		# clase=class(propiedad[1,1]) #ver
-		# print("clase")
-		# print(clase)
-		# print('propiedad[1,1]')
-		# print(propiedad[1,1])
-		
+				
 		if(A1!="Ingrese archivo"){
 			if(length(c1)!=0){
 				sep=";"
 			}else{
 				sep=" "
-			} #VER ACA SI VA ESPACIO U OTRA COSA
+			} 
 			descriptores<<-read.csv(A1, sep, header=FALSE, dec=",", stringsAsFactors=FALSE) #stringsAsFactors=FALSE ---> VER
 			if(A3!="Ingrese archivo"){
 				if(length(c3)!=0){
@@ -196,14 +143,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 				}
 				nombresD<<-read.csv(A3, sep, header=FALSE)
 			}
-			# if(A4!="Ingrese archivo"){
-				# if(length(c4)!=0){
-					# sep=";"
-				# }else{
-					# sep=" "
-				# }
-				# nombresP<<-read.csv(A4, sep, header=FALSE)
-			# }
+			
 		}else{
 			gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
 			bandera=FALSE
@@ -252,18 +192,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 			}
 		}
 			
-		# if(dims[7]!=0){#hay algo en el df nombresP
-			# if(dims[1]!=dims[7]){
-				# gmessage("Error, la cantidad de nombres de compuestos no coincide con la cantidad de observaciones.", icon="error")  
-				# bandera=FALSE
-			# }else{
-				# if(dims[8]!=1){
-					# gmessage("Error en el formato del vector de nombres de compuestos.", icon="error")
-					# bandera=FALSE
-				# }
-			# }
-		# }
-			
+					
 		if(bandera){
 			cartel_data_loaded(win2, dims, cod)
 		}	
@@ -287,12 +216,7 @@ cartel_data_loaded=function(win2, dimensiones, codigo){
 	str14=paste(paste0(paste(paste0("Size: ( ", dimensiones[3]), "x "),dimensiones[4] ), ")")
 	str15="Vector of descriptors names"
 	str16=paste(paste0(paste(paste0("Size: ( ", dimensiones[5]), "x "), dimensiones[6]), ")")
-#	str17="Vector of compounds names"
-#	str18=paste(paste0(paste(paste0("Size: ( ", dimensiones[7]), "x "), dimensiones[8]), ")")
 
-	#str5=cat(str1, str2, str3, str4, fill=31)
-	#cat(str1, str2, str3, str4, fill=31, file="texto.txt")
-	#str5=readLines("texto.txt")
 	 
 	label0=glabel(" ", container=frame1)
 	label1=glabel(str11, container=frame1)
@@ -304,15 +228,7 @@ cartel_data_loaded=function(win2, dimensiones, codigo){
 	label7=glabel(str15, container=frame1)
 	label8=glabel(str16, container=frame1)
 	label6=glabel(" ", container=frame1)
-#	label9=glabel(str17, container=frame1)
-#	label10=glabel(str18, container=frame1)
-#	label6=glabel(" ", container=frame1)
-	 
-	
-	#str5=paste(str11, str12, str13, str14, str15, str16, str17, str18)
-	 
-	#texto1=gtext(str5, container=frame1, font.attr=list(style="bold"), width=50,heigth=80, do.newline=TRUE, editable=FALSE)#, width=25, heigth=25)
-	
+
 	button1=gbutton("OK", container=group_2, handler=function(h, ...){
 														
 														gmessage("El proceso va a tomar unos segundos...", icon="info")

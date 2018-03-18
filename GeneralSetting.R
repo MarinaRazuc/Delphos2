@@ -299,10 +299,10 @@ seteo=function(datos, codigo){
 						valor=svalue(radio431)
 						if(valor=="Regression"){
 							 metodo<<-svalue(combobox4321)
-							 print(metodo)
+							 #print(metodo)
 						}else{
 							 metodo<<-svalue(combobox4322)
-							 print(metodo)
+							 #print(metodo)
 						}
 						
 						archivoUno<<-svalue(textA)
@@ -326,8 +326,8 @@ comenzar_calculo=function(archivo, cod){
 	#print(dim(dataframe0))
 	partes=partir(dataframe0, 1-valExterna, seed) #ver valInterna y valExterna
 
-	INTERNA<<-partes$it
-	EXTERNA<<-partes$et
+	#INTERNA<<-partes$it
+	#EXTERNA<<-partes$et
 	
 	largo=length(partes$it[1,])
 	#print(largo)

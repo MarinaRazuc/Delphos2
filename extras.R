@@ -134,7 +134,7 @@ partir=function(datos, porcentaje, seed){# datos a ser partidos segun porcentaje
 #
 #generar_data_frame(valores_descriptores, valores_propiedad, nombres_descriptores, nombres_compuestos)
 #
-generar_data_frame=function(val, prop, nomD){#data frames-- ver despues q hacer con la de los nombres de compuestos
+generar_data_frame=function(val, prop, nomD){#data frames
 	
 	if(length(nomD)>0){
 		names(val)=nomD[,1]
@@ -146,7 +146,7 @@ generar_data_frame=function(val, prop, nomD){#data frames-- ver despues q hacer 
 		nombreUlt=names(dataframe1)[ultimo-1]  #el nombre del ultimo descriptor (ultimo-1 porque ultimo es la propiedad, que se llama V1)
 		names(dataframe1)[1]=paste0(nombreUlt, "1")##le agrego un 1 para diferenciarlo del ultimo descriptor, y asi tmp se llama V1 como la prop
 	}
-	print("Generé dataframe")
+	#print("Generé dataframe")
 	dataframe1
 }
 #
@@ -583,6 +583,8 @@ acomodar=function(datos){
 ##
 mostrar_resultados=function(archivo){
 
+	#cambiar totalmente porque ahora los SecondPhase_xxxx.csv guardan otra info
+
 	print("mostrar resultados")
 	print(archivo)
 	
@@ -685,17 +687,16 @@ generar_particiones=function(ndfr4, pex, pin){
 grafiquitos=function(datos){
 	#win=gwindow(title = "Graficos", visible=FALSE, width=190, height=200, parent=c(575,230), toolkit="RGtk2")
 	#grupo1=ggroup(horizontal = FALSE, container=win, spacing=2)
-	dev.flush()
-	dev.off()
+	#dev.flush()
+	#dev.off()
 	x11()
-	ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
+	ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=vals, group=vals)) + geom_point(aes(colour=vals), size=3)
 	
 	#add(win, graf)
 	#visible(win)=TRUE
 	
 	#ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
 }	
-
 
 
 

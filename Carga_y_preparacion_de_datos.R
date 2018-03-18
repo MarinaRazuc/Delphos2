@@ -46,30 +46,30 @@ filtrado_columnas=function(A){
 }
 
 
-preparar_datos=function(seed, trials){
-	nombres=read.csv("Nombres_dfr4.csv", sep=" ", header=FALSE)
-	propiedad=read.csv("prop_dfr4.csv", sep=" ", header=FALSE)
+# preparar_datos=function(seed, trials){
+	# nombres=read.csv("Nombres_dfr4.csv", sep=" ", header=FALSE)
+	# propiedad=read.csv("prop_dfr4.csv", sep=" ", header=FALSE)
 	
-	if(class(propiedad[1])=="character")
-		clase_propiedad="nom"
-	else
-		clase_propiedad="num"
+	# if(class(propiedad[1])=="character")
+		# clase_propiedad="nom"
+	# else
+		# clase_propiedad="num"
 		
-	dfr4=read.csv("dfr4.csv", header=FALSE, sep=" ")
-	names(dfr4)=nombres[,1]
+	# dfr4=read.csv("dfr4.csv", header=FALSE, sep=" ")
+	# names(dfr4)=nombres[,1]
 	
-	#FALTA COMPARAR NROS DE FILAS Y COLS Y DAR ERROR CUANDO CORRESPONDA
+	# #FALTA COMPARAR NROS DE FILAS Y COLS Y DAR ERROR CUANDO CORRESPONDA
 	
-	fdfr4=filtrado_columnas(dfr4) #filtrado data frame: elimina columnas constantes
-	ndfr4=cbind(fdfr4,propiedad) #new data frame
+	# fdfr4=filtrado_columnas(dfr4) #filtrado data frame: elimina columnas constantes
+	# ndfr4=cbind(fdfr4,propiedad) #new data frame
 	
-	set.seed(seed) #por parametro
-	indices4=createDataPartition(ndfr4$V1, p=0.75, list=FALSE) #p por parametro (validacion externa)
-	#V1 porque se supone que tengo el nombre de los descriptores, pero NO el de la propiedad, que queda como V1
-	externa=ndfr4[-indices4, ]
-	interna=ndfr4[indices4, ]
+	# set.seed(seed) #por parametro
+	# indices4=createDataPartition(ndfr4$V1, p=0.75, list=FALSE) #p por parametro (validacion externa)
+	# #V1 porque se supone que tengo el nombre de los descriptores, pero NO el de la propiedad, que queda como V1
+	# externa=ndfr4[-indices4, ]
+	# interna=ndfr4[indices4, ]
 	
-	primera_fase(interna, trials, clase_propiedad) #FALTAN MUCHOS MUCHOS PARAMETROS
-	segunda_fase()
+	# primera_fase(interna, trials, clase_propiedad) #FALTAN MUCHOS MUCHOS PARAMETROS
+	# segunda_fase()
 
-}
+# }

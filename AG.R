@@ -49,7 +49,7 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 	#(ver si me los pasan por parámetro o cómo los obtengo)
 	t <- proc.time() 
 	
-	modelo=tryCatch(construir_modelo(metodo, datosEfiltro), #... significa parámetros oooo los puedo tener como vars globales
+	modelo=tryCatch(construir_modelo(metodo, datosEfiltro), 
 	error=function(e){
 						print("ERROR")
 						print(e)
@@ -71,7 +71,6 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 		#	print(proc.time()-p)
 		}
 	}else {
-		#print("BANDERA ES TRUE")
 		resu_F2=1000  #numero grande porque marca el error
 	}
 	resu_F2
@@ -194,7 +193,6 @@ generar_poblacion_inicial=function(nro_desc, popSize, maximo ){
 #	print("Generar población")
 	pop=matrix(nrow=popSize, ncol=nro_desc)
 
-	
 	for (i in 1:popSize){
 		
 		ind=runif(nro_desc, 0, 1)
@@ -267,11 +265,7 @@ fitness2=function(x){
 #permutación2
 permutacion2=function(padre1, padre2){
 	largo=length(padre1) #el largo es el mismo para ambos
-	#print("LARGO PADRES----------------")
-	#print(largo)
 	punto=round(runif(1,1,largo-2)) #punto de cruce
-	#print("PUNTO------------------------")
-	#print(punto)
 	h1p1= padre1[1:punto] #hijo 1 parte 1
 	h1p2= padre2[(punto+1):largo]
 	h2p1=padre2[1:punto]
@@ -322,9 +316,7 @@ calcular_promedio=function(valores){
 		suma=suma+valores[i]
 	}
 	resu=suma/largo
-	write("-------", "fitnesis.txt", append=TRUE)
-	print("PROMEDIO CALCULADO")
-	print(resu)
+	 
 	resu
 	
 }
@@ -337,14 +329,11 @@ determinar_mejor_individuo=function(fit_vals){
 	indice=1
 	for(i in 1:largo){
 		elem=fit_vals[i]
-		
 		if(elem>mejor){
-			
 			indice=i
 			mejor=elem
 		}
 	}
-	
 	resultado=list()
 	resultado$individuo=poblacion_actual[indice, ]
 	resultado$indice=indice
@@ -495,16 +484,11 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 		
 	i=1
 	G=1
-	# print("NRO GENS : -------------")
-	# print(nroGens)
-	# print("BANDERA")
-	# print(bandera)
-	
+		
 	while(i<=nroGens && !bandera){
 		
 		#tomar poblacion
 		#calcular fitness de cada uno
-		#print("voy a calcular el fitness")
 		for(j in 1:popSize){
 			#print(j)
 			individuo=poblacion_actual[j,]
@@ -513,13 +497,12 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 		
 		promfit[1]=promfit[2]
 		promfit[2]=calcular_promedio(fit_vals)
-		# PromFitAnterior<<-PromFit
-		# PromFit<<-calcular_promedio(fit_vals)		
+			
 		
-		print("PromFitAnterior")
-		print(promfit[1])
-		print("PromFit")
-		print(promfit[2])
+		# print("PromFitAnterior")
+		# print(promfit[1])
+		# print("PromFit")
+		# print(promfit[2])
 		
 		
 		if((abs(promfit[1]-promfit[2])<=umbralFitness)||(promfit[2]<promfit[1])){
@@ -532,11 +515,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			}
 		}
 		
-		print("empeora")
-		print(empeora)
-		
 		if(empeora==stallGens){
-			print("empeora es igual a stallgens")
 			resultado=determinar_mejor_individuo(fit_vals)
 			bandera=TRUE
 			str2=paste(paste0("No hubo mejora significativa del fitness en ", stallGens), "generaciones.")
@@ -548,46 +527,45 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			#elegir los mejores eliteSize individuos y ponerlos en la nueva población
 			valores=fit_vals
 			for(k in 1:eliteSize){
-				
 				mejor=determinar_mejor_individuo(valores)
 				nueva_poblacion[k,]=mejor$individuo
-					
+				
 				if(k==1){
 					MejorFitness<<-valores[mejor$indice]
-					print("MejorFitness")
-					print(MejorFitness)
 				}
 				
 				valores[mejor$indice]=0
 			}
-			
-			# print("I ES : ------------------------")
-			# print(i)
-			
-			
-			# print(grafico)
-			# grafico[G,1]=i
-			# grafico[G,2]="promedio"
-			# grafico[G,3]=PromFit
-			# G=G+1
-			# grafico[G,1]=i
-			# grafico[G,2]="mejor"
-			# grafico[G,3]=MejorFitness
-			# G=G+1
-			# print(grafico)
-			# names(grafico)=c("generaciones", "vals", "fitness")
-			# if(i!=1){ #no es la primera generación
-				# dev.off()
-			# }else{
-				# names(grafico)=c("generaciones", "vals", "fitness")
-			# }
-			
-			# print(grafico)
-			
-			# x11()
-			# ggplot(grafico, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=vals, group=vals)) + geom_point(aes(colour=vals), size=3)
-			
+		
+			if(i%%3==0 || i==1){
+				grafico[G,1]=i
+				grafico[G,2]="promedio"
+				grafico[G,3]=promfit[2]
+				G=G+1
+				grafico[G,1]=i
+				grafico[G,2]="mejor"
+				grafico[G,3]=MejorFitness
+				G=G+1
 				
+				if(i!=1){ #no es la primera generación a dibujar
+					tryCatch(dev.off(), 
+						error=function(e){
+											str1=iconv("No hay gráficos activos.", from="UTF-8", to="UTF-8")
+											print(str1)
+										}
+						)
+					 
+				}else{
+					names(grafico)=c("generaciones", "referencias", "fitness")
+				}
+				dev.flush()
+				#print(grafico)
+				
+				# grafiquitos(grafico)
+				x11(width=2000, height=1000, title="Primera Fase");print(ggplot(grafico, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=referencias, group=referencias)) + geom_point(aes(colour=referencias), size=3))
+				
+			}
+			
 			#tomar de a tourSize individuos y hacer un torneo, el que gane pasa a formar parte del pool de apareamiento
 			pool=generar_pool(tourSize, fit_vals, poblacion_actual, pxo)
 		
@@ -625,6 +603,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 					}
 				}
 				nueva_poblacion[k, ]=h1
+				
 				k=k+1
 				if(k<=popSize){
 					p=1
@@ -638,18 +617,19 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 						}
 					}
 					nueva_poblacion[k,]=h2
+					
 				}
 				k=k+1
 			}
 			#print(proc.time()-npop)
-			#print("Poblacion generada")
+			
 		}
 		poblacion_actual=nueva_poblacion
 		i=i+1
 	}#FIN WHILE
 	
 	if(!bandera){ #se ejecutaron todas las generaciones
-		print("se ejecutaron todas las generaciones")
+		
 		resultado=determinar_mejor_individuo(fit_vals) 
 		#devuelvo el mejor individuo de la poblacion vieja
 		#que seria el primero de la nueva ya que fue elegido por elitismo

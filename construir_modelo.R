@@ -56,6 +56,9 @@ construir_modelo=function(metodo, datos){
 }
 
 arbolDeDecision2=function(datos){
+	str1=iconv("Árbol de Decisión", from="UTF-8", to="UTF-8")
+	print(str1)
+
 	pep=proc.time()
 	modelo=Stacking(formula=V1~., data=datos, 
 					control=Weka_control(
@@ -89,6 +92,9 @@ arbolDeDecision=function(datos){
 
 
 kVecinosStacking=function(datos){
+
+	str1=iconv("k Vecinos Más Cercanos", from="UTF-8", to="UTF-8")
+	print(str1)
 	pep=proc.time()
 	modelo=Stacking(formula=V1~., data=datos, 
 					control=Weka_control(
@@ -111,7 +117,7 @@ kVecinosStacking=function(datos){
 
 
 kVecinosMasCercanos=function(datos){
-	str1=iconv("K Vecinos más cercanos", from="UTF-8", to="UTF-8")
+	str1=iconv("k Vecinos Más Cercanos", from="UTF-8", to="UTF-8")
 	print(str1)
 
 	# largo=dim(datos)[2]
@@ -133,8 +139,9 @@ kVecinosMasCercanos=function(datos){
 }
 
 arbolDeRegresion=function(datos){
+	str1=iconv("Árbol de Regresión", from="UTF-8", to="UTF-8")
+	print(str1)
 
-	print("Árbol de Regresión")
 
 	modelo=M5P(V1~., datos, control=Weka_control(R=TRUE, N=TRUE))
 	
@@ -147,6 +154,9 @@ arbolDeRegresion=function(datos){
 }
 
 arbolDeRegresion2=function(datos){
+
+	str1=iconv("Árbol de Regresión", from="UTF-8", to="UTF-8")
+	print(str1)
 	modelo=Stacking(formula=V1~., data=datos, 
 					control=Weka_control(
 								M="weka.classifiers.trees.M5P",
@@ -203,25 +213,9 @@ regresionNoLineal=function(datos){
 
 
 regresionLineal=function(datos){
+	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
+	print(str1)
 
-#	rl=proc.time()
-
-#	nCols=ncol(datos)
-#	vnam=paste0("V", 1:(nCols-1) )
-##	fmla=as.formula(
-#		paste(
-#			paste(
-#				paste0( 
-#					"V", nCols 
-#				), "~"
-#			) , 
-#			paste(
-#				vnam, collapse="+" 
-#			)
-#		)
-	
-#	)
-#	print(fmla)
 	LR=lm("V1~.", datos)
 	#LR=LinearRegression(fmla, data=datos)
 	
@@ -253,7 +247,8 @@ regresionLineal2=function(datos){
 }
 
 regresionLineal4=function(datos){
-
+	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
+	print(str1)
 	fmla=as.formula("V1~.")
 	#write.table(datos, file="datillos.txt", append=TRUE)
 	
@@ -273,6 +268,8 @@ trasponer=function(datos){
 }
 
 regresionLineal3=function(datos){
+	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
+	print(str1)
 	modelo=Stacking(formula=V1~., data=datos, 
 					control=Weka_control(
 								M="weka.classifiers.functions.GaussianProcesses",
@@ -286,6 +283,8 @@ regresionLineal3=function(datos){
 }
 
 regresionLineal5=function(datos){
+	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
+	print(str1)
 	modelo=Stacking(formula=V1~., data=datos, 
 					control=Weka_control(
 								M="weka.classifiers.trees.RandomTree",
@@ -302,6 +301,8 @@ regresionLineal5=function(datos){
 
 
 regresionLinealSpeedlm=function(datos){
+	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
+	print(str1)
 	fmla=as.formula("V1~.")
 	
 	modelo=speedlm("V1~.", datos, method='Cholesky', fitted = FALSE)
