@@ -111,7 +111,7 @@ segunda_fase=function(archivo, metodoSF, salida){
 	
 	scan3=scan(archivo, what="numeric")
 #	str1=paste("poblaciones_", archivo)
-	print("LLAMAR A PROCESAR")
+	
 	procesado=procesar(scan3, salida)
 			
 	soluciones=procesado$individuos
@@ -124,6 +124,7 @@ segunda_fase=function(archivo, metodoSF, salida){
 	clase=class(externa[,cols])
 	iteras=nrow(soluciones)
 	resultados=c(1:iteras)
+	
 	for(i in 1:iteras){
 		individuo=soluciones[i,]
 		IF=filtrar(interna, individuo)
@@ -131,6 +132,7 @@ segunda_fase=function(archivo, metodoSF, salida){
 		EF=filtrar(externa, individuo) 
 		
 		modelo=construirModelo(IF ,metodoSF)
+		write("---", salida, append=TRUE)
 		write(individuo, salida, append=TRUE)
 		
 		if(clase=="numeric"){
@@ -181,7 +183,7 @@ segunda_fase=function(archivo, metodoSF, salida){
 			write(str1, salida, append=TRUE)
 			
 			write(str2, salida ,append=TRUE)
-			write(matriz, salida ,append=TRUE)
+			write.table(matriz, salida ,append=TRUE)
 			write("ROC Area: ", salida ,append=TRUE)
 			write(rocarea, salida ,append=TRUE)
 			

@@ -24,7 +24,7 @@ cantExp=function(x){
 
 iniciar=function(){
 	#win=gtkWindow()
-	win=gwindow(title = "DELPHOS.R", visible=FALSE, width=190, height=200, parent=c(575,230), toolkit="RGtk2")
+	win=gwindow(title = "DELPHOS.R", visible=FALSE, width=190, height=200, parent=c(575,150), toolkit="RGtk2")
 	group=ggroup(horizontal = FALSE, container=win, spacing=2)
 	glabel("  ", container=group)
 	frame1=gframe(container=group, text="Experiment Design", horizontal=FALSE, spacing=5, pos=0, expand=TRUE)
@@ -136,7 +136,7 @@ ver_resultados=function(){
 											})
 	#glabel("                                                                    ", container=group3)
 	
-	lay3[1, 17:24]=buttonok
+	lay3[1, 18:24]=buttonok
 	
 	visible(win)=TRUE
 }

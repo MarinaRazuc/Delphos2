@@ -202,9 +202,24 @@ filtrado_columnas=function(A){
 
 #
 #
-#
+#procesar archivo de la segunda fase
 procesar_SF=function(scaneo){ #probablemente esto cambie porque voy a necesitar guardar mas info
-	nombres=c()
+	
+	#cambiar totalmente porque ahora los SecondPhase_xxxx.csv guardan otra info
+	#X cant de veces:
+		#Vx's
+		#poblacion
+		#marca ---
+	
+	#si es num
+		#individuo
+		#Coef de correlacion
+	
+	#si es nom
+		#individuo
+		#casos correctamente clasificados
+	
+	nombres=c() #v
 	nombres_desc=c()
 	
 	largo=length(scaneo)
@@ -221,73 +236,167 @@ procesar_SF=function(scaneo){ #probablemente esto cambie porque voy a necesitar 
 		i=i+1
 	}
 	
-	individuos=data.frame()
-	if(bandera){ #busco individuos
+	#aca tengo q leer la poblacion
+	poblacion=data.frame()
+	tam=length(nombres)
+	j=1
+	k=1
+	i=i+1 #saltea numeracion
+	fin=FALSE
+	while(!fin){
 		j=1
-		k=1
-		limitador=2 
-		bandera=FALSE
-		while(i<=largo && !bandera){
-			elem=as.numeric(scaneo[i])
-			if(is.na(elem)){ #llegamos a algo q no es numero
-				bandera=TRUE
-			}else{
-				pos=grep(limitador, elem)
-				if(length(pos)==0){#sigo en el individuo 
-					individuos[j,k]=elem
-					k=k+1
-				}else{ #termine con el individuo
-					j=j+1
-					k=1
-					limitador=limitador+1
-				}
+		while(j<=tam){
+			elem=scaneo[i]
+			poblacion[k,j]=as.numeric(elem)
+			j=j+1
+			i=i+1
+		}
+		elem=scaneo[i]
+		pos=grep("-",elem)
+		if(length(pos)!=0){
+			#termine la poblacion
+			#i=i+2+tam+1 #salteo los -- , los v y la primera numeracion
+			i=i+1
+			elem=scaneo[i]
+			pos=grep("V") #veo si siguen nombres (nueva poblacion) o no hay mas poblaciones (individuo)
+			if(length(pos)!=0){#nueva poblacion
+				i=i+2+tam+1 #salteo Vs, -- y  nume
+				k=1
+				j=1
+			}else{#individuo!
+				fin=TRUE
 			}
+		}else{
+			j=1
+			k=k+1
+			i=i+1 #salteo num
+		}
+	}
+	
+	
+	individuos=data.frame()
+	#busco individuos
+	j=1
+	k=1 
+	bandera=FALSE
+	p=1
+	porcentaje=c()
+	mae=c()
+	nombre=""
+	nombres=c()
+	confusion=data.frame()
+	d=1
+	f=1
+	while(!bandera){
+		while(j<=tam && i<=largo){
+			individuos[k,j]=as.numeric(scaneo[i])
+			i=i+1
+			j=j+1
+		}
+		
+		elem=scaneo[i]
+		pos=grep("P", elem)
+		if(length(pos)!=0){#ante Porcentaje ,clasif
+			while(as.numeric(scaneo[i])==NA){
+				i=i+1
+			}
+			porcentaje[p]=scaneo[i]
+			i=i+1
+			while(as.numeric(scaneo[i])==NA){
+				i=i+1
+			}
+			mae[p]=scaneo[i]
+			i=i+21 #"matriz de confusion"
+			
+			q=1
+			ene=FALSE
+			hecho=FALSE
+			
+			while(length(grep('"', scaneo[i]))!=0){
+				nombre=paste(nombre, scaneo[i])
+				i=i+1
+			}
+			nombre=gsub(" ","",nombre) 
+			r=1
+			fen=FALSE
+			while(r<=q && !fen){
+				if(nombres[r]==nombre){
+					fen=TRUE
+				}
+				r=r+1
+			}
+			if(!fen){
+				nombres[q]=nombre
+				if(q>1){
+					i=i+3 #saltear comillas de cierre y comienzo sgte
+				}
+				q=q+1
+			}else{ #hubo coincidencia, ya tengo todos los nombres
+				if(!hecho){
+					names(confusion)=nombres
+					hecho=TRUE
+				}
+				while(d<=length(nombres)){
+					while(as.numeric(scaneo[i])!=NA){
+						confusion[d,f]=as.numeric(scaneo[i])
+						i=i+1
+						f=f+1
+					}
+					f=1
+					d=d+1
+					i=i+length(nombres[d])
+				}
+				#termine matriz
+				#leo ROC Area
+				i=i+9 #roc area
+			}
+			rocarea[
+			
+		}
+	}
+	vals_finales=c()
+	if(bandera){ #saltear V1 y V2 de valores
+		i=i+3 #para saltear vs y numeracion (CREO)
+		cant=nrow(individuos)
+		k=1
+		while(k<=cant && i<=largo){
+			elem=scaneo[i]
+			vals_finales=c(vals_finales, elem)
+			k=k+1
+			i=i+3 #por las numeraciones
+		}
+		#tengo todos los valores
+		i=i-1
+		#tengo a i posicionado en el primer nombre
+		cant=ncol(individuos)+1
+		k=1
+		
+		while(k<=cant && i<=largo){
+			elem=scaneo[i]
+			nombres_desc=c(nombres_desc, elem)
+			k=k+1
 			i=i+1
 		}
 		
-		vals_finales=c()
-		if(bandera){ #saltear V1 y V2 de valores
-			i=i+3 #para saltear vs y numeracion (CREO)
-			cant=nrow(individuos)
-			k=1
-			while(k<=cant && i<=largo){
-				elem=scaneo[i]
-				vals_finales=c(vals_finales, elem)
-				k=k+1
-				i=i+3 #por las numeraciones
-			}
-			#tengo todos los valores
-			i=i-1
-			#tengo a i posicionado en el primer nombre
-			cant=ncol(individuos)+1
-			k=1
-			
-			while(k<=cant && i<=largo){
-				elem=scaneo[i]
-				nombres_desc=c(nombres_desc, elem)
+		valores=data.frame()
+		i=i+1 #para saltear la numeracion
+		h=1
+		j=1
+		k=1
+		while(i<=largo){
+			while(h<=cant){
+				valores[j,k]=as.numeric(scaneo[i])
+				h=h+1
 				k=k+1
 				i=i+1
 			}
-			
-			valores=data.frame()
-			i=i+1 #para saltear la numeracion
+			j=j+1
 			h=1
-			j=1
 			k=1
-			while(i<=largo){
-				while(h<=cant){
-					valores[j,k]=as.numeric(scaneo[i])
-					h=h+1
-					k=k+1
-					i=i+1
-				}
-				j=j+1
-				h=1
-				k=1
-				i=i+1 #para saltear la numeracion
-			}
+			i=i+1 #para saltear la numeracion
 		}
 	}
+
 	
 	
 	resultados=list()
@@ -302,7 +411,7 @@ procesar_SF=function(scaneo){ #probablemente esto cambie porque voy a necesitar 
 }
 ####
 ###
-##
+## procesar archivo de la primera fase
 #procesar(archivo_leido, archivo_de_salida)
 procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	
@@ -578,32 +687,70 @@ acomodar=function(datos){
 }
 
 
+#determina el nombre de los descriptores seleccionados segun los individuos
+filtrar_nombres=func(nombres_desc, individuos){
+	nombres=data.frame()
+	largo=dim(individuos)[2]
+	cant=dim(individuos)[1]
+	
+	for(i in 1:cant){
+		for(j in 1:largo){
+			if(individuos[i,j]==1){
+				nombres[i,j]=nombres_desc[j]
+			}else{
+				nombres[i,j]=" "
+			}	
+		}
+	}
+	
+	nombres
+}
+
 ##
 ##
 ##
 mostrar_resultados=function(archivo){
 
-	#cambiar totalmente porque ahora los SecondPhase_xxxx.csv guardan otra info
-
-	print("mostrar resultados")
-	print(archivo)
-	
 	scan1=scan(archivo, what="numeric")
-	procesado=procesar_SF(scan1)
+	#procesado=procesar_SF(scan1)
+	individuos=buscar_individuos(scan1)
+	nombres_desc=nombres_descriptores(scan1)
+	valores=valores_desc(scan1)
 	
-	individuos=procesado$individuos
-	matriz=procesado$valores
-	ndescriptores=procesado$nombres_desc
-	aptitudes=procesado$vals_finales
+	largo=dim(valores)[2]
+	elem=valores[,largo]
+	clase=class(elem)
+	if(clase=="numeric"){
+		mostrar_numericos(individuos, nombres_desc, valores, scan1)
+	}else{
+		mostrar_nominales(individuos, nombres_desc, valores, scan1)
+	}
+}
+
+mostrar_numericos=function(individuos, nombres_desc, valores, scan1){
+	cant=dim(individuos)[1]
+	seleccionados=filtrar_nombres(nombres_desc, individuos)
+	#armar cuadro con individuos
+	#armar cuadro con seleccionados
 	
-	win1=gwindow(title="Resultados", visible=FALSE, width=200,  height=200, parent=c(200,200))
-	group1=ggroup(container=win1, spacing=15, horizontal=FALSE) #contenedor principal
-	group2=ggroup(container=group1, spacing=15, horizontal=FALSE)
+	CyMAE=obtener_corryMAE(cant, scan1)
+	#armar cuadro con CyMAE --> separar en 2 y armar 2 cuadros
+	#determinar cardinalidad y armar cuadro
+	#armar ventana con todo eso
+}
+
+mostrar_nominales=function(individuos, nombres_desc, valores, scan1){
+	cant=dim(individuos)[1]
+	seleccionados=filtrar_nombres(nombres_desc, individuos)
+	#armar cuadro con individuos
+	#armar cuadro con seleccionados
 	
-	text1=gtext(individuos, container=group2, editable=FALSE)
-	
-	visible(win1)=TRUE
-	
+	PyMAE=obtener_PyMAE(scan1)
+	#armar 2 cuadros
+	rocarea=obtener_rocarea(scan1, cant)
+	#por cada individuo
+		#obtener_matriz_confusion(i)
+		#hacer grafico con ella
 
 }
 
