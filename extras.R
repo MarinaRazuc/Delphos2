@@ -815,48 +815,78 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	j=1
 	porcentaje=c()
 	bandera=FALSE
+	mae=c()
+	coefi=c()
+	rocarea=data.frame()
+	r=1
+	p=1
+	
+	elem=scan1[i+cant]
+	pos=grep("P", elem)
+	if(length(pos)!=0){ #es Porcentaje
+		clase="nom"
+	}else{
+		clase="num"
+	}
+	
 	while(!bandera){ #hasta que no saltee todos los individuos
+		p=1
 		i=i+cant #me paro en coef o porc
-		elem=scan1[i]
-		pos=grep("p", elem)
-		if(length(pos)!=0){ #es porcentaje
-			clase="nom"
-		}else{
-			clase="num"
-		}
+		
 		
 		if(clase=="nom"){
-			while(as.numeric(scan1[i])==NA){
+			print("clase es nom")
+			elem=as.numeric(scan1[i])
+			print(elem)
+			print(is.na(elem))
+			while(is.na(as.numeric(scan1[i]))){
 				i=i+1
 			}
 			porcentaje[j]=scan1[i]
 			i=i+1
-			while(as.numeric(scan1[i])==NA){
+			while(is.na(as.numeric(scan1[i]))){
 				i=i+1
 			}
 			mae[j]=scan1[i]
 			i=i+1
+			while(length(grep("ROC", scan1[i]))==0){
+				i=i+1
+			}
+			i=i+2
 			elem=scan1[i]
 			while(length(grep("-", elem))==0){
+				rocarea[r,p]=elem
+				p=p+1
 				i=i+1
-				elem=scan[i]
+				elem=scan1[i]
 			}
-			i=i+1
-			if(as.numeric(scan1[i])==NA){#llegue a los nombres
-				bandera=TRUE
-			}else{
-				j=j+1
-			}
+			r=r+1
 		}else{#numerico
-			while(as.numeric(scan1[i])==NA){
+			print("ES NUMERICO")
+			print("elem num")
+			print(scan1[i])
+			while(is.na(as.numeric(scan1[i]))){
 				i=i+1
 			}
+			print(scan1[i])
 			coefi[j]=scan1[i]
-			while(as.numeric(scan1[i])==NA){
+			i=i+1
+			print("siguiente")
+			print(scan1[i])
+			while(is.na(as.numeric(scan1[i]))){
 				i=i+1
 			}
+			print(scan1[i])
 			mae[j]=scan1[i]
-		
+			i=i+1
+		}
+		i=i+1
+		print(scan1[i])
+		if(is.na(as.numeric(scan1[i]))){#llegue a los nombres
+			print("llegue a los nombres")
+			bandera=TRUE
+		}else{
+			j=j+1
 		}
 	}
 	
@@ -867,9 +897,14 @@ nombres_descriptores=function(scan1, cant, ipobl){
 		i=i+1
 	}
 	
-	
-	
+	resultados=list()
+	resultados$porcentaje=porcentaje
+	resultados$mae=mae
+	resultados$coefi=coefi
+	resultados$rocarea=rocarea
+	resultados$nombres=nombres
 
+	resultados
 }
 
 ##
@@ -883,8 +918,13 @@ mostrar_resultados=function(archivo){
 	individuos=proceso1$indis
 	cant_desc=proceso1$largo
 	ipobl=proceso1$I
-	nombres_desc=nombres_descriptores(scan1, cant_desc, ipobl)
+	proceso2=nombres_descriptores(scan1, cant_desc, ipobl)
+	nombres_desc=proceso2$nombres
+	coefis=proceso2$coefi
+	maes=proceso2$mae
+	
 	valores=valores_desc(scan1)
+	
 	
 	largo=dim(valores)[2]
 	elem=valores[,largo]
