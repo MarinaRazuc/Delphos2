@@ -1,3 +1,5 @@
+library("gridExtra")
+library("grid")
 
 #obtener_nombres()
 obtener_nombres=function(individuo, nombres){
@@ -649,7 +651,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			while(is.na(as.numeric(scan1[i]))){
 				i=i+1
 			}
-			print(scan1[i])
+			#print(scan1[i])
 			coefi[j]=scan1[i]
 			i=i+1
 			#print("siguiente")
@@ -741,22 +743,66 @@ mostrar_resultados=function(archivo){
 
 mostrar_numericos=function(individuos, nombres_desc, valores, coefs, maes){
 	cant=dim(individuos)[1] #filas
+	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
+	
 	#armar cuadro con individuos
 	#armar cuadro con seleccionados
-	textos_nombres=c()
-	textos_indivs=c()
 	
-	win1=gwindow(title="Resultados", visible=FALSE, width=700, height=500, parent=c(200,200))
-	# for(i in 1:cant){
-		# textos_nombres[i]=seleccionados[i]
-		# textos_indivs[i]=individuos[i]
+	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
+	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
+	glabel(" ", container=grupomayor)
+	grupo0=ggroup(horizontal = TRUE, spacing = 10,   container = grupomayor)
+	
+	etiq=paste(paste(paste0(" Individuos seleccionados: ( ", cols), "descriptores"),")")
+	glabel(etiq, container=grupo0)
+	
+	lay=glayout(container=grupomayor)
+	grupo1=ggroup(horizontal = FALSE, spacing = 5, width=500, height=200, use.scrollwindow = TRUE)
+	names(individuos)=nombres_desc
+	glabel(" ", container=grupo1)
+	
+	for(i in 1:cant){
+		str1=paste0(" ", i)
+		str1=paste(str1," ")
+		for (j in 1:cols){
+			str1=paste0(str1,individuos[i,j])
+		}
+		str1=paste(str1, " ")
+		glabel(str1, container=grupo1)
+	}
+	lay[1:15, 1:100]=grupo1
+	
+	grupo4=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
+	glabel(" Descriptores elegidos por individuo: ", container=grupo4)
+	
+	lay2=glayout(container=grupomayor)
+	grupo2=ggroup(horizontal=FALSE, spacing=5, width=500, height=200, use.scrollwindow = TRUE)
+	glabel(" ", container=grupo2)
+	
+	card=c()
+	for(i in 1:cant){
+		# str2=paste0(" ", i)
+		# str2=paste(str2," ")
 		
-	# }
+		str2=paste0("",i)
+		maxcols=card[i]=cardinalidad(individuos[i,])
+		
+		for(j in 1:maxcols){
+			str2=paste(str2, seleccionados[i,j])
+		}
+		glabel(str2, container=grupo2)
+	}
+	lay2[1:15, 1:100]=grupo2
 	
-	text1=gtext(text = individuos[1,], width = 500, height = 200, container = win1)
-	text2=gtext(text = individuos[2,], width = 500, height = 200, container = win1)
+	# # grupo3=ggroup(container=grupomayor, horizontal=TRUE, spacing=10) #botones
+	# # botonEst=gbutton()
+	# # botonFilt=gbutton()
+	# # botonSal=gbutton()
+	
 	visible(win1)=TRUE
+	
+	print(card)
 	
 	#armar cuadro con CyMAE --> separar en 2 y armar 2 cuadros
 	#determinar cardinalidad y armar cuadro
