@@ -483,12 +483,7 @@ acomodar=function(datos){
 filtrar_nombres=function(nombres_desc, individuos){
 	nombres=data.frame()
 	largo=dim(individuos)[2]
-	print("largo es:")
-	print(largo)
 	cant=dim(individuos)[1]
-	print("cant es : ")
-	print(cant)
-	
 	
 	for(i in 1:cant){
 		for(j in 1:largo){
@@ -734,20 +729,21 @@ mostrar_resultados=function(archivo){
 	largo=dim(valores)[2]
 	elem=valores[,largo]
 	clase=class(elem)
+	
 	if(clase=="numeric"){
-		mostrar_numericos(individuos, nombres_desc, valores, coefis, maes)
+		mostrar_numericos(individuos, nombres_desc, coefis, maes)
 	}else{
-		mostrar_nominales(individuos, nombres_desc, valores, porcentaje, maes, rocarea)
+		mostrar_nominales(porcentaje, maes, rocarea)
 	}
+	
+	
 }
 
-mostrar_numericos=function(individuos, nombres_desc, valores, coefs, maes){
+mostrar_numericos=function(individuos, nombres_desc, coefs, maes){
+
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
-	
-	#armar cuadro con individuos
-	#armar cuadro con seleccionados
 	
 	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
@@ -782,44 +778,150 @@ mostrar_numericos=function(individuos, nombres_desc, valores, coefs, maes){
 	
 	card=c()
 	for(i in 1:cant){
-		# str2=paste0(" ", i)
-		# str2=paste(str2," ")
+		str2=paste0(" ", i)
+		str2=paste(str2," ")
 		
-		str2=paste0("",i)
 		maxcols=card[i]=cardinalidad(individuos[i,])
-		
+		gtemp=ggroup(container=grupo2, horizontal=TRUE)
 		for(j in 1:maxcols){
 			str2=paste(str2, seleccionados[i,j])
 		}
-		glabel(str2, container=grupo2)
+		str2=paste(str2, " ")
+		glabel(str2, container=gtemp)
 	}
 	lay2[1:15, 1:100]=grupo2
 	
-	# # grupo3=ggroup(container=grupomayor, horizontal=TRUE, spacing=10) #botones
-	# # botonEst=gbutton()
-	# # botonFilt=gbutton()
-	# # botonSal=gbutton()
+	grupo5=ggroup(container=grupomayor, horizontal=FALSE, spacing=5)
+	glabel(" ", container=grupo5)
+	grupo3=ggroup(container=grupo5, horizontal=TRUE, spacing=20) #botones
+	glabel(" ", container=grupo3)
 	
-	visible(win1)=TRUE
+	lay3=glayout(container=grupo3)
 	
-	print(card)
+	botonmae=gbutton(" Ver MAE ",
+					handler=function(h,...){
+						ventana_mae(maes)
+					}, width=15)
+	botoncoef=gbutton(" Ver Coef.Corr. ", handler=function(h, ...){
+											ventana_coef(coefs)
+										})
+	botoncard=gbutton(" Ver Cardinalidad ", handler=function(h, ...){
+											ventana_card(card)
+										})
+	 
 	
-	#armar cuadro con CyMAE --> separar en 2 y armar 2 cuadros
-	#determinar cardinalidad y armar cuadro
-	#armar ventana con todo eso
+	botonFilt=gbutton("  Filtrar  ",  
+					handler=function(h,...){
+						ventana_filtrado(individuos, valores)
+					}, width=15)
+	botonSal=gbutton("  Salir  ",  
+					handler=function(h,...){
+						dispose(win1)
+					}, width=15)
+	lay3[1:3, 1:5]=botonmae
+	lay3[1:3, 8:13]=botoncoef
+	lay3[1:3, 16:21]=botoncard
+	
+	lay3[1:3, 24:29]=botonFilt
+	lay3[1:3, 80:85]=botonSal
+	glabel(" ", container=grupo5)
+	
+	visible(win1)=TRUE	
 }
 
 mostrar_nominales=function(individuos, nombres_desc, valores, porcentaje, maes, rocarea){
-	cant=dim(individuos)[1]
+	cant=dim(individuos)[1] #filas
+	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
 	
-	win1=gwindow(title="Resultados", visible=FALSE, width=700, height=200, parent=c(200,200))
-	#armar cuadro con individuos
-	#armar cuadro con seleccionados
+	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
+	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
+	glabel(" ", container=grupomayor)
+	grupo0=ggroup(horizontal = TRUE, spacing = 10,   container = grupomayor)
 	
-	PyMAE=obtener_PyMAE(scan1)
-	#armar 2 cuadros
-	rocarea=obtener_rocarea(scan1, cant)
+	etiq=paste(paste(paste0(" Individuos seleccionados: ( ", cols), "descriptores"),")")
+	glabel(etiq, container=grupo0)
+	
+	lay=glayout(container=grupomayor)
+	grupo1=ggroup(horizontal = FALSE, spacing = 5, width=500, height=200, use.scrollwindow = TRUE)
+	names(individuos)=nombres_desc
+	glabel(" ", container=grupo1)
+	
+	for(i in 1:cant){
+		str1=paste0(" ", i)
+		str1=paste(str1," ")
+		for (j in 1:cols){
+			str1=paste0(str1,individuos[i,j])
+		}
+		str1=paste(str1, " ")
+		glabel(str1, container=grupo1)
+	}
+	lay[1:15, 1:100]=grupo1
+	
+	grupo4=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
+	glabel(" Descriptores elegidos por individuo: ", container=grupo4)
+	
+	lay2=glayout(container=grupomayor)
+	grupo2=ggroup(horizontal=FALSE, spacing=5, width=500, height=200, use.scrollwindow = TRUE)
+	glabel(" ", container=grupo2)
+	
+	card=c()
+	for(i in 1:cant){
+		str2=paste0(" ", i)
+		str2=paste(str2," ")
+		
+		maxcols=card[i]=cardinalidad(individuos[i,])
+		gtemp=ggroup(container=grupo2, horizontal=TRUE)
+		for(j in 1:maxcols){
+			str2=paste(str2, seleccionados[i,j])
+		}
+		str2=paste(str2, " ")
+		glabel(str2, container=gtemp)
+	}
+	lay2[1:15, 1:100]=grupo2
+	
+	grupo5=ggroup(container=grupomayor, horizontal=FALSE, spacing=5)
+	glabel(" ", container=grupo5)
+	grupo3=ggroup(container=grupo5, horizontal=TRUE, spacing=20) #botones
+	glabel(" ", container=grupo3)
+	
+	lay3=glayout(container=grupo3)
+	
+	botonmae=gbutton(" Ver MAE ",
+					handler=function(h,...){
+						ventana_mae(maes)
+					}, width=15)
+	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
+											ventana_rocarea(rocarea)
+										})
+	botoncasos=gbutton(" Ver Porcentaje Correctos ", handler=function(h, ...){
+											ventana_casos(porcentaje)
+										})									
+	botoncard=gbutton(" Ver Cardinalidad ", handler=function(h, ...){
+											ventana_card(card)
+										})
+	 
+	
+	botonFilt=gbutton("  Filtrar  ",  
+					handler=function(h,...){
+						ventana_filtrado(individuos, valores)
+					}, width=15)
+	botonSal=gbutton("  Salir  ",  
+					handler=function(h,...){
+						dispose(win1)
+					}, width=15)
+	lay3[1:3, 1:5]=botonmae
+	lay3[1:3, 8:13]=botonrocarea
+	lay3[1:3, 16:21]=botoncasos
+	lay3[1:3, 24:29]=botoncard
+	lay[1:3, 32:37]=botonFilt
+	lay3[1:3, 70:75]=botonSal
+	glabel(" ", container=grupo5)
+	
+	visible(win1)=TRUE	
+	
+	
+	#VER LO DE LAS MATRICES DE CONFUSION
 	#por cada individuo
 		#obtener_matriz_confusion(i)
 		#hacer grafico con ella
