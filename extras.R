@@ -744,6 +744,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes){
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
+	nombres(valores)=nombres_desc
 	
 	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
@@ -829,10 +830,168 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes){
 	visible(win1)=TRUE	
 }
 
+ventana_card=function(cardis){
+	datos=data.frame()
+	cant=length(cardis)
+	
+	for(i in 1:cant){
+		datos[i,1]=i
+		datos[i,2]=cardis[i]
+	}
+
+	names(datos)=c("Subconjuntos", "Cardinalidad")
+
+	x11(width=2000, height=1000, title="Cardinalidad de los subconjuntos");
+	#print(plot(datos, colour="purple"))
+	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
+}
+
+
+#
+ventana_coef=function(coefis){
+	nuevo=data.frame()
+	cant=length(coefis)
+	for(i in 1:cant){
+		nuevo[i,1]=i
+		nuevo[i,2]=coefis[i]
+	}
+	
+	str1=iconv("Coeficientes de Correlación", from="UTF-8", to="UTF-8")
+	names(nuevo)=c("subconjuntos", "Coef_Corr")
+	
+	x11(width=2000, height=1000, title=str1);
+	print(ggplot(nuevo, aes(x=subconjuntos, y=Coef_Corr))   + geom_point(aes(colour=Coef_Corr), size=4))
+	 
+}
+
+ventana_mae=function(maes){
+	nuevomae=data.frame()
+	cant=length(maes)
+	for(i in 1:cant){
+		nuevomae[i,1]=i
+		nuevomae[i,2]=maes[i]
+	}
+	names(nuevomae)=c("subconjuntos", "MAE")
+	
+	x11(width=2000, height=1000, title="MAE");
+	#print(plot(nuevomae))
+	print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
+	
+	#geom_line(aes(colour=MAE, group=MAE))
+	
+}
+
+ventana_rocarea=function(rocarea){
+	nuevo=data.frame()
+	dims=dim(rocarea)
+	filas=dims[1]
+	cols=dims[2]
+	maxI=filas*cols 
+	i=1
+	k=1
+	while(k <= maxI){
+		for(j in 1:cols){
+			nuevo[k, 1]=i
+			nuevo[k, 2]=rocarea[i,j]
+			k=k+1
+		}
+		i=i+1
+	}
+	
+	# print(rocarea)
+	# print(nuevo)
+	names(nuevo)=c("subconjuntos", "ROC_Area")
+	x11(width=2000, height=1000, title="ROC Area");
+	print(ggplot(nuevo, aes(x=subconjuntos, y=ROC_Area))   + geom_point(aes(colour=subconjuntos), size=4))
+	
+	#x11(width=2000, height=1000, title="ROC Area");
+	#print(ggplot(nuevo, aes(x=ROC_Area, y=subconjuntos))   + geom_point(aes(colour=subconjuntos), size=4))
+
+}
+
+ventana_casos=function(porc){
+	nuevo=data.frame()
+	porc=round(as.numeric(porc))
+	largo=length(porc)
+	for(i in 1:largo){
+		nuevo[i,1]=i
+		nuevo[i,2]=porc[i]
+	}
+	names(nuevo)=c("subconjuntos", "Porc_Casos_Correctos")
+	x11(width=2000, height=1000, title="Porcentaje de casos correctamente clasificados");
+	print(ggplot(nuevo, aes(x=subconjuntos, y=Porc_Casos_Correctos))   + geom_point(aes(colour=Porc_Casos_Correctos), size=4))
+	
+
+}
+
+#
+ventana_filtrado=function(individuos, valores){
+	win1=gwindow(title = "Filtrar", visible=FALSE, width=300, height=120, parent=c(575,150))
+	grupomayor=ggroup(horizontal=FALSE, spacing=10, container=win1)
+	grupo1=ggroup(horizontal=FALSE, spaacing=10, container=grupomayor)
+	glabel(" ", container=grupo1)
+	lay1=glayout(container=grupo1)
+	label1=glabel("   Seleccionar subconjunto: ")
+	cant=length(individuos)
+	combobox1=gcombobox(c(1:cant), selected=1, editable=FALSE)
+	lay1[1:3, 2:12]=label1
+	lay1[1:3, 14:19]=combobox1
+	grupo2=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
+	#lay2=glayout(container=grupo2)
+	glabel(" ", container=grupo2)
+	label2=glabel(" Guardar como: (archivo csv)", container=grupo2)
+	edit2=gedit("Datos_filtrados.csv", container=grupo2)
+	boton2=gbutton("Browse", container=grupo2,
+					handler=function(h,...){
+						file4=gfile("Guardar como...", type="save")
+						if(is.na(file4)){
+							svalue(edit2)="Datos_filtrados.csv"
+						}else{
+							svalue(edit2)=file4
+						}
+						print(file4)
+					})	
+	glabel(" ", container=grupo2)
+	
+	grupo3=ggroup(horizontal=FALSE, container=grupomayor)
+	glabel(" ",container=grupo3)
+	lay3=glayout(container=grupo3)
+	botonok=gbutton(" OK ", handler=function(h,...){
+						filtrar2(valores, individuos[as.numeric(svalue(combobox1))], svalue(edit2))
+					})
+	botonCan=gbutton(" Cancelar ",
+					handler=function(h,...){
+						dispose(win1)
+					})
+	lay3[1:3, 8:13]=botonok
+	lay3[1:3, 30:35]=botonCan
+	glabel(" ", container=grupo3)
+	
+	visible(win1)=TRUE
+	
+}
+
+
+filtrar2=function(valores, individuo, archivo){
+	largo<-length(individuo)
+	iters<-c(1:largo)
+	cols<-c()
+	for(i in iters){
+		if(individuo[i]!=0){
+			cols=c(cols,i)
+		}
+	}
+
+	newdataset<-valores[,cols]
+	write.table(newdataset, archivo)
+}
+
+#
 mostrar_nominales=function(individuos, nombres_desc, valores, porcentaje, maes, rocarea){
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
+	nombres(valores)=nombres_desc
 	
 	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
