@@ -55,14 +55,18 @@ ventana_fase_dos=function(archivo){
 	str3="(Se utilizará junto con Stacking de Weka)"
 	str3=iconv(str3, from="UTF-8", to="UTF-8")
 	label3=glabel(str3, container=group1)
-	radio1 = gradio(c("RandomCommittee","RandomForest"), container=group1, 
+	radio1 = gradio(c("RandomCommittee","RandomForest", "REPTree"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)
 							#print(valor)
 							if(valor=="RandomCommittee"){
 								 metodoSF<<-"RC"
 							}else{
-								 metodoSF<<-"RF"  
+								if(valor=="RandomForest"){
+									metodoSF<<-"RF"  
+								}else{
+									metodosSF<<-"RP"
+								}
 							}
 					})
 	group4=ggroup(container=frame1, spacing=15)
@@ -91,7 +95,11 @@ ventana_fase_dos=function(archivo){
 							 metodoSF<<-"RC"
 							 
 						}else{
-							 metodoSF<<-"RF"
+							if(valor=="RandomForest"){
+								metodoSF<<-"RF"
+							}else{
+								metodoSF<<-"RP"
+							}
 							  
 						}
 						segunda_fase(archivo, metodoSF, svalue(texto2))	
@@ -106,22 +114,19 @@ ventana_fase_dos=function(archivo){
 
 #segunda_fase(archivo_a_leer, folds_validacion)
 segunda_fase=function(archivo, metodoSF, salida){ 
-	#metodoSF RC o RF	
 	print("Segunda Fase")
-	
+	grafico=data.frame()
 	scan3=scan(archivo, what="numeric")
-#	str1=paste("poblaciones_", archivo)
-	
+
 	procesado=procesar(scan3, salida)
 			
 	soluciones=procesado$individuos
 	interna=procesado$interna
 	externa=procesado$externa
 	
-	#write.table(externa, "EXTERNA.csv", append=TRUE)
-	
 	cols=ncol(externa)
 	clase=class(externa[,cols])
+		
 	iteras=nrow(soluciones)
 	resultados=c(1:iteras)
 	
@@ -189,8 +194,25 @@ segunda_fase=function(archivo, metodoSF, salida){
 			
 			resultados[i]=correctos/100
 		}
-					
 		
+		grafico[i,1]=i
+		grafico[i,2]=mae
+		
+		if(i!=1){ #no es el primero
+			tryCatch(dev.off(), 
+						error=function(e){
+											str1=iconv("No hay gráficos activos.", from="UTF-8", to="UTF-8")
+											print(str1)
+										}
+						)
+		}else{
+			names(grafico)=c("individuo", "MAE")
+		}
+		dev.flush()
+		#print(grafico)
+		
+		# grafiquitos(grafico)
+		x11(width=200, height=100, title="Segunda Fase");print(ggplot(grafico, aes(x=individuo, y=MAE))+ geom_point(aes(colour=MAE), size=4))
 	}
 	
 	write("---", salida, append=TRUE)

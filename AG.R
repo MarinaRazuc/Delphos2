@@ -497,13 +497,6 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 		
 		promfit[1]=promfit[2]
 		promfit[2]=calcular_promedio(fit_vals)
-			
-		
-		# print("PromFitAnterior")
-		# print(promfit[1])
-		# print("PromFit")
-		# print(promfit[2])
-		
 		
 		if((abs(promfit[1]-promfit[2])<=umbralFitness)||(promfit[2]<promfit[1])){
 			#estanco o empeora

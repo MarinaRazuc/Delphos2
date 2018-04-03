@@ -1,5 +1,3 @@
-library("gridExtra")
-library("grid")
 
 #obtener_nombres()
 obtener_nombres=function(individuo, nombres){
@@ -137,18 +135,35 @@ partir=function(datos, porcentaje, seed){# datos a ser partidos segun porcentaje
 #generar_data_frame(valores_descriptores, valores_propiedad, nombres_descriptores, nombres_compuestos)
 #
 generar_data_frame=function(val, prop, nomD){#data frames
+	win1=gwindow(visible=FALSE, title="Espere...", height=100, width=250, parent=c(550, 150))
+	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
+	glabel(" ", container=grupo1)
+	glabel("  Espere mientras se cargan los datos...  ", container=grupo1)
+	glabel(" ", container=grupo1)
+	barra=gprogressbar(container=grupo1)
+	visible(win1)=TRUE
 	
 	if(length(nomD)>0){
 		names(val)=nomD[,1]
 	}
+	svalue(barra)<-20
+
 	val=filtrado_columnas(val) #filtrado data frame: elimina columnas constantes
+	svalue(barra)<-50
+	
 	dataframe1=cbind(val,prop) #new data frame
+	svalue(barra)<-60
+	
 	if(length(nomD)==0){
+		svalue(barra)<-70
 		ultimo=dim(dataframe1)[2] #el nro de la ultima columna
+		svalue(barra)<-80
 		nombreUlt=names(dataframe1)[ultimo-1]  #el nombre del ultimo descriptor (ultimo-1 porque ultimo es la propiedad, que se llama V1)
+		svalue(barra)<-90
 		names(dataframe1)[1]=paste0(nombreUlt, "1")##le agrego un 1 para diferenciarlo del ultimo descriptor, y asi tmp se llama V1 como la prop
 	}
-	#print("Generé dataframe")
+	svalue(barra)<-100
+	dispose(win1)
 	dataframe1
 }
 #
@@ -201,18 +216,24 @@ filtrado_columnas=function(A){
 	nuevoA
 }
 
-
-
-####
-###
 ## procesar archivo de la primera fase
 #procesar(archivo_leido, archivo_de_salida)
 procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	print("Procesando archivo...")
+	win1=gwindow(visible=FALSE, title="Espere...", height=100, width=250, parent=c(550, 150))
+	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
+	glabel(" ", container=grupo1)
+	glabel("  Espere mientras se procesa el archivo...  ", container=grupo1)
+	glabel(" ", container=grupo1)
+	barra=gprogressbar(container=grupo1)
+	visible(win1)=TRUE
+
 	nombres=c()
 	nombres_desc=c()
 	
 	largo=length(scan2)#todos los caracteres digamos
+	svalue(barra)<-1
+	
 	bandera=FALSE
 	i=1
 	while(i<largo && !bandera){
@@ -226,6 +247,8 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			bandera=TRUE
 		}
 		i=i+1
+		
+		svalue(barra)<-svalue(barra)+1
 	}
 	
 	#aca debería leer las poblaciones
@@ -248,6 +271,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			poblacion[fils, cols]=elem
 			cols=cols+1
 			i=i+1
+
 		}#finalice un individuo
 		elem=scan2[i] #puede ser numeracion o -
 		#print("elemento nuevo")
@@ -277,7 +301,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 				cols=1
 			}
 		}
-		#}
+		svalue(barra)<-svalue(barra)+5
 	}
 	i=i+colus+2
 	
@@ -288,7 +312,8 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 		limitador=2 
 		bandera=FALSE
 		#i=i+1 #descarto el primer 1 que es de numeración
-		while(i<largo && !bandera){
+		while(i<largo && !bandera){	
+			
 			elem=as.numeric(scan2[i])
 			# print("I")
 			# print(i)
@@ -328,6 +353,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 				nombres_desc=c(nombres_desc, scan2[i])
 				i=i+1
 				h=h+1
+				
 			}
 			#valores=matrix(0,500,length(nombres)) #ver
 			#valores=matrix()
@@ -373,6 +399,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 					k=1
 					i=i+1 #para saltear la numeracion
 				}
+				
 			}
 			if(nominal)
 				valor_propiedad=as.factor(valor_propiedad)
@@ -415,6 +442,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 						i=i+1
 						j=j+1
 					}
+					svalue(barra)<-svalue(barra)+5
 				}
 				if(nominal)
 					valor_prop=as.factor(valor_prop)
@@ -434,6 +462,9 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	resultados$nombres_desc=nombres_desc
 	resultados$interna=valores
 	resultados$externa=externa
+	
+	dispose(win1)
+	
 	resultados
 }
 
@@ -682,11 +713,19 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	#print(cant)
 	#print(scan1[i])
 	i=i+2
-	
+	cant2=cant+1
 	while(i<=largo){
-		for(d in 1:cant){
-			valores[e,d]=as.numeric(scan1[i])
-			i=i+1
+		for(d in 1:cant2){
+			if(d!=cant2){
+				valores[e,d]=as.numeric(scan1[i])
+				i=i+1
+			}else{ # d es cant
+				if(is.na(as.numeric(scan1[i]))){
+					valores[e,d]=scan1[i]
+				}else{
+					valores[e,d]=as.numeric(scan1[i])
+				}
+			}
 		}
 		
 		i=i+2
@@ -727,24 +766,33 @@ mostrar_resultados=function(archivo){
 	rocarea=proceso2$rocarea
 	
 	largo=dim(valores)[2]
-	elem=valores[,largo]
+	print(largo)
+	elem=valores[1,largo]
+	print("ELEMENTO")
+	print(elem)
 	clase=class(elem)
 	
 	if(clase=="numeric"){
-		mostrar_numericos(individuos, nombres_desc, coefis, maes)
+		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores)
 	}else{
-		mostrar_nominales(porcentaje, maes, rocarea)
+		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores)
 	}
 	
 	
 }
 
-mostrar_numericos=function(individuos, nombres_desc, coefs, maes){
+mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores){
 
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
-	nombres(valores)=nombres_desc
+	names(valores)=nombres_desc
+	
+	maxj=length(maes)
+	for(j in 1:maxj){
+		h=as.numeric(maes[j])
+		maes[j]=signif(h, digits=6)
+	}
 	
 	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
@@ -824,174 +872,25 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes){
 	lay3[1:3, 16:21]=botoncard
 	
 	lay3[1:3, 24:29]=botonFilt
-	lay3[1:3, 80:85]=botonSal
+	lay3[1:3, 75:80]=botonSal
 	glabel(" ", container=grupo5)
 	
 	visible(win1)=TRUE	
 }
 
-ventana_card=function(cardis){
-	datos=data.frame()
-	cant=length(cardis)
-	
-	for(i in 1:cant){
-		datos[i,1]=i
-		datos[i,2]=cardis[i]
-	}
-
-	names(datos)=c("Subconjuntos", "Cardinalidad")
-
-	x11(width=2000, height=1000, title="Cardinalidad de los subconjuntos");
-	#print(plot(datos, colour="purple"))
-	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
-}
-
-
 #
-ventana_coef=function(coefis){
-	nuevo=data.frame()
-	cant=length(coefis)
-	for(i in 1:cant){
-		nuevo[i,1]=i
-		nuevo[i,2]=coefis[i]
-	}
-	
-	str1=iconv("Coeficientes de Correlación", from="UTF-8", to="UTF-8")
-	names(nuevo)=c("subconjuntos", "Coef_Corr")
-	
-	x11(width=2000, height=1000, title=str1);
-	print(ggplot(nuevo, aes(x=subconjuntos, y=Coef_Corr))   + geom_point(aes(colour=Coef_Corr), size=4))
-	 
-}
-
-ventana_mae=function(maes){
-	nuevomae=data.frame()
-	cant=length(maes)
-	for(i in 1:cant){
-		nuevomae[i,1]=i
-		nuevomae[i,2]=maes[i]
-	}
-	names(nuevomae)=c("subconjuntos", "MAE")
-	
-	x11(width=2000, height=1000, title="MAE");
-	#print(plot(nuevomae))
-	print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
-	
-	#geom_line(aes(colour=MAE, group=MAE))
-	
-}
-
-ventana_rocarea=function(rocarea){
-	nuevo=data.frame()
-	dims=dim(rocarea)
-	filas=dims[1]
-	cols=dims[2]
-	maxI=filas*cols 
-	i=1
-	k=1
-	while(k <= maxI){
-		for(j in 1:cols){
-			nuevo[k, 1]=i
-			nuevo[k, 2]=rocarea[i,j]
-			k=k+1
-		}
-		i=i+1
-	}
-	
-	# print(rocarea)
-	# print(nuevo)
-	names(nuevo)=c("subconjuntos", "ROC_Area")
-	x11(width=2000, height=1000, title="ROC Area");
-	print(ggplot(nuevo, aes(x=subconjuntos, y=ROC_Area))   + geom_point(aes(colour=subconjuntos), size=4))
-	
-	#x11(width=2000, height=1000, title="ROC Area");
-	#print(ggplot(nuevo, aes(x=ROC_Area, y=subconjuntos))   + geom_point(aes(colour=subconjuntos), size=4))
-
-}
-
-ventana_casos=function(porc){
-	nuevo=data.frame()
-	porc=round(as.numeric(porc))
-	largo=length(porc)
-	for(i in 1:largo){
-		nuevo[i,1]=i
-		nuevo[i,2]=porc[i]
-	}
-	names(nuevo)=c("subconjuntos", "Porc_Casos_Correctos")
-	x11(width=2000, height=1000, title="Porcentaje de casos correctamente clasificados");
-	print(ggplot(nuevo, aes(x=subconjuntos, y=Porc_Casos_Correctos))   + geom_point(aes(colour=Porc_Casos_Correctos), size=4))
-	
-
-}
-
-#
-ventana_filtrado=function(individuos, valores){
-	win1=gwindow(title = "Filtrar", visible=FALSE, width=300, height=120, parent=c(575,150))
-	grupomayor=ggroup(horizontal=FALSE, spacing=10, container=win1)
-	grupo1=ggroup(horizontal=FALSE, spaacing=10, container=grupomayor)
-	glabel(" ", container=grupo1)
-	lay1=glayout(container=grupo1)
-	label1=glabel("   Seleccionar subconjunto: ")
-	cant=length(individuos)
-	combobox1=gcombobox(c(1:cant), selected=1, editable=FALSE)
-	lay1[1:3, 2:12]=label1
-	lay1[1:3, 14:19]=combobox1
-	grupo2=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
-	#lay2=glayout(container=grupo2)
-	glabel(" ", container=grupo2)
-	label2=glabel(" Guardar como: (archivo csv)", container=grupo2)
-	edit2=gedit("Datos_filtrados.csv", container=grupo2)
-	boton2=gbutton("Browse", container=grupo2,
-					handler=function(h,...){
-						file4=gfile("Guardar como...", type="save")
-						if(is.na(file4)){
-							svalue(edit2)="Datos_filtrados.csv"
-						}else{
-							svalue(edit2)=file4
-						}
-						print(file4)
-					})	
-	glabel(" ", container=grupo2)
-	
-	grupo3=ggroup(horizontal=FALSE, container=grupomayor)
-	glabel(" ",container=grupo3)
-	lay3=glayout(container=grupo3)
-	botonok=gbutton(" OK ", handler=function(h,...){
-						filtrar2(valores, individuos[as.numeric(svalue(combobox1))], svalue(edit2))
-					})
-	botonCan=gbutton(" Cancelar ",
-					handler=function(h,...){
-						dispose(win1)
-					})
-	lay3[1:3, 8:13]=botonok
-	lay3[1:3, 30:35]=botonCan
-	glabel(" ", container=grupo3)
-	
-	visible(win1)=TRUE
-	
-}
-
-
-filtrar2=function(valores, individuo, archivo){
-	largo<-length(individuo)
-	iters<-c(1:largo)
-	cols<-c()
-	for(i in iters){
-		if(individuo[i]!=0){
-			cols=c(cols,i)
-		}
-	}
-
-	newdataset<-valores[,cols]
-	write.table(newdataset, archivo)
-}
-
-#
-mostrar_nominales=function(individuos, nombres_desc, valores, porcentaje, maes, rocarea){
+mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores){
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
-	nombres(valores)=nombres_desc
+	names(valores)=nombres_desc
+	
+	maxj=length(maes)
+	for(j in 1:maxj){
+		h=as.numeric(maes[j])
+		maes[j]=signif(h, digits=6)
+	}
+	
 	
 	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
@@ -1049,7 +948,7 @@ mostrar_nominales=function(individuos, nombres_desc, valores, porcentaje, maes, 
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
 						ventana_mae(maes)
-					}, width=15)
+					})
 	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
 										})
@@ -1064,16 +963,16 @@ mostrar_nominales=function(individuos, nombres_desc, valores, porcentaje, maes, 
 	botonFilt=gbutton("  Filtrar  ",  
 					handler=function(h,...){
 						ventana_filtrado(individuos, valores)
-					}, width=15)
+					})
 	botonSal=gbutton("  Salir  ",  
 					handler=function(h,...){
 						dispose(win1)
-					}, width=15)
+					})
 	lay3[1:3, 1:5]=botonmae
 	lay3[1:3, 8:13]=botonrocarea
 	lay3[1:3, 16:21]=botoncasos
 	lay3[1:3, 24:29]=botoncard
-	lay[1:3, 32:37]=botonFilt
+	lay3[1:3, 32:37]=botonFilt
 	lay3[1:3, 70:75]=botonSal
 	glabel(" ", container=grupo5)
 	
@@ -1085,6 +984,171 @@ mostrar_nominales=function(individuos, nombres_desc, valores, porcentaje, maes, 
 		#obtener_matriz_confusion(i)
 		#hacer grafico con ella
 
+}
+
+ventana_card=function(cardis){
+	datos=data.frame()
+	cant=length(cardis)
+	
+	for(i in 1:cant){
+		datos[i,1]=i
+		datos[i,2]=cardis[i]
+	}
+
+	names(datos)=c("Subconjuntos", "Cardinalidad")
+
+	x11(width=2000, height=1000, title="Cardinalidad de los subconjuntos");
+	#print(plot(datos, colour="purple"))
+	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
+}
+
+
+#
+ventana_coef=function(coefis){
+	nuevo=data.frame()
+	cant=length(coefis)
+	for(i in 1:cant){
+		nuevo[i,1]=i
+		nuevo[i,2]=coefis[i]
+	}
+	
+	str1=iconv("Coeficientes de Correlación", from="UTF-8", to="UTF-8")
+	names(nuevo)=c("subconjuntos", "Coef_Corr")
+	
+	x11(width=2000, height=1000, title=str1);
+	print(ggplot(nuevo, aes(x=subconjuntos, y=Coef_Corr))   + geom_point(aes(colour=Coef_Corr), size=4))
+	 
+}
+
+ventana_mae=function(maes){
+	nuevomae=data.frame()
+	cant=length(maes)
+	for(i in 1:cant){
+		nuevomae[i,1]=i
+		nuevomae[i,2]=maes[i]
+	}
+	names(nuevomae)=c("subconjuntos", "MAE")
+	
+	print(nuevomae)
+	
+	x11(width=2000, height=1000, title="MAE");
+	#print(plot(nuevomae))
+	print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
+	
+	#geom_line(aes(colour=MAE, group=MAE))
+	
+}
+
+ventana_rocarea=function(rocarea){
+	nuevo=data.frame()
+	dims=dim(rocarea)
+	filas=dims[1]
+	cols=dims[2]
+	maxI=filas*cols 
+	i=1
+	k=1
+	while(k <= maxI){
+		for(j in 1:cols){
+			nuevo[k, 1]=i
+			nuevo[k, 2]=rocarea[i,j]
+			k=k+1
+		}
+		i=i+1
+	}
+	
+	# print(rocarea)
+	print(nuevo)
+	names(nuevo)=c("subconjuntos", "ROC_Area")
+	x11(width=2000, height=1000, title="ROC Area");
+	print(ggplot(nuevo, aes(x=subconjuntos, y=ROC_Area))   + geom_point(aes(colour=subconjuntos), size=4))
+	
+	#x11(width=2000, height=1000, title="ROC Area");
+	#print(ggplot(nuevo, aes(x=ROC_Area, y=subconjuntos))   + geom_point(aes(colour=subconjuntos), size=4))
+
+}
+
+ventana_casos=function(porc){
+	nuevo=data.frame()
+	porc=round(as.numeric(porc))
+	largo=length(porc)
+	for(i in 1:largo){
+		nuevo[i,1]=i
+		nuevo[i,2]=porc[i]
+	}
+	names(nuevo)=c("subconjuntos", "Porc_Casos_Correctos")
+	print(nuevo)
+	x11(width=2000, height=1000, title="Porcentaje de casos correctamente clasificados");
+	print(ggplot(nuevo, aes(x=subconjuntos, y=Porc_Casos_Correctos))   + geom_point(aes(colour=Porc_Casos_Correctos), size=4))
+	
+
+}
+
+#
+ventana_filtrado=function(individuos, valores){
+	win1=gwindow(title = "Filtrar", visible=FALSE, width=300, height=120, parent=c(575,150))
+	grupomayor=ggroup(horizontal=FALSE, spacing=10, container=win1)
+	grupo1=ggroup(horizontal=FALSE, spaacing=10, container=grupomayor)
+	glabel(" ", container=grupo1)
+	lay1=glayout(container=grupo1)
+	label1=glabel("   Seleccionar subconjunto: ")
+	cant=dim(individuos)[1]
+	print(cant)
+	combobox1=gcombobox(c(1:cant), selected=1, editable=FALSE)
+	lay1[1:3, 2:12]=label1
+	lay1[1:3, 14:19]=combobox1
+	grupo2=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
+	#lay2=glayout(container=grupo2)
+	glabel(" ", container=grupo2)
+	label2=glabel(" Guardar como: (archivo csv)", container=grupo2)
+	edit2=gedit("Datos_filtrados.csv", container=grupo2)
+	boton2=gbutton("Browse", container=grupo2,
+					handler=function(h,...){
+						file4=gfile("Guardar como...", type="save")
+						if(length(file4)!=0){
+							if(is.na(file4)){
+								svalue(edit2)="Datos_filtrados.csv"
+							}else{
+								svalue(edit2)=file4
+							}
+							print(file4)
+						}
+					})	
+	glabel(" ", container=grupo2)
+	
+	grupo3=ggroup(horizontal=FALSE, container=grupomayor)
+	glabel(" ",container=grupo3)
+	lay3=glayout(container=grupo3)
+	botonok=gbutton(" OK ", handler=function(h,...){
+						filtrar2(valores, individuos[as.numeric(svalue(combobox1)), ], svalue(edit2))
+						gmessage("Filtrado finalizado.", icon="info")
+					})
+	botonCan=gbutton(" Cancelar ",
+					handler=function(h,...){
+						dispose(win1)
+					})
+	lay3[1:3, 8:13]=botonok
+	lay3[1:3, 30:35]=botonCan
+	glabel(" ", container=grupo3)
+	
+	visible(win1)=TRUE
+	
+}
+
+
+filtrar2=function(valores, individuo, archivo){
+	print("individuo")
+	print(individuo)
+	largo<-length(individuo)
+	iters<-c(1:largo)
+	cols<-c()
+	for(i in iters){
+		if(individuo[i]!=0){
+			cols=c(cols,i)
+		}
+	}
+
+	newdataset<-valores[,cols]
+	write.table(newdataset, archivo)
 }
 
 
@@ -1178,7 +1242,21 @@ grafiquitos=function(datos){
 	#ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
 }	
 
+probando=function(tiempo){
+	win1=gwindow(visible=FALSE, title="Prueba", height=100, width=200)
+	grupo1=ggroup(container=win1, horizontal=FALSE)
+	barra=gprogressbar(container=grupo1)
+	visible(win1)=TRUE
+	
+	for(i in 1:tiempo){
+		svalue(barra)<-i
+		Sys.sleep(0.1)
+		print(i)
+	}
+	
+	dispose(win1)
 
+}
 
 
 

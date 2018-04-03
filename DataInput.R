@@ -5,7 +5,6 @@ source("extras.R")
 descriptores<<-data.frame()
 propiedad<<-data.frame()
 nombresD<<-data.frame()
-#nombresP<<-data.frame()
 
 #data_input
 data_input=function(i, experimento, cod){
@@ -102,7 +101,6 @@ data_input=function(i, experimento, cod){
 
 #carga_y_control
 carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){ 
-
 	bandera=TRUE
 	
 	if(A2!="Ingrese archivo"){
@@ -114,8 +112,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 		
 		propi=read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=",")
 		clase=class(propi[1,1])
-		
-		
+	
 		if(clase=="numeric"){
 			propiedad<<-read.csv(A2, sep, header=FALSE, dec=",", stringsAsFactors=FALSE)
 		}else{
@@ -125,8 +122,6 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 				
 			}
 		}
-		
-		
 				
 		if(A1!="Ingrese archivo"){
 			if(length(c1)!=0){
@@ -143,7 +138,6 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 				}
 				nombresD<<-read.csv(A3, sep, header=FALSE)
 			}
-			
 		}else{
 			gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
 			bandera=FALSE
@@ -167,19 +161,10 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 	dims[5]=dim(nombresD)[1]
 	dims[6]=dim(nombresD)[2] #1 o 0
 	
-	# dims[7]=dim(nombresP)[1]
-	# dims[8]=dim(nombresP)[2] #1 o 0
-	
-	print(dim(nombresD))
-	
-	
-	
 	if(dims[1] != dims[3]){
-		 
 		gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores")
 		bandera=FALSE
 	}else{ #todo ok
-		#todo ok
 		if(dims[5]!=0){ #hay algo en el df nombresD
 			if(dims[2]!=dims[5]){
 				bandera=FALSE
@@ -191,16 +176,12 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 				}
 			}
 		}
-			
-					
 		if(bandera){
 			cartel_data_loaded(win2, dims, cod)
 		}	
 	}
 }
 	
-	
-
 #cartel_data_loaded
 cartel_data_loaded=function(win2, dimensiones, codigo){
 		
@@ -230,9 +211,6 @@ cartel_data_loaded=function(win2, dimensiones, codigo){
 	label6=glabel(" ", container=frame1)
 
 	button1=gbutton("OK", container=group_2, handler=function(h, ...){
-														
-														gmessage("El proceso va a tomar unos segundos...", icon="info")
-														
 														dataframe1=generar_data_frame(descriptores,propiedad,nombresD)
 														dispose(win2)
 														dispose(window1)
