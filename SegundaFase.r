@@ -39,22 +39,32 @@ ventana_fase_dos=function(archivo){
 	frame1=gframe(container=win1, text="Second Phase Settings", horizontal=FALSE, spacing=15, pos=0)
 	
 	group200=ggroup(horizontal=TRUE, container=frame1, spacing=15)#experiment i of n 
+	lay0=glayout(container=group200)
 	stri=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
-	glabel("                                ", container=group200)
-	glabel("                                ", container=group200)
-	label0=glabel(stri, container=group200, width=10)
-	ggroup(container=frame1)
+	# glabel("                                ", container=group200)
+	# glabel("                                ", container=group200)
+	label0=glabel(stri, width=10)
+	lay0[1:3, 32:37]=label0
 	ggroup(container=frame1)
 	
-	#group0=ggroup(horizontal =FALSE, container=frame1, spacing=15) #label
+	#ggroup(container=frame1)
+	glabel(" ", container=frame1)
+	group0=ggroup(horizontal=TRUE, container=frame1, spacing=10) #max cant subconjs
+	
+	stringS=iconv("  Máxima cantidad de subconjuntos:", from="UTF-8", to="UTF-8")
+	labelC=glabel(stringS, container=group0)
+	editS=gedit("5", container=group0, width=5)
+	glabel(" ", container=frame1)
+	
 	group1=ggroup(horizontal = FALSE, container=frame1, spacing=15) #seleccionar metodo
 	#glabel("  ", container=group1)
-	str2="Seleccione método para la segunda fase: "
+	group11=ggroup(horizontal=TRUE, container=group1, spacing=5)
+	str2="  Seleccione método para la segunda fase: "
 	str2=iconv(str2, from="UTF-8", to="UTF-8")
-	label1=glabel(str2 , container=group1)
-	str3="(Se utilizará junto con Stacking de Weka)"
+	label1=glabel(str2 , container=group11)
+	str3="(Se utilizará junto con Stacking de Weka) "
 	str3=iconv(str3, from="UTF-8", to="UTF-8")
-	label3=glabel(str3, container=group1)
+	label3=glabel(str3, container=group11)
 	radio1 = gradio(c("RandomCommittee","RandomForest", "REPTree"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)
@@ -87,8 +97,8 @@ ventana_fase_dos=function(archivo){
 	group5=ggroup(container=frame1, spacing=15)
 	glabel("   ", container=group5)
 	group3=ggroup(horizontal=TRUE, container=frame1, spacing=15)
-	glabel("                                         ", container=group3)
-	boton3=gbutton("OK", container=group3,
+	lay3=glayout(container=group3)
+	boton3=gbutton("OK",
 					handler=function(h,...){
 						valor=svalue(radio1)
 						if(valor=="RandomCommittee"){
@@ -102,18 +112,23 @@ ventana_fase_dos=function(archivo){
 							}
 							  
 						}
-						segunda_fase(archivo, metodoSF, svalue(texto2))	
-						dispose(win1)
+						if(svalue(editS)==0){
+							gmessage("La cantidad de subconjuntos debe ser mayor a 0", icon=error)
+						}else{
+							segunda_fase(archivo, metodoSF, svalue(texto2), svalue(editS))	
+							dispose(win1)
+						}
 					} )
-	glabel("              ", container=group3)
-													
+	lay3[1:3, 20:25]=boton3
+	
+	glabel("  ", container=frame1)
 	
 	visible(win1)=TRUE
 
 }
 
 #segunda_fase(archivo_a_leer, folds_validacion)
-segunda_fase=function(archivo, metodoSF, salida){ 
+segunda_fase=function(archivo, metodoSF, salida, maxCant){ 
 	print("Segunda Fase")
 	grafico=data.frame()
 	scan3=scan(archivo, what="numeric")
@@ -129,6 +144,9 @@ segunda_fase=function(archivo, metodoSF, salida){
 		
 	iteras=nrow(soluciones)
 	resultados=c(1:iteras)
+	
+	if(iteras>maxCant)
+		iteras=maxCant
 	
 	for(i in 1:iteras){
 		individuo=soluciones[i,]

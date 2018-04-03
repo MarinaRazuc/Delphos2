@@ -1,9 +1,7 @@
 
 #obtener_nombres()
 obtener_nombres=function(individuo, nombres){
-
 	largo=length(individuo)
-	
 	resus=c()
 	j=1
 	for(i in 1:largo){
@@ -619,6 +617,15 @@ buscar_individuos=function(scan1){
 
 #quiero devolver un vector con los nombres de los descriptores
 nombres_descriptores=function(scan1, cant, ipobl){
+
+	win1=gwindow(visible=FALSE, title="Espere..", height=100, width=200, parent=c(550, 150))
+	grupo1=ggroup(container=win1, horizontal=FALSE)
+	glabel(" ", container=grupo1)
+	glabel("  Espere mientras se procesa el archivo...  ", container=grupo1)
+	glabel(" ", container=grupo1)
+	barra=gprogressbar(container=grupo1)
+	visible(win1)=TRUE
+
 	nombres=c()
 	i=ipobl #parado en el primer individuo
 	j=1
@@ -642,7 +649,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 		p=1
 		i=i+cant #me paro en coef o porc
 		
-		
+		svalue(barra)<-svalue(barra)+5
 		if(clase=="nom"){
 			#print("clase es nom")
 			elem=as.numeric(scan1[i])
@@ -715,6 +722,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	i=i+2
 	cant2=cant+1
 	while(i<=largo){
+		svalue(barra)<-svalue(barra)+5
 		for(d in 1:cant2){
 			if(d!=cant2){
 				valores[e,d]=as.numeric(scan1[i])
@@ -740,6 +748,8 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	resultados$rocarea=rocarea
 	resultados$nombres=nombres
 	resultados$valores=valores
+	
+	dispose(win1)
 	
 	resultados
 }
