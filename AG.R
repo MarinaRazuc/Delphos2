@@ -530,7 +530,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 				valores[mejor$indice]=0
 			}
 		
-			if(i%%3==0 || i==1){
+			if(i%%3==0 || i==1 ||i==nroGens){
 				grafico[G,1]=i
 				grafico[G,2]="promedio"
 				grafico[G,3]=promfit[2]
