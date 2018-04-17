@@ -512,6 +512,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			resultado=determinar_mejor_individuo(fit_vals)
 			bandera=TRUE
 			str2=paste(paste0("No hubo mejora significativa del fitness en ", stallGens), "generaciones.")
+			print(str2)
 			write.table(poblacion_actual, archivo, append=TRUE)
 		}
 		
@@ -622,7 +623,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	}#FIN WHILE
 	
 	if(!bandera){ #se ejecutaron todas las generaciones
-		
+		print("Se ejecutaron todas las generaciones.")
 		resultado=determinar_mejor_individuo(fit_vals) 
 		#devuelvo el mejor individuo de la poblacion vieja
 		#que seria el primero de la nueva ya que fue elegido por elitismo

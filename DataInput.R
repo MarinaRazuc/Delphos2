@@ -114,7 +114,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 		clase=class(propi[1,1])
 	
 		if(clase=="numeric"){
-			propiedad<<-read.csv(A2, sep, header=FALSE, dec=",", stringsAsFactors=FALSE)
+			propiedad<<-read.csv(A2, sep, header=FALSE,  stringsAsFactors=FALSE) #dec=",",
 		}else{
 			if(clase=="character"){
 				propiedad<<-read.csv(A2, sep, header=FALSE)
@@ -129,7 +129,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 			}else{
 				sep=" "
 			} 
-			descriptores<<-read.csv(A1, sep, header=FALSE, dec=",", stringsAsFactors=FALSE) #stringsAsFactors=FALSE ---> VER
+			descriptores<<-read.csv(A1, sep, header=FALSE, stringsAsFactors=FALSE) #stringsAsFactors=FALSE ---> VER
 			if(A3!="Ingrese archivo"){
 				if(length(c3)!=0){
 					sep=";"
@@ -161,6 +161,12 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 	dims[5]=dim(nombresD)[1]
 	dims[6]=dim(nombresD)[2] #1 o 0
 	
+	print("descriptores")
+	print(dim(descriptores))
+	print("propiedad")
+	print(dim(propiedad))
+	print("nombres")
+	print(dim(nombresD))
 	if(dims[1] != dims[3]){
 		gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores")
 		bandera=FALSE
