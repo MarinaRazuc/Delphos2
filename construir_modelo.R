@@ -232,8 +232,12 @@ regresionLineal=function(datos){
 regresionLineal2=function(datos){
 	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
 	print(str1)
-	#print("dimension de los datos: ")
-	#print(dim(datos))
+	
+	print("dimension de los datos: ")
+	print(dim(datos))
+	print("valor")
+	print(datos[1,1])
+	print(names(datos)[1])
 	fmla=as.formula("V1~.")
 	LR=LinearRegression(fmla, data=datos, control=Weka_control(S=2, R="1.0e-6", minimal=TRUE), options=c(model=TRUE, instances=TRUE)) #
 	#evalLR=evaluate_Weka_classifier(LR, numfolds=10, seed=2)
@@ -249,6 +253,13 @@ regresionLineal2=function(datos){
 regresionLineal4=function(datos){
 	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
 	print(str1)
+	
+	# print("dimension de los datos: ")
+	# print(dim(datos))
+	# print("valor")
+	# print(datos[1,1])
+	# print(names(datos)[1])
+	
 	fmla=as.formula("V1~.")
 	#write.table(datos, file="datillos.txt", append=TRUE)
 	

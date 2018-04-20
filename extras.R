@@ -149,16 +149,20 @@ generar_data_frame=function(val, prop, nomD){#data frames
 	val=filtrado_columnas(val) #filtrado data frame: elimina columnas constantes
 	svalue(barra)<-50
 	
+	
 	dataframe1=cbind(val,prop) #new data frame
 	svalue(barra)<-60
 	
 	if(length(nomD)==0){
 		svalue(barra)<-70
 		ultimo=dim(dataframe1)[2] #el nro de la ultima columna
+	#	print("ultimo es:")
+	#	print(ultimo)
 		svalue(barra)<-80
 		nombreUlt=names(dataframe1)[ultimo-1]  #el nombre del ultimo descriptor (ultimo-1 porque ultimo es la propiedad, que se llama V1)
 		svalue(barra)<-90
 		names(dataframe1)[1]=paste0(nombreUlt, "1")##le agrego un 1 para diferenciarlo del ultimo descriptor, y asi tmp se llama V1 como la prop
+		
 	}
 	svalue(barra)<-100
 	dispose(win1)

@@ -86,10 +86,31 @@ data_input=function(i, experimento, cod){
 	#lab=glabel(container=group_2)
 	lay1[3,10]=glabel("(*)Required")
 	#lay1[4,1]=glabel("")
-	glabel(container=group_3)			
+	glabel(container=group_3)	
+	grupo00=ggroup(spacing=10, horizontal=FALSE)
+	
+	strs2=c("',' coma decimal","'.' punto decimal")
+	radio431 = gradio(strs2, container=grupo00, 
+				handler=function(h,...){
+						valor=svalue(radio431)
+						print(valor)
+						if(valor==strs2[1]){
+							 dec<<-","
+							 print(dec)
+						}else{
+							 dec<<-"."
+							 print(dec)
+						}
+					})
+	lay1[4:6, 1:10]=grupo00
 	button8=gbutton("OK", container=group_3, width=5, 
 					handler=function(h,...){
-						carga_y_control(win2, svalue(text4), svalue(text5), svalue(text6), svalue(check4), svalue(check5), svalue(check6), cod)
+						if(svalue(radio431)==strs2[1]){
+							dec<<-","
+						}else{
+							dec<<-"."
+						}
+						carga_y_control(win2, svalue(text4), svalue(text5), svalue(text6), svalue(check4), svalue(check5), svalue(check6), cod, dec)
 					})
 	button9=gbutton("Cancel", container=group_3, width=5, 
 					handler=function(h,...){
@@ -100,8 +121,17 @@ data_input=function(i, experimento, cod){
 
 
 #carga_y_control
-carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){ 
+carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){ 
 	bandera=TRUE
+	print("dec es:")
+	print(deci)
+	print(deci)
+	print(deci)
+	print(deci)
+	print(deci)
+	print(deci)
+	print(deci)
+	print(deci)
 	
 	if(A2!="Ingrese archivo"){
 		if(length(c2!=0)){
@@ -112,9 +142,25 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 		
 		propi=read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=",")
 		clase=class(propi[1,1])
-	
+		
 		if(clase=="numeric"){
-			propiedad<<-read.csv(A2, sep, header=FALSE,  stringsAsFactors=FALSE) #dec=",",
+			propiedad<<-read.csv(A2, sep, header=FALSE, dec=deci, stringsAsFactors=FALSE) #dec=",",
+			#pos2=grep(",", propiedad[1,1])
+			#pos1=grep(".", propiedad[1,1])
+			#print("propiedad en 1,1")
+			#print(propiedad[1,1])
+			#print(pos1)
+			#print(pos2)
+			#if(length(pos1)!=0){#hay punto
+			#	propiedad<<-read.csv(A2, sep, header=FALSE, dec=".",stringsAsFactors=FALSE)
+			#	dec<<-"."
+			#	print("dec")
+			#	print(dec)
+			#}else{
+			#	dec<<-","
+			#	print("dec")
+			#	print(dec)
+			#}
 		}else{
 			if(clase=="character"){
 				propiedad<<-read.csv(A2, sep, header=FALSE)
@@ -129,7 +175,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 			}else{
 				sep=" "
 			} 
-			descriptores<<-read.csv(A1, sep, header=FALSE, stringsAsFactors=FALSE) #stringsAsFactors=FALSE ---> VER
+			descriptores<<-read.csv(A1, sep, dec=deci, header=FALSE, stringsAsFactors=FALSE) #stringsAsFactors=FALSE ---> VER
 			if(A3!="Ingrese archivo"){
 				if(length(c3)!=0){
 					sep=";"
@@ -137,6 +183,8 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 					sep=" "
 				}
 				nombresD<<-read.csv(A3, sep, header=FALSE)
+			}else{
+				nombresD<<-data.frame()
 			}
 		}else{
 			gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
@@ -161,12 +209,6 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){
 	dims[5]=dim(nombresD)[1]
 	dims[6]=dim(nombresD)[2] #1 o 0
 	
-	print("descriptores")
-	print(dim(descriptores))
-	print("propiedad")
-	print(dim(propiedad))
-	print("nombres")
-	print(dim(nombresD))
 	if(dims[1] != dims[3]){
 		gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores")
 		bandera=FALSE

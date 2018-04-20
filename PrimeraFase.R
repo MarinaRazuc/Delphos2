@@ -18,9 +18,6 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 	m=proc.time() 
 	soluciones=data.frame()
 	soluciones=matrix(data=NA, nrow=trials, ncol=(columnas-1))
-	#ver despues como usar las medias algogenet@summary --> matriz de medias, min, max, etc de cada iteracion
-	# print("TRIALS")
-	# print(trials)
 	iterwrap=c(1:trials) #trials x parametros
 	for(i in iterwrap){
 		set.seed(i) 
@@ -28,7 +25,7 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 		
 		dataframe1=partir(interna, valInterna, i)
 	
-		convergencia<<-FALSE
+		#convergencia<<-FALSE
 		algogenet=algoritmo_genetico_2(archivo, metodo, dataframe1$it, dataframe1$et, clase_propiedad, alpha, pm, popSize,  tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral) #... etc
 		
 		soluciones[i,]=algogenet$individuo
