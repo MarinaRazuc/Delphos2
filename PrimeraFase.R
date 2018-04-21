@@ -32,7 +32,78 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 		#soluciones[i,]=algogenet@solution[1,]
 		
 	}
+	
+	calcular_maes(archivo, metodo, interna, soluciones)
+	
 	print(proc.time()-m)
 	soluciones
+}
 
+calcular_maes=function(archivo, metodo, interna, soluciones){
+	print("Calculando errores...")
+	
+	# - Una vez que quedan seleccionados los 10 mejores (por ejemplo, depende la cantidad que ingrese el usuario) conjuntos de descriptores, lo que habría que hacer es:
+          # - por cada uno de esos conjuntos de descriptores 
+                  # * hacer un 10 fold cross validación con el método que seleccionó el usuario (árboles, regresión lineal, etc)
+                  # * ahí vas a tener 10 valores de MAE para cada conjunto de descriptores, y eso sería lo que mostraríamos en los resultados junto con el único valor de 
+                     # MAE de la segunda fase.
+	cant=nrow(soluciones)
+	print("nrow soluciones")
+	print(cant)
+	print("largo solucion")
+	print(length(soluciones[1,]))
+	num=length(soluciones[1,])-1
+	
+	for(i in 1:cant){
+		datos=filtrar(interna, soluciones[i,])
+						 
+		if(metodo==1){ #speedglm
+			for(j in 1:10){
+				partes=partir(datos, 0.75, j)
+				train=partes$it
+				test=partes$et
+				
+				modelo=construir_modelo(1, train)
+				
+				m2=nrow(test)
+				ncols=ncol(test)
+				suma=0
+				for(k in 1:m2){
+					yi=test[i,ncols] #valor de la propiedad para el compuesto i
+					fin=ncols-1
+					if(fin!=1)
+						xi=test[ i, 1:fin] #valores de los descriptores para el compuesto i
+					else{#fin es 1
+						if(dim(test)[2]!=1){
+							xi1=test[i, 1:2]
+							xi=xi1[1]
+						}else{ #tiene solo una columna
+							xi=data.frame(test)
+							names(xi)=c(names(test))
+						}
+					}
+					ypredict=predict(modelo, newdata=xi, fitted=FALSE) #fitted->TRUE o FALSE
+					
+					diferencia=yi-ypredict
+					cuad=abs(diferencia) #ver si funciona
+					suma=suma+cuad
+				}
+				mae=suma/m2
+				print("MAE")
+				print(mae)
+				write("-", archivo ,append=TRUE)
+				write(mae, archivo, append=TRUE)
+			}
+		}else{ #metodo de weka
+			modelo=construir_modelo(metodo, datos)
+			for(j in 1:10){
+				eval1=evaluate_Weka_classifier(object=modelo, numFolds=10, seed=j)
+				mae=eval1$details[2]
+				print("MAE")
+				print(mae)
+				write("-", archivo ,append=TRUE)
+				write(mae, archivo, append=TRUE)
+			}
+		}
+	}
 }
