@@ -305,7 +305,40 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 		}
 		svalue(barra)<-svalue(barra)+5
 	}
-	i=i+colus+2
+	#i=i+colus+2 #ver , capaz q +2 no necesario
+	#i=i+colus
+	i=i+1
+	
+	#debo buscar los maes
+	maes=matrix(0,20,10) #20 individuos (por poner) 10 valores de mae seguros
+	bandera=FALSE
+	f=1
+	
+	
+	while(!bandera){
+		for(m in 1:10){
+				elem=as.numeric(scan2[i])
+				# print("elem, f, m")
+				# print(elem)
+				# print(f)
+				# print(m)
+				maes[f,m]=elem
+				i=i+2 #saltear -
+		}
+		elem=scan2[i]
+		# print("elem")
+		# print(elem)
+		pos=grep("V", elem) 
+		# print("pos")
+		# print(pos)
+		if(length(pos)!=0){ #llegue a individuos
+			i=i+colus+1
+			bandera=TRUE
+		}else{ #maes de otro individuo
+			#i=i+1
+			f=f+1
+		}
+	}
 	
 	individuos=matrix(0, 20, length(nombres))#ver
 	if(bandera){#ahora busco los individuos
@@ -456,11 +489,12 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	individuos=acomodar(individuos)
 	names(valores)=nombres_desc
 	names(externa)=nombres_desc
-		
+	maes=acomodar(maes)	
 	
 	resultados=list()
 	resultados$nombres=nombres #no se si es necesario
 	resultados$individuos=individuos
+	resultados$maes=maes
 	resultados$nombres_desc=nombres_desc
 	resultados$interna=valores
 	resultados$externa=externa
@@ -725,7 +759,9 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	#print(scan1[i])
 	i=i+2
 	cant2=cant+1
-	while(i<=largo){
+	bandera=FALSE
+	
+	while(!bandera){
 		svalue(barra)<-svalue(barra)+5
 		for(d in 1:cant2){
 			if(d!=cant2){
@@ -742,8 +778,28 @@ nombres_descriptores=function(scan1, cant, ipobl){
 		
 		i=i+2
 		e=e+1
+		
+		elem=as.numeric(scan1[i])
+		if(is.na(elem)){ #llegue a "subconjunto"
+			print("elemento")
+			print(elem)
+			print(scan1[i])
+			bandera=TRUE
+		}
 	}
 	
+	todos_maes=data.frame()
+	#buscar maes
+	nume=1
+	i=i+4
+	fila=1
+	while(i<=largo){
+		todos_maes[fila, 1]=as.numeric(scan1[i])
+		i=i+1
+		todos_maes[fila, 2]=as.numeric(scan1[i])
+		i=i+3
+		fila=fila+1
+	}
 	
 	resultados=list()
 	resultados$porcentaje=porcentaje
@@ -752,6 +808,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	resultados$rocarea=rocarea
 	resultados$nombres=nombres
 	resultados$valores=valores
+	resultados$todos_maes=todos_maes
 	
 	dispose(win1)
 	
@@ -778,24 +835,25 @@ mostrar_resultados=function(archivo){
 	maes=proceso2$mae
 	porcentaje=	proceso2$porcentaje
 	rocarea=proceso2$rocarea
+	todos_maes=proceso2$todos_maes
 	
 	largo=dim(valores)[2]
-	print(largo)
+	# print(largo)
 	elem=valores[1,largo]
-	print("ELEMENTO")
-	print(elem)
+	# print("ELEMENTO")
+	# print(elem)
 	clase=class(elem)
 	
 	if(clase=="numeric"){
-		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores)
+		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores, todos_maes)
 	}else{
-		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores)
+		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos_maes)
 	}
 	
 	
 }
 
-mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores){
+mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos){
 
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
@@ -863,7 +921,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores){
 	
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
-						ventana_mae(maes)
+						ventana_mae(todos)
 					}, width=15)
 	botoncoef=gbutton(" Ver Coef.Corr. ", handler=function(h, ...){
 											ventana_coef(coefs)
@@ -893,7 +951,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores){
 }
 
 #
-mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores){
+mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos){
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
@@ -961,7 +1019,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
-						ventana_mae(maes)
+						ventana_mae(todos)
 					})
 	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
@@ -1035,19 +1093,19 @@ ventana_coef=function(coefis){
 }
 
 ventana_mae=function(maes){
-	nuevomae=data.frame()
-	cant=length(maes)
-	for(i in 1:cant){
-		nuevomae[i,1]=i
-		nuevomae[i,2]=maes[i]
-	}
-	names(nuevomae)=c("subconjuntos", "MAE")
-	
-	print(nuevomae)
-	
-	x11(width=2000, height=1000, title="MAE");
+	# nuevomae=data.frame()
+	# cant=length(maes)
+	# for(i in 1:cant){
+		# nuevomae[i,1]=i
+		# nuevomae[i,2]=maes[i]
+	# }
+	names(maes)=c("subconjunto", "MAE")
+	print(maes)
+	x11(width=80, height=50, title="MAE")
+	print(boxplot(MAE~subconjunto,  data=maes,boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
+		
 	#print(plot(nuevomae))
-	print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
+	#print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
 	
 	#geom_line(aes(colour=MAE, group=MAE))
 	

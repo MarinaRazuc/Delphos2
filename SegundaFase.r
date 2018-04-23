@@ -49,20 +49,20 @@ ventana_fase_dos=function(archivo){
 	glabel(" ", container=frame1)
 	group0=ggroup(horizontal=TRUE, container=frame1, spacing=5) #max cant subconjs
 	
-	stringS=iconv("  Máxima cantidad de subconjuntos:      ", from="UTF-8", to="UTF-8")
+	stringS=iconv("  Máxima cantidad de subconjuntos:", from="UTF-8", to="UTF-8")
 	labelC=glabel(stringS, container=group0)
 	editS=gedit("5", container=group0, width=4)
 	glabel(" ", container=frame1)
 	
-	grupoT=ggroup(container=frame1, horizontal=TRUE, spacing=5)
-	labelT=glabel("  Modelos a construir por subconjunto: ", container=grupoT)
-	editT=gedit("2", container=grupoT, width=4)
-	glabel(" ", container=frame1)
+	# grupoT=ggroup(container=frame1, horizontal=TRUE, spacing=5)
+	# labelT=glabel("  Modelos a construir por subconjunto: ", container=grupoT)
+	# editT=gedit("2", container=grupoT, width=4)
+	# glabel(" ", container=frame1)
 	
-	group9=ggroup(container=frame1, horizontal=TRUE, spacing=5)
-	labelI=glabel("  Cantidad de intentos por subconjunto:", container=group9)
-	editI=gedit("4", container=group9, width=4)
-	glabel(" ", container=frame1)
+	# group9=ggroup(container=frame1, horizontal=TRUE, spacing=5)
+	# labelI=glabel("  Cantidad de intentos por subconjunto:", container=group9)
+	# editI=gedit("4", container=group9, width=4)
+	# glabel(" ", container=frame1)
 	
 	group1=ggroup(horizontal = FALSE, container=frame1, spacing=15) #seleccionar metodo
 	#glabel("  ", container=group1)
@@ -123,17 +123,8 @@ ventana_fase_dos=function(archivo){
 						if(svalue(editS)==0){
 							gmessage("La cantidad de subconjuntos debe ser mayor a 0", icon=error)
 						}else{
-							if(svalue(editI)==0){
-								gmessage("La cantidad de repeticiones por subconj debe ser mayor a 0", icon=error)
-							}else{
-								if(svalue(editT)==0){
-									gmessage("La cantidad de modelos debe ser mayor a 0", icon=error)
-								}
-								else{
-									segunda_fase(archivo, metodoSF, svalue(texto2), svalue(editS), svalue(editI), svalue(editT))	
-									dispose(win1)
-								}
-							}
+							segunda_fase(archivo, metodoSF, svalue(texto2), svalue(editS))#, svalue(editI), svalue(editT))	
+							dispose(win1)
 						}
 					} )
 	lay3[1:3, 20:25]=boton3
@@ -144,7 +135,7 @@ ventana_fase_dos=function(archivo){
 
 }
 
-segunda_fase=function(archivo, metodoSF, salida, maxCant, replicas, modelos){ 
+segunda_fase=function(archivo, metodoSF, salida, maxCant){ 
 	print("Segunda Fase")
 	grafico=data.frame()
 	scan3=scan(archivo, what="numeric")
@@ -154,6 +145,10 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant, replicas, modelos){
 	soluciones=procesado$individuos
 	interna=procesado$interna
 	externa=procesado$externa
+	maes_primera=procesado$maes
+	
+	print("dim maes")
+	print(dim(maes_primera))
 	
 	cols=ncol(externa)
 	clase=class(externa[,cols])
@@ -164,92 +159,119 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant, replicas, modelos){
 	if(iteras>maxCant)
 		iteras=maxCant
 	
+	g=1
 	for(i in 1:iteras){
+		
+		#cargo maes en grafico
+		#pri=(i-1)*10+1
+		#ult=(i-1)*10+10
+		ult=g+10
+		colu=1
+		while(colu<11){
+			grafico[g,1]=i
+			grafico[g,2]=maes_primera[i,colu]
+			grafico[g,3]="P"
+			colu=colu+1
+			g=g+1
+		}
+		
 		individuo=soluciones[i,]
 		IF=filtrar(interna, individuo)
 		EF=filtrar(externa, individuo) 
 		write("---", salida, append=TRUE)
 		write(individuo, salida, append=TRUE)
 		
-		for(j in 1:modelos){
-			modelo=construirModelo(IF ,metodoSF)
+		modelo=construirModelo(IF ,metodoSF)
+		
+		if(clase=="numeric"){
+			evalF2=evaluate_Weka_classifier(modelo, newdata=EF)
+			corcoef=evalF2$details[1]
+			mae=evalF2$details[2]
+			grafico[g,1]=i
+			grafico[g, 2]=mae
+			grafico[g,3]="S"
+			g=g+1
+			# print("grafico")
+			# print(grafico)
+			print("---------------------")
+			str1=iconv("Coeficiente de Correlación", from="UTF-8", to="UTF-8")
+			print(str1)
+			print(corcoef)
+			print("---------------------")
+			print("Mean Absolute Error: ")
+			print(mae)
+			print("---------------------")
+			write(str1, salida, append=TRUE)
+			write(corcoef, salida, append=TRUE)
+			write("Mean Absolute Error: ", salida, append=TRUE)
+			write(mae, salida, append=TRUE)
 			
-			for(h in 1:replicas){
-				if(clase=="numeric"){
-					evalF2=evaluate_Weka_classifier(modelo, newdata=EF)
-					corcoef=evalF2$details[1]
-					mae=evalF2$details[2]
-					print("---------------------")
-					str1=iconv("Coeficiente de Correlación", from="UTF-8", to="UTF-8")
-					print(str1)
-					print(corcoef)
-					print("---------------------")
-					print("Mean Absolute Error: ")
-					print(mae)
-					print("---------------------")
-					write(str1, salida, append=TRUE)
-					write(corcoef, salida, append=TRUE)
-					write("Mean Absolute Error: ", salida, append=TRUE)
-					write(mae, salida, append=TRUE)
-					
-					resultados[i]=as.numeric(corcoef)	
-				}else{ 
-					evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
-					correctos=evalF2$details[1]
-					mae=evalF2$details[5]
-					matriz=evalF2$confusionMatrix
-					rocarea=c()
-					for(j in 1:3){
-						rocarea[j]=evalF2$detailsClass[j,6]
-					}
-					print("---------------------")
-					print("Porcentaje de casos clasificados correctamente: ")
-					print(correctos)
-					print("---------------------")
-					print("Mean Absolute Error")
-					print(mae)
-					print("---------------------")
-					str2=iconv("Matriz de Confusión", from="UTF-8", to="UTF-8")
-					print(str2)
-					print(matriz)
-					print("---------------------")
-					print("ROC Area")
-					print(rocarea)
-					print("---------------------")
-					str1=paste0("Porcentaje de Casos clasificados correctamente: ", correctos)
-					write(str1, salida, append=TRUE)
-					
-					str1=paste0("Mean Absolute Error: ", mae)
-					write(str1, salida, append=TRUE)
-					
-					write(str2, salida ,append=TRUE)
-					write.table(matriz, salida ,append=TRUE)
-					write("ROC Area: ", salida ,append=TRUE)
-					write(rocarea, salida ,append=TRUE)
-					
-					resultados[i]=correctos/100
-				}
+			resultados[i]=as.numeric(corcoef)	
+		}else{ 
+			evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
+			correctos=evalF2$details[1]
+			mae=evalF2$details[5]
+			matriz=evalF2$confusionMatrix
+			rocarea=c()
+			for(j in 1:3){
+				rocarea[j]=evalF2$detailsClass[j,6]
 			}
+			print("---------------------")
+			print("Porcentaje de casos clasificados correctamente: ")
+			print(correctos)
+			print("---------------------")
+			print("Mean Absolute Error")
+			print(mae)
+			print("---------------------")
+			str2=iconv("Matriz de Confusión", from="UTF-8", to="UTF-8")
+			print(str2)
+			print(matriz)
+			print("---------------------")
+			print("ROC Area")
+			print(rocarea)
+			print("---------------------")
+			str1=paste0("Porcentaje de Casos clasificados correctamente: ", correctos)
+			write(str1, salida, append=TRUE)
+			
+			str1=paste0("Mean Absolute Error: ", mae)
+			write(str1, salida, append=TRUE)
+			
+			write(str2, salida ,append=TRUE)
+			write.table(matriz, salida ,append=TRUE)
+			write("ROC Area: ", salida ,append=TRUE)
+			write(rocarea, salida ,append=TRUE)
+			
+			resultados[i]=correctos/100
 		}
+			
+		
 		# grafico[i,1]=i
 		# grafico[i,2]=mae
-		# if(i!=1){ #no es el primero
-			# tryCatch(dev.off(), 
-						# error=function(e){
-											# str1=iconv("No hay gráficos activos.", from="UTF-8", to="UTF-8")
-											# print(str1)
-										# }
-						# )
-		# }else{
-			# names(grafico)=c("individuo", "MAE")
-		# }
-		# dev.flush()
+		if(i!=1){ #no es el primero
+			 tryCatch(dev.off(), 
+						 error=function(e){
+											str1=iconv("No hay gráficos activos.", from="UTF-8", to="UTF-8")
+											print(str1)
+										 }
+						 )
+		}else{
+			 names(grafico)=c("Subconjunto", "MAE", "Fase")
+		}
+		dev.flush()
+		x11(width=55, height=50, title="Segunda Fase", xpos=18, ypos=15)
+		print(boxplot(MAE~Subconjunto,  data=grafico,boxwex = 0.25, main = "MAEs de cada subconjunto, primera y segunda fase", xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
 		# x11(width=200, height=100, title="Segunda Fase");print(ggplot(grafico, aes(x=individuo, y=MAE))+ geom_point(aes(colour=MAE), size=4))
 	}
 	
+	x11(width=55, height=50, title="Segunda Fase", xpos=702, ypos=15)
+	print(ggplot(grafico, aes(x=Subconjunto, y=MAE)) + geom_point(aes(colour=Fase), size=3))
+
 	write("---", salida, append=TRUE)
 	completo=rbind(interna, externa)
-	write.table(completo, salida, append=TRUE) 
+	write.table(completo, salida, append=TRUE)
+	
+	write("---", salida, append=TRUE)
+	write.table(grafico, salida, append=TRUE)
 }
 
 #construirModelo(datos)
