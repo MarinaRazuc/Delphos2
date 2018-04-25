@@ -42,7 +42,7 @@ ventana_fase_dos=function(archivo){
 	lay0=glayout(container=group200)
 	stri=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
 	label0=glabel(stri, width=10)
-	lay0[1:3, 32:37]=label0
+	lay0[1:3, 25:30]=label0
 	ggroup(container=frame1)
 	
 	#ggroup(container=frame1)
@@ -64,15 +64,15 @@ ventana_fase_dos=function(archivo){
 	# editI=gedit("4", container=group9, width=4)
 	# glabel(" ", container=frame1)
 	
-	group1=ggroup(horizontal = FALSE, container=frame1, spacing=15) #seleccionar metodo
+	group1=ggroup(horizontal = FALSE, container=frame1, spacing=10) #seleccionar metodo
 	#glabel("  ", container=group1)
 	group11=ggroup(horizontal=TRUE, container=group1, spacing=5)
 	str2="  Seleccione método para la segunda fase: "
 	str2=iconv(str2, from="UTF-8", to="UTF-8")
 	label1=glabel(str2 , container=group11)
-	str3="(Se utilizará junto con Stacking de Weka) "
-	str3=iconv(str3, from="UTF-8", to="UTF-8")
-	label3=glabel(str3, container=group11)
+	# str3="(Se utilizará junto con Stacking de Weka) "
+	# str3=iconv(str3, from="UTF-8", to="UTF-8")
+	# label3=glabel(str3, container=group11)
 	radio1 = gradio(c("RandomCommittee","RandomForest", "REPTree"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)
@@ -127,7 +127,7 @@ ventana_fase_dos=function(archivo){
 							dispose(win1)
 						}
 					} )
-	lay3[1:3, 20:25]=boton3
+	lay3[1:3, 15:20]=boton3
 	
 	glabel("  ", container=frame1)
 	
@@ -182,6 +182,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		write(individuo, salida, append=TRUE)
 		
 		modelo=construirModelo(IF ,metodoSF)
+		
 		
 		if(clase=="numeric"){
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF)
@@ -289,39 +290,17 @@ construirModelo=function(datos, metodo){
 	names(datos)[1]="V0"
 	fmla=as.formula(paste(ultimo,"~."))
 	
-	
 	if(metodo=="RF"){ #randomforest
-		modelo=Stacking(formula=fmla, data=datos, 
-						control=Weka_control(
-									M="weka.classifiers.meta.RandomCommittee",
-									X=10,
-									S=2,
-									B="weka.classifiers.trees.RandomForest", 
-									num_slots=2
-								)
-						)
+		RF=make_Weka_classifier("weka/classifiers/trees/RandomForest")
+		modelo=RF(formula=fmla, data=datos)
 	}else{
 		if(metodo=="RC"){ #randomcommittee
-			modelo=Stacking(formula=fmla, data=datos, 
-							control=Weka_control(
-										M="weka.classifiers.trees.REPTree",
-										X=10, 
-										S=2,
-										B="weka.classifiers.meta.RandomCommittee", 
-										num_slots=2
-									)
-							)
+			RC=make_Weka_classifier("weka/classifiers/meta/RandomCommittee")
+			modelo=RC(formula=fmla, data=datos)
 		}else{
 			if(metodo=="RP"){ #reptree
-				modelo=Stacking(formula=fmla, data=datos, 
-							control=Weka_control(
-										M="weka.classifiers.trees.RandomCommittee",
-										X=10, 
-										S=2,
-										B="weka.classifiers.meta.REPTree", 
-										num_slots=2
-									)
-							)
+				RP=make_Weka_classifier("weka/classifiers/trees/REPTree")
+				modelo=RP(formula=fmla, data=datos)
 			}
 		}				
 	}

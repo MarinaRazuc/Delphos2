@@ -22,19 +22,12 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 	for(i in iterwrap){
 		set.seed(i) 
 		print("Primera Fase")
-		
 		dataframe1=partir(interna, valInterna, i)
-	
-		#convergencia<<-FALSE
-		algogenet=algoritmo_genetico_2(archivo, metodo, dataframe1$it, dataframe1$et, clase_propiedad, alpha, pm, popSize,  tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral) #... etc
-		
-		soluciones[i,]=algogenet$individuo
-		#soluciones[i,]=algogenet@solution[1,]
-		
+		algogenet=algoritmo_genetico_2(archivo, metodo, dataframe1$it, dataframe1$et, clase_propiedad, alpha, pm, popSize,  tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral)	
+		soluciones[i,]=algogenet$individuo	
 	}
 	
-	calcular_maes(archivo, metodo, interna, soluciones)
-	
+	calcular_maes(archivo, metodo, interna, soluciones)	
 	print(proc.time()-m)
 	soluciones
 }
@@ -42,16 +35,7 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 calcular_maes=function(archivo, metodo, interna, soluciones){
 	print("Calculando errores...")
 	
-	# - Una vez que quedan seleccionados los 10 mejores (por ejemplo, depende la cantidad que ingrese el usuario) conjuntos de descriptores, lo que habría que hacer es:
-          # - por cada uno de esos conjuntos de descriptores 
-                  # * hacer un 10 fold cross validación con el método que seleccionó el usuario (árboles, regresión lineal, etc)
-                  # * ahí vas a tener 10 valores de MAE para cada conjunto de descriptores, y eso sería lo que mostraríamos en los resultados junto con el único valor de 
-                     # MAE de la segunda fase.
 	cant=nrow(soluciones)
-	print("nrow soluciones")
-	print(cant)
-	print("largo solucion")
-	print(length(soluciones[1,]))
 	num=length(soluciones[1,])-1
 	
 	for(i in 1:cant){
@@ -85,12 +69,10 @@ calcular_maes=function(archivo, metodo, interna, soluciones){
 					ypredict=predict(modelo, newdata=xi, fitted=FALSE) #fitted->TRUE o FALSE
 					
 					diferencia=yi-ypredict
-					cuad=abs(diferencia) #ver si funciona
+					cuad=abs(diferencia)
 					suma=suma+cuad
 				}
 				mae=suma/m2
-				print("MAE")
-				print(mae)
 				write("-", archivo ,append=TRUE)
 				write(mae, archivo, append=TRUE)
 			}
@@ -99,8 +81,6 @@ calcular_maes=function(archivo, metodo, interna, soluciones){
 			for(j in 1:10){
 				eval1=evaluate_Weka_classifier(object=modelo, numFolds=10, seed=j)
 				mae=eval1$details[2]
-				print("MAE")
-				print(mae)
 				write("-", archivo ,append=TRUE)
 				write(mae, archivo, append=TRUE)
 			}

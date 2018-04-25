@@ -1314,21 +1314,32 @@ grafiquitos=function(datos){
 	#ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
 }	
 
-probando=function(tiempo){
-	win1=gwindow(visible=FALSE, title="Prueba", height=100, width=200)
-	grupo1=ggroup(container=win1, horizontal=FALSE)
-	barra=gprogressbar(container=grupo1)
-	visible(win1)=TRUE
+# probando=function(tiempo){
+	# win1=gwindow(visible=FALSE, title="Prueba", height=100, width=200)
+	# grupo1=ggroup(container=win1, horizontal=FALSE)
+	# barra=gprogressbar(container=grupo1)
+	# visible(win1)=TRUE
 	
-	for(i in 1:tiempo){
-		svalue(barra)<-i
-		Sys.sleep(0.1)
-		print(i)
-	}
+	# for(i in 1:tiempo){
+		# svalue(barra)<-i
+		# Sys.sleep(0.1)
+		# print(i)
+	# }
 	
-	dispose(win1)
+	# dispose(win1)
+# }
+
+prueba_shell=function(){
+
+	print("hola")
+	shell("RandomForest -I 10 -num-slots 2 -S 2 -t 'hola.csv' -T 'chau.csv'" )
 
 }
+
+
+
+
+
 
 
 
