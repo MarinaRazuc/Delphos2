@@ -123,15 +123,6 @@ data_input=function(i, experimento, cod){
 #carga_y_control
 carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){ 
 	bandera=TRUE
-	print("dec es:")
-	print(deci)
-	print(deci)
-	print(deci)
-	print(deci)
-	print(deci)
-	print(deci)
-	print(deci)
-	print(deci)
 	
 	if(A2!="Ingrese archivo"){
 		if(length(c2!=0)){
@@ -145,22 +136,6 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 		
 		if(clase=="numeric"){
 			propiedad<<-read.csv(A2, sep, header=FALSE, dec=deci, stringsAsFactors=FALSE) #dec=",",
-			#pos2=grep(",", propiedad[1,1])
-			#pos1=grep(".", propiedad[1,1])
-			#print("propiedad en 1,1")
-			#print(propiedad[1,1])
-			#print(pos1)
-			#print(pos2)
-			#if(length(pos1)!=0){#hay punto
-			#	propiedad<<-read.csv(A2, sep, header=FALSE, dec=".",stringsAsFactors=FALSE)
-			#	dec<<-"."
-			#	print("dec")
-			#	print(dec)
-			#}else{
-			#	dec<<-","
-			#	print("dec")
-			#	print(dec)
-			#}
 		}else{
 			if(clase=="character"){
 				propiedad<<-read.csv(A2, sep, header=FALSE)

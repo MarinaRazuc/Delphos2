@@ -1,4 +1,3 @@
-
 source("extras.R")
 metodoSF<<-"RF"
 

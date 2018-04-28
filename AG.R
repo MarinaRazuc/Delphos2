@@ -82,18 +82,8 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 
 
 F2_clasif=function(modelo, datosTfiltro){
-	#evaluate me brinda información sobre el modelo
-	eval=evaluate_Weka_classifier(modelo, newdata = datosTfiltro)
-	#busco la posición del renglón donde están los casos correctamente clasificados
-	 
-	pos=regexpr('Correctly', eval$string)
-	#obtengo un substring entre posición+56 (lo que ocupa "Correctly classified cases y el nro") y posición+72 (espacios en blanco)
-	keep=substring(eval$string, pos+56, pos+60) #ver 
-	#elimino espacios en blanco para quedarme con el número
-	valor=gsub(" ", "", keep)
-	#convierto el char a int 
-	#valorint=round(strtoi(valor))
-	valorint=as.double(valor)
+	eval2=evaluate_Weka_classifier(modelo, newdata = datosTfiltro)
+	valorint=as.numeric(eval2$details[1])	
 	resultado=valorint/100
 	
 	resultado
@@ -109,9 +99,6 @@ F2=function(P, testeoFiltrado){
 	frac=1/m2
 	suma=0
 	ncols=ncol(testeoFiltrado)
-	
-	#library(doParallel)
-	#registerDoParallel(cores=2)
 	
 	t <- proc.time() 
 	for (i in 1:m2){
@@ -459,7 +446,8 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	numcols=ncol(entrenamiento) #entrenamiento y testeo tienen el mismo nro de cols
 	filas=nrow(entrenamiento)
 	if(pm==0 || pm>numcols){
-		pm<-numcols-1 #debería ser proporción del tamaño del individuo
+		#pm<-numcols-1 #debería ser proporción del tamaño del individuo
+		pm<-round((numcols-1)*0.70)
 	}
 	# <3 
 	

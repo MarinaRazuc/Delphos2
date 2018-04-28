@@ -921,7 +921,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
-						ventana_mae(todos)
+						ventana_mae(maes, todos)
 					}, width=15)
 	botoncoef=gbutton(" Ver Coef.Corr. ", handler=function(h, ...){
 											ventana_coef(coefs)
@@ -1019,7 +1019,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
-						ventana_mae(todos)
+						ventana_mae(maes, todos)
 					})
 	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
@@ -1092,18 +1092,32 @@ ventana_coef=function(coefis){
 	 
 }
 
-ventana_mae=function(maes){
+ventana_mae=function(segunda, primera){
 	# nuevomae=data.frame()
 	# cant=length(maes)
 	# for(i in 1:cant){
 		# nuevomae[i,1]=i
 		# nuevomae[i,2]=maes[i]
 	# }
-	names(maes)=c("subconjunto", "MAE")
-	print(maes)
+	names(primera)=c("subconjunto", "MAE")
+	names(segunda)=c("subconjunto", "MAE")
+
 	x11(width=80, height=50, title="MAE")
-	print(boxplot(MAE~subconjunto,  data=maes,boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
-		
+	# print(ggplot(data=primera, aes(x=subconjunto, y=MAE))  + 
+		# geom_boxplot(color="transparent") + geom_jitter()
+	# )
+
+	
+		# stat_summary(data=segunda, geom="point", shape=18,
+		# size=3, color="red" , fun.y="x=y") 
+	
+	#print(boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
+	plot(segunda, axes=FALSE, col="blue", type="p")
+	par(new=TRUE)
+	boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue")
+	#print(ggplot(segunda, aes(x=subconjunto, y=MAE))  + geom_point(aes(colour=subconjunto), size=4))
+	#ggplot(segunda, aes(x=subconjunto, y=MAE))  + geom_point(aes(colour=subconjunto), size=4)
+
 	#print(plot(nuevomae))
 	#print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
 	
@@ -1224,60 +1238,6 @@ filtrar2=function(valores, individuo, archivo){
 }
 
 
-lasegunda=function(soluciones, externa){ 
-	
-	cols=ncol(externa)
-	clase=class(externa[,cols])
-	
-	
-	iteras=nrow(soluciones)
-	print("iteras")
-	print(iteras)
-	resultados=c(1:iteras)
-	print("dim externa")
-	print(dim(externa))
-	for(i in 1:iteras){
-		individuo=soluciones[i,]
-		EF=filtrar(externa, individuo)
-		modelo=construirModelo(EF)
-		evalF2=evaluate_Weka_classifier(modelo, numfolds=nfolds, seed=2)
-		#print(evalF2)
-		
-		if(clase=="nom"){
-			pos=regexpr('Correctly', evalF2$string)
-			#obtengo un substring entre posición+56 (lo que ocupa "Correctly classified cases y el nro") y posición+72 (espacios en blanco)
-			keep=substring(evalF2$string, pos+56, pos+60) #ver 
-			#elimino espacios en blanco para quedarme con el número
-			valor=gsub(" ", "", keep)
-			#convierto el char a int 
-			#valorint=round(strtoi(valor))
-			valorint=as.double(valor)
-			resultado=valorint/100
-		}else{ #no tengo porcentaje de correctamente clasificados... que uso??
-			#una opcion podria ser el coeficiente de correlacion
-			#Coeficiente de correlacion escalado o
-			#1 - MAE
-			
-			#COEFICIENTE
-			pos=regexpr('Correlation', evalF2$string)
-			keep=substring(evalF2$string, pos+40, pos+46) #ver si 46 o menos
-			valor=gsub(" ", "", keep)
-			valorint=as.double(valor)
-			resultado=(valorint+1)/2
-		}
-		print("Resultado")
-		print(resultado)
-		
-		resultados[i]=resultado
-		
-	}
-	
-	ordenados=ordenar(soluciones, resultados)
-	
-	ordenados 
-
-}
-
 generar_particiones=function(ndfr4, pex, pin){
 		set.seed(2) 
 		indices4=createDataPartition(ndfr4$V1, p=pex, list=FALSE) #p por parametro (validacion externa)
@@ -1300,46 +1260,14 @@ generar_particiones=function(ndfr4, pex, pin){
 }	
 
 
-grafiquitos=function(datos){
-	#win=gwindow(title = "Graficos", visible=FALSE, width=190, height=200, parent=c(575,230), toolkit="RGtk2")
-	#grupo1=ggroup(horizontal = FALSE, container=win, spacing=2)
-	#dev.flush()
-	#dev.off()
-	x11()
-	ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=vals, group=vals)) + geom_point(aes(colour=vals), size=3)
 	
-	#add(win, graf)
-	#visible(win)=TRUE
-	
-	#ggplot(datos, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=valores, group=valores)) + geom_point(aes(colour=valores), size=3)
-}	
 
-# probando=function(tiempo){
-	# win1=gwindow(visible=FALSE, title="Prueba", height=100, width=200)
-	# grupo1=ggroup(container=win1, horizontal=FALSE)
-	# barra=gprogressbar(container=grupo1)
-	# visible(win1)=TRUE
-	
-	# for(i in 1:tiempo){
-		# svalue(barra)<-i
-		# Sys.sleep(0.1)
-		# print(i)
-	# }
-	
-	# dispose(win1)
-# }
+prueba=function(){
+	plot(sin,-2*pi, 2*pi, col="red" , xlab="", ylab="")
+	par(new=TRUE)
+	plot(cos, -2*pi, 2*pi, col="blue" , xlab="", ylab="",  axes=FALSE) 
+	title(main="Gráficas del seno y coseno")
+	abline(a=0, b=0)
 
-prueba_shell=function(){
-
-	print("hola")
-	shell("RandomForest -I 10 -num-slots 2 -S 2 -t 'hola.csv' -T 'chau.csv'" )
 
 }
-
-
-
-
-
-
-
-
