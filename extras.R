@@ -1112,9 +1112,15 @@ ventana_mae=function(segunda, primera){
 		# size=3, color="red" , fun.y="x=y") 
 	
 	#print(boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
-	plot(segunda, axes=FALSE, col="blue", type="p")
+	mayor=buscar_mayor(primera, segunda)
+	print("mayor")
+	print(mayor)
+	print("length(segunda[,1]")
+	print(length(segunda[,1]))
+	
+	boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(segunda[,1])+1), ylim=c(0,mayor+0.2))
 	par(new=TRUE)
-	boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue")
+	plot(segunda, axes=FALSE, col="blue", type="p", xlim=c(0, length(segunda[,1])+1), ylim=c(0,mayor+0.2), main="MAE - Primera y Segunda Fase")
 	#print(ggplot(segunda, aes(x=subconjunto, y=MAE))  + geom_point(aes(colour=subconjunto), size=4))
 	#ggplot(segunda, aes(x=subconjunto, y=MAE))  + geom_point(aes(colour=subconjunto), size=4)
 
@@ -1124,6 +1130,27 @@ ventana_mae=function(segunda, primera){
 	#geom_line(aes(colour=MAE, group=MAE))
 	
 }
+
+buscar_mayor=function(pri, seg){
+	mayor=0
+	largo=length(pri[,2])
+	for(i in 1:largo){
+		elem=pri[i,2]
+		if(elem>mayor){
+			mayor=elem
+		}
+	}
+	
+	largo=length(seg[,2])
+	for(j in 1:largo){
+		elem=seg[j,2]
+		if(elem>mayor)
+			mayor=elem
+	}
+
+	mayor
+}
+
 
 ventana_rocarea=function(rocarea){
 	nuevo=data.frame()
