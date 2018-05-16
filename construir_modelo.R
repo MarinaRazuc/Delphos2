@@ -40,9 +40,27 @@ construir_modelo=function(metodo, datos){
 							if(metodo==7){
 								resultado=arbolDeDecision2(datos)
 							}else{
-								str1=iconv("No se eligió un método disponible", from="UTF-8", to="UTF-8")
-								print(str1)
-								return
+								if(metodo==8){
+									B=proc.time()
+									resultado=randomForest(datos)
+									print(proc.time()-B)
+								}else{
+									if(metodo==9){
+										B=proc.time()
+										resultado=randomCommittee(datos)
+										print(proc.time()-B)
+									}else{
+										if(metodo==10){
+											B=proc.time()
+											resultado=multilayer(datos)
+											print(proc.time()-B)
+										}else{
+											str1=iconv("No se eligió un método disponible", from="UTF-8", to="UTF-8")
+											print(str1)
+											return
+										}										
+									}
+								}
 							}
 						}
 					}
@@ -53,6 +71,27 @@ construir_modelo=function(metodo, datos){
 	
 	resultado
 
+}
+
+multilayer=function(datos){
+	print("Multilayer Perceptron")
+	MP=make_Weka_classifier("weka/classifiers/functions/MultilayerPerceptron")
+	modelo=MP(formula=V1~., data=datos)
+	modelo
+}
+
+randomCommittee=function(datos){
+	print("Random Committee")
+	RC=make_Weka_classifier("weka/classifiers/meta/RandomCommittee")
+	modelo=RC(formula=V1~., data=datos)
+	modelo
+}
+
+randomForest=function(datos){
+	print("Random Forest")
+	RF=make_Weka_classifier("weka/classifiers/trees/RandomForest")
+	modelo=RF(formula=V1~., data=datos)
+	modelo
 }
 
 arbolDeDecision2=function(datos){

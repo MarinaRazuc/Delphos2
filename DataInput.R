@@ -7,12 +7,12 @@ propiedad<<-data.frame()
 nombresD<<-data.frame()
 
 #data_input
-data_input=function(i, experimento, cod){
+data_input=function(cod){
 	win2=gwindow(title = "DataInput", visible=FALSE, width=200,  height=70., parent=c(200,200)) #visible=FALSE por ahi
 	group_1=ggroup(horizontal = FALSE, container=win2) #el contenedor principal
-	glabel("", container=group_1)
-	frame1=gframe(container=group_1, text=paste(paste(paste("Experiment ",i),"of "),experimento), horizontal=FALSE, spacing=10, pos=0.5)
-
+	glabel(" ", container=group_1)
+	frame1=gframe(container=group_1, text="Data", horizontal=FALSE, spacing=10, pos=0.5)
+	#glabel(" ", container=frame1)
 	lay1=glayout(container=frame1)
 	
 	group_2=ggroup(horizontal=FALSE) #para la carga de datos

@@ -39,9 +39,9 @@ ventana_fase_dos=function(archivo){
 	
 	group200=ggroup(horizontal=TRUE, container=frame1, spacing=15)#experiment i of n 
 	lay0=glayout(container=group200)
-	stri=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
-	label0=glabel(stri, width=10)
-	lay0[1:3, 25:30]=label0
+	#stri=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
+	#label0=glabel(stri, width=10)
+	#lay0[1:3, 25:30]=label0
 	ggroup(container=frame1)
 	
 	#ggroup(container=frame1)
@@ -296,7 +296,7 @@ construirModelo=function(datos, metodo){
 		if(metodo=="RC"){ #randomcommittee
 			RC=make_Weka_classifier("weka/classifiers/meta/RandomCommittee")
 			modelo=RC(formula=fmla, data=datos)
-		}else{
+		}else{#no se usa
 			if(metodo=="RP"){ #reptree
 				RP=make_Weka_classifier("weka/classifiers/trees/REPTree")
 				modelo=RP(formula=fmla, data=datos)

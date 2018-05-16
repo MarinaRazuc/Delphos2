@@ -56,7 +56,6 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 						bandera<<-TRUE
 					}
 	)
-	
 	tiempo=proc.time()-t
 	
 	if(bandera==FALSE){
@@ -71,7 +70,11 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 		#	print(proc.time()-p)
 		}
 	}else {
+		ERRORES<<-ERRORES +1
 		resu_F2=1000  #numero grande porque marca el error
+		if(ERRORES>3){
+			return
+		}
 	}
 	resu_F2
  #	write(eval$string, file=paste0('Resultados_',N))
@@ -437,7 +440,7 @@ pertenece=function(poblacion, individuo){
 
 #algoritmo genético casero
 algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens, stallThres){	
-	
+	ERRORES<<-0
 	grafico=data.frame()
 	empeora<<-0
 	PromFit<<-0 

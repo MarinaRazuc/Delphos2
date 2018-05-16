@@ -12,15 +12,14 @@ source("DataInput.R")
 source("SegundaFase.r")
 source("AG.R")
 
-nroExp<<-1
-expActual<<-1
+#nroExp<<-1
+#expActual<<-1
 archivo=NULL
 
-cantExp=function(x){
-	nroExp<<-x
-	#print(nroExp)
-	
-} 
+# cantExp=function(x){
+	# nroExp<<-x
+	# #print(nroExp)
+# } 
 
 iniciar=function(){
 	#win=gtkWindow()
@@ -31,12 +30,12 @@ iniciar=function(){
 	lay1=glayout(container=frame1)
 	font(frame1)<-list(weight="bold", style="oblique", size=20)
 		
-	group1=ggroup(horizontal = TRUE, spacing=15)
+	#group1=ggroup(horizontal = TRUE, spacing=15)
 	label1=glabel("             ")
 	lay1[1,1:5]=label1
-	obj=glabel("  Number of experiments", container=group1, width=10 )
-	obj_gedit=gedit(c(1), container = group1, width=3, coerce.with =as.numeric, handler=function(h,...){ cantExp(svalue(obj_gedit)) })
-	lay1[2,1:5]=group1
+	# obj=glabel("  Number of experiments", container=group1, width=10 )
+	#obj_gedit=gedit(c(1), container = group1, width=3, coerce.with =as.numeric, handler=function(h,...){ cantExp(svalue(obj_gedit)) })
+	#lay1[2,1:5]=group1
 	
 	
 	group2=ggroup(horizontal = FALSE, spacing=15)
@@ -44,18 +43,20 @@ iniciar=function(){
 	
 	obj_button_1=gbutton("First Phase", width=10, 
 						handler=function(h, ...){
-							nroExp=svalue(obj_gedit)
-							primeraFase(nroExp)
+							#nroExp=svalue(obj_gedit)
+							#primeraFase(nroExp)
+							primeraFase()
 							
 						})
 	lay2[1,4:11]=obj_button_1
 	objb2=gbutton("Second Phase", handler=(function(h,...){
-																segundaFase(nroExp)
-																
+																#segundaFase(nroExp)
+																segundaFase()
 															}), width=10)
 	lay2[2,4:11]=objb2
 	objb3=gbutton("First and Second Phase", handler=(function(h,...){
-																primerasegunda(nroExp)
+																#primerasegunda(nroExp)
+																primerasegunda()
 																
 															}), width=10)
 	lay2[3,4:11]=objb3
@@ -80,27 +81,27 @@ iniciar=function(){
 
 
 #solamente la primera fase
-primeraFase=function(experimentos){
-	for(i in 1:experimentos){
-		expActual<<-i
-		data_input(i, experimentos, "P") #P primera fase
-	}
+primeraFase=function(){
+	#for(i in 1:experimentos){
+		#expActual<<-i
+		data_input("P") #P primera fase
+	#}
 }
 
 #solamente la segunda fase
-segundaFase=function(experimentos){ #S segunda fase
-	for(i in 1:experimentos){
-		expActual<<-i
+segundaFase=function(){ #S segunda fase
+	#for(i in 1:experimentos){
+	#	expActual<<-i
 		obtener_archivo_entrada()
-	}
+	#}
 }
 
 #primera y segunda fase en secuencia
-primerasegunda=function(experimentos){ #PS primera y segunda fase
-	for(i in 1:experimentos){
-		expActual<<-i
-		data_input(i, experimentos, "PS")
-	}
+primerasegunda=function(){ #PS primera y segunda fase
+	#for(i in 1:experimentos){
+		#expActual<<-i
+		data_input("PS")
+	#}
 }
 
 

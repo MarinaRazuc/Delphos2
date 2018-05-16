@@ -34,20 +34,21 @@ seteo=function(datos, codigo){
 	dataframe0<<-datos
 	win1=gwindow(title="FirstPhase",  visible=FALSE, width=300, height=400, parent=c(470,50))
 	group_1=ggroup(horizontal = FALSE, container=win1) #principal
-	
+	glabel("  ", container=group_1)
 	frame1=gframe(container=group_1, text="First Phase Settings", horizontal=FALSE, spacing=10, pos=0)
 	group_11=ggroup(horizontal=FALSE, container=frame1)
 	
 	group_2=ggroup(horizontal=TRUE, container=group_11) #label experiment i of n
-	print(expActual)
-	print(nroExp)
-	str1=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
-	label3=glabel("                             ", container=group_2)
+	#print(expActual)
+	#print(nroExp)
+	#str1=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
+#	label3=glabel("                             ", container=group_2)
 	label2=glabel("                             ", container=group_2)
-	label1=glabel(str1, container=group_2, width=5)
+	#label1=glabel(str1, container=group_2, width=5)
 	
 	group_3=ggroup(horizontal=FALSE, container=group_11) #general settings
 	frame2=gframe(text="General Settings", pos=0, container=group_3, horizontal=FALSE , spacing=5)
+	label3=glabel("                             ", container=group_3)
 	group_31=ggroup(horizontal=TRUE, container=frame2)
 	label4=glabel("  Percentage of Internal Validation     ", container=group_31)
 	obj_gedit1=gedit(c(75), container = group_31, width=5, coerce.with =as.numeric, 
@@ -117,8 +118,8 @@ seteo=function(datos, codigo){
 					
 	group_432=ggroup(container=group_43, horizontal=FALSE, anchor=250, value=5)
 	layout1=glayout(homogeneus=FALSE, spacing=10, container=group_432)
-	regresion=c("Linear Regression", "Non-Linear Regression", "Regression Trees", "k-Nearest Neighbours")
-	clasificacion=c("Decision Trees", "k-Nearest Neighbours")
+	regresion=c("Linear Regression", "Multilayer Perceptron", "k-Nearest Neighbours", "Random Forest", "Random Committee")
+	clasificacion=c("Multilayer Perceptron", "Random Forest", "Random Committee")
 	label432=glabel(" ")
 	combobox4321=gcombobox(regresion, selected=3, editable=FALSE)
 	combobox4322=gcombobox(clasificacion, selected=1, editable=FALSE)
@@ -353,6 +354,18 @@ comenzar_calculo=function(archivo, cod){
 				}else{
 					if(metodo=="Decision Trees"){
 						nromet=5
+					}else{
+						if(metodo=="Random Forest"){
+							nromet==8
+						}else{
+							if(metodo=="Random Committee"){
+								nromet=9
+							}else{
+								if(metodo=="Multilayer Perceptron"){
+									nromet=10
+								}
+							}
+						}
 					}
 				}	
 			}
