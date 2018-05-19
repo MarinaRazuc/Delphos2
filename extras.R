@@ -221,6 +221,7 @@ filtrado_columnas=function(A){
 ## procesar archivo de la primera fase
 #procesar(archivo_leido, archivo_de_salida)
 procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
+	ERROR=FALSE
 	print("Procesando archivo...")
 	win1=gwindow(visible=FALSE, title="Espere...", height=100, width=250, parent=c(550, 150))
 	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
@@ -252,39 +253,32 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 		
 		svalue(barra)<-svalue(barra)+1
 	}
-	
+	if(i>=largo){
+		print("ERROR. Fin de archivo.")
+		return
+	}
 	#aca debería leer las poblaciones
 
 	banderaSEP=FALSE
 	poblacion=data.frame()
 	colus=length(nombres)
 	fils=1
+	contadorERR=0
 	while(!banderaSEP){
 		#arranca una nueva poblacion
 		cols=1
-		
+		contadorERR=contadorERR+1
 		while(cols<=colus){
-			# print("fila, columna")
-			# print(fils)
-			
 			elem=as.numeric(scan2[i])
-			# print("elemento")
-			# print(elem)
 			poblacion[fils, cols]=elem
 			cols=cols+1
 			i=i+1
-
 		}#finalice un individuo
 		elem=scan2[i] #puede ser numeracion o -
-		#print("elemento nuevo")
-		#print(elem)
+		
 		pos=grep("-", elem)
-		#print(pos)
 		if(length(pos)!=0){ #es el separador
-			
 			banderaSEP=TRUE
-			
-			#banderaPOP=TRUE
 			write.table(poblacion, salida, append=TRUE)
 		}else{
 			pos=grep("V", elem)
@@ -304,9 +298,14 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			}
 		}
 		svalue(barra)<-svalue(barra)+5
+		if(contadorERR==1000000){
+			ERROR=TRUE
+			print("ERROR")
+			return
+		}
 	}
-	#i=i+colus+2 #ver , capaz q +2 no necesario
-	#i=i+colus
+	if(ERROR)
+		return
 	i=i+1
 	
 	#debo buscar los maes
@@ -314,53 +313,42 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	bandera=FALSE
 	f=1
 	
-	
+	contadorERR=0
 	while(!bandera){
+		contadorERR=contadorERR+1
 		for(m in 1:10){
-				elem=as.numeric(scan2[i])
-				# print("elem, f, m")
-				# print(elem)
-				# print(f)
-				# print(m)
-				maes[f,m]=elem
-				i=i+2 #saltear -
+			elem=as.numeric(scan2[i])
+			maes[f,m]=elem
+			i=i+2 #saltear -
 		}
 		elem=scan2[i]
-		# print("elem")
-		# print(elem)
 		pos=grep("V", elem) 
-		# print("pos")
-		# print(pos)
 		if(length(pos)!=0){ #llegue a individuos
 			i=i+colus+1
 			bandera=TRUE
 		}else{ #maes de otro individuo
-			#i=i+1
 			f=f+1
 		}
+		if(contadorERR==1000000){
+			ERROR=TRUE
+			print("ERROR")
+			return
+		}
 	}
-	
+	if(ERROR)
+		return
 	individuos=matrix(0, 20, length(nombres))#ver
 	if(bandera){#ahora busco los individuos
 		j=1
 		k=1
 		limitador=2 
 		bandera=FALSE
-		#i=i+1 #descarto el primer 1 que es de numeración
 		while(i<largo && !bandera){	
-			
 			elem=as.numeric(scan2[i])
-			# print("I")
-			# print(i)
 			if(is.na(elem)){ #llegamos a algo q no es numero
-				# print("ISNAELEM")
 				bandera=TRUE
 			}else{
-				# print("limitador")
-				# print(limitador)
 				pos=grep(limitador, elem)
-				# print("pos")
-				# print(pos)
 				if(length(pos)==0){#sigo en el individuo 
 					individuos[j,k]=elem
 					k=k+1
@@ -377,26 +365,14 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			bandera=FALSE
 			cant=length(individuos[1,])+1 #+1 por la propiedad
 			h=1
-			# print("cant")
-			# print(cant)
-			# print("h")
-			# print(h)
-			# print(h<=cant)
 			while(h<=cant){
-				# print("H")
-				# print(h)
 				nombres_desc=c(nombres_desc, scan2[i])
 				i=i+1
 				h=h+1
-				
 			}
-			#valores=matrix(0,500,length(nombres)) #ver
-			#valores=matrix()
 			valores=data.frame()
 			valor_propiedad=c()
 			i=i+1 #para saltear la numeracion
-			#print("i es:")
-			
 			h=1
 			j=1
 			k=1
@@ -404,11 +380,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			nominal=FALSE
 			while(i<largo && !bandera){
 				while(h<=cant){
-					# print("j, k")
-					# print(j) 
-					# print("I")
-					# print(i)
-					
 					if(h==cant){
 						elem=as.numeric(scan2[i])
 						if(is.na(elem)){
@@ -434,7 +405,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 					k=1
 					i=i+1 #para saltear la numeracion
 				}
-				
 			}
 			if(nominal)
 				valor_propiedad=as.factor(valor_propiedad)
@@ -442,7 +412,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			###########################
 			if(bandera){#debo leer externa
 				i=i+cant+2 #salteo nombres, separadores y primera numeracion
-				
 				externa=data.frame()
 				valor_prop=c()
 				j=1
@@ -451,8 +420,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 				bandera=FALSE
 				
 				while(i<=largo && !bandera){
-					# print("I")
-					# print(i)
 					while(h<=cant){
 						elem=as.numeric(scan2[i])
 						if(h==cant){
@@ -574,8 +541,9 @@ buscar_individuos=function(scan1){
 	bandera=FALSE
 	individuos=data.frame()
 	I_inicial=0
+	len_scan=length(scan1)
 	
-	while(!bandera){
+	while(i<=len_scan && !bandera){
 		elem=scan1[i]
 		pos=grep("V", elem)
 		if(length(pos)!=0){ #es un nombre V*
@@ -584,19 +552,19 @@ buscar_individuos=function(scan1){
 		}else{#llegue a las poblaciones
 			bandera=TRUE
 		}
+		if(i>=len_scan){
+			print("ERROR. Fin de archivo.")
+			return
+		}
 	}
-	
-	# print("ELEM")
-	# print(scan1[i])
-	
 	fin=FALSE
 	popus=0
 	if(bandera){
 		#tengo que saltear las poblaciones
 		bandera=FALSE
-		while(!fin){
+		while(i<=len_scan && !fin){
 			popus=popus+1
-			while(!bandera){
+			while(i<=len_scan && !bandera){
 				i=i+largo+1 #creo
 				elem=scan1[i]
 						
@@ -604,6 +572,11 @@ buscar_individuos=function(scan1){
 				if(length(pos)!=0){ #se termino la poblacion
 					
 					bandera=TRUE
+				}
+				
+				if(i>=len_scan){
+					print("ERROR. Fin de archivo.")
+					return
 				}
 			}
 			if(bandera){
@@ -623,6 +596,10 @@ buscar_individuos=function(scan1){
 					fin=TRUE
 				}
 			}
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
+			}
 		}
 		I_inicial=i
 		#busco el primer individuo
@@ -634,7 +611,7 @@ buscar_individuos=function(scan1){
 			}
 			#saltear hasta la marca ---
 			saltee=FALSE
-			while(!saltee){
+			while(i<=len_scan && !saltee){
 				elem=scan1[i]
 				pos=grep("-",elem)
 				if(length(pos)!=0){ #la encontre
@@ -642,6 +619,10 @@ buscar_individuos=function(scan1){
 					i=i+1
 				}else{
 					i=i+1
+				}
+				if(i>=len_scan){
+					print("ERROR. Fin de archivo.")
+					return
 				}
 			}
 		}
@@ -663,7 +644,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	glabel(" ", container=grupo1)
 	barra=gprogressbar(container=grupo1)
 	visible(win1)=TRUE
-
+	len_scan=length(scan1)
 	nombres=c()
 	i=ipobl #parado en el primer individuo
 	j=1
@@ -683,7 +664,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 		clase="num"
 	}
 	
-	while(!bandera){ #hasta que no saltee todos los individuos
+	while(i<=len_scan && !bandera){ #hasta que no saltee todos los individuos
 		p=1
 		i=i+cant #me paro en coef o porc
 		
@@ -693,42 +674,60 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			elem=as.numeric(scan1[i])
 			#print(elem)
 			#print(is.na(elem))
-			while(is.na(as.numeric(scan1[i]))){
+			while(i<=len_scan && is.na(as.numeric(scan1[i]))){
 				i=i+1
+			}
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
 			}
 			porcentaje[j]=scan1[i]
 			i=i+1
-			while(is.na(as.numeric(scan1[i]))){
+			while(i<=len_scan && is.na(as.numeric(scan1[i]))){
 				i=i+1
+			}
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
 			}
 			mae[j]=scan1[i]
 			i=i+1
-			while(length(grep("ROC", scan1[i]))==0){
+			while(i<=len_scan && length(grep("ROC", scan1[i]))==0){
 				i=i+1
+			}
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
 			}
 			i=i+2
 			elem=scan1[i]
-			while(length(grep("-", elem))==0){
+			while(i<=len_scan && length(grep("-", elem))==0){
 				rocarea[r,p]=elem
 				p=p+1
 				i=i+1
 				elem=scan1[i]
 			}
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
+			}
 			r=r+1
 		}else{#numerico
-			#print("ES NUMERICO")
-			#print("elem num")
-			#print(scan1[i])
-			while(is.na(as.numeric(scan1[i]))){
+			while(i<=len_scan && is.na(as.numeric(scan1[i]))){
 				i=i+1
 			}
-			#print(scan1[i])
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
+			}
 			coefi[j]=scan1[i]
 			i=i+1
-			#print("siguiente")
-			#print(scan1[i])
-			while(is.na(as.numeric(scan1[i]))){
+			while(i<=len_scan && is.na(as.numeric(scan1[i]))){
 				i=i+1
+			}
+			if(i>=len_scan){
+				print("ERROR. Fin de archivo.")
+				return
 			}
 			#print(scan1[i])
 			mae[j]=scan1[i]
@@ -741,6 +740,10 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			bandera=TRUE
 		}else{
 			j=j+1
+		}
+		if(i>=len_scan){
+			print("ERROR. Fin de archivo.")
+			return
 		}
 	}
 	
@@ -761,7 +764,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	cant2=cant+1
 	bandera=FALSE
 	
-	while(!bandera){
+	while(i<=len_scan && !bandera){
 		svalue(barra)<-svalue(barra)+5
 		for(d in 1:cant2){
 			if(d!=cant2){
@@ -781,13 +784,13 @@ nombres_descriptores=function(scan1, cant, ipobl){
 		
 		elem=as.numeric(scan1[i])
 		if(is.na(elem)){ #llegue a "subconjunto"
-			print("elemento")
-			print(elem)
-			print(scan1[i])
 			bandera=TRUE
 		}
 	}
-	
+	if(i>=len_scan){
+		print("ERROR. Fin de archivo.")
+		return
+	}
 	todos_maes=data.frame()
 	#buscar maes
 	nume=1
@@ -827,6 +830,7 @@ mostrar_resultados=function(archivo){
 	cant_desc=proceso1$largo
 	ipobl=proceso1$I
 	
+	
 	proceso2=nombres_descriptores(scan1, cant_desc, ipobl)
 	nombres_desc=proceso2$nombres
 	valores=proceso2$valores
@@ -858,9 +862,10 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
-	names(valores)=nombres_desc
 	
+	names(valores)=nombres_desc
 	maxj=length(maes)
+	
 	for(j in 1:maxj){
 		h=as.numeric(maes[j])
 		maes[j]=signif(h, digits=6)
@@ -897,17 +902,28 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	grupo2=ggroup(horizontal=FALSE, spacing=5, width=500, height=200, use.scrollwindow = TRUE)
 	glabel(" ", container=grupo2)
 	
+	num=length(individuos[1,])
+	indices="	   "
+	for(i in 1:num){
+		indices=paste(paste0(indices, i), "		 ")
+	}
+	#gtemp=ggroup(container=grupo2, horizontal=TRUE)
+	#glabel(indices, container=gtemp)
+	
 	card=c()
 	for(i in 1:cant){
 		str2=paste0(" ", i)
 		str2=paste(str2," ")
 		
 		maxcols=card[i]=cardinalidad(individuos[i,])
+		
 		gtemp=ggroup(container=grupo2, horizontal=TRUE)
-		for(j in 1:maxcols){
-			str2=paste(str2, seleccionados[i,j])
+		for(j in 1:num){
+			str2=paste(str2, paste("", paste0(j, paste(")", paste(seleccionados[i,j], "  ")))))
+			
 		}
-		str2=paste(str2, " ")
+		str2=paste(str2, "  ")
+		print(str2)
 		glabel(str2, container=gtemp)
 	}
 	lay2[1:15, 1:100]=grupo2
@@ -921,7 +937,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
-						ventana_mae(maes, todos)
+						ventana_mae(todos, maes)
 					}, width=15)
 	botoncoef=gbutton(" Ver Coef.Corr. ", handler=function(h, ...){
 											ventana_coef(coefs)
@@ -1019,7 +1035,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	
 	botonmae=gbutton(" Ver MAE ",
 					handler=function(h,...){
-						ventana_mae(maes, todos)
+						ventana_mae(todos, maes)
 					})
 	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
@@ -1049,7 +1065,6 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	glabel(" ", container=grupo5)
 	
 	visible(win1)=TRUE	
-	
 	
 	#VER LO DE LAS MATRICES DE CONFUSION
 	#por cada individuo
@@ -1092,43 +1107,21 @@ ventana_coef=function(coefis){
 	 
 }
 
-ventana_mae=function(segunda, primera){
-	# nuevomae=data.frame()
-	# cant=length(maes)
-	# for(i in 1:cant){
-		# nuevomae[i,1]=i
-		# nuevomae[i,2]=maes[i]
-	# }
-	names(primera)=c("subconjunto", "MAE")
-	names(segunda)=c("subconjunto", "MAE")
-
+ventana_mae=function(todos, maes){
+	 nuevomae=data.frame()
+	 cant=length(maes)
+	 for(i in 1:cant){
+		 nuevomae[i,1]=i
+		 nuevomae[i,2]=maes[i]
+	 }
+	names(todos)=c("subconjunto", "MAE")
+	names(nuevomae)=c("subconjunto", "MAE")
 	x11(width=80, height=50, title="MAE")
-	# print(ggplot(data=primera, aes(x=subconjunto, y=MAE))  + 
-		# geom_boxplot(color="transparent") + geom_jitter()
-	# )
-
+	mayor=buscar_mayor(todos, maes)
 	
-		# stat_summary(data=segunda, geom="point", shape=18,
-		# size=3, color="red" , fun.y="x=y") 
-	
-	#print(boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
-	mayor=buscar_mayor(primera, segunda)
-	print("mayor")
-	print(mayor)
-	print("length(segunda[,1]")
-	print(length(segunda[,1]))
-	
-	boxplot(MAE~subconjunto,  data=primera, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(segunda[,1])+1), ylim=c(0,mayor+0.2))
+	boxplot(MAE~subconjunto,  data=todos, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(nuevomae[,1])+1), ylim=c(0,mayor+0.3))
 	par(new=TRUE)
-	plot(segunda, axes=FALSE, col="blue", type="p", xlim=c(0, length(segunda[,1])+1), ylim=c(0,mayor+0.2), main="MAE - Primera y Segunda Fase")
-	#print(ggplot(segunda, aes(x=subconjunto, y=MAE))  + geom_point(aes(colour=subconjunto), size=4))
-	#ggplot(segunda, aes(x=subconjunto, y=MAE))  + geom_point(aes(colour=subconjunto), size=4)
-
-	#print(plot(nuevomae))
-	#print(ggplot(nuevomae, aes(x=subconjuntos, y=MAE))   + geom_point(aes(colour=MAE), size=4))
-	
-	#geom_line(aes(colour=MAE, group=MAE))
-	
+	plot(nuevomae, axes=FALSE, col="blue", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(0,mayor+0.3), main="MAE - Primera y Segunda Fase")
 }
 
 buscar_mayor=function(pri, seg){
@@ -1141,9 +1134,9 @@ buscar_mayor=function(pri, seg){
 		}
 	}
 	
-	largo=length(seg[,2])
+	largo=length(seg)
 	for(j in 1:largo){
-		elem=seg[j,2]
+		elem=seg[j]
 		if(elem>mayor)
 			mayor=elem
 	}
@@ -1192,8 +1185,6 @@ ventana_casos=function(porc){
 	print(nuevo)
 	x11(width=2000, height=1000, title="Porcentaje de casos correctamente clasificados");
 	print(ggplot(nuevo, aes(x=subconjuntos, y=Porc_Casos_Correctos))   + geom_point(aes(colour=Porc_Casos_Correctos), size=4))
-	
-
 }
 
 #

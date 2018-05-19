@@ -53,16 +53,6 @@ ventana_fase_dos=function(archivo){
 	editS=gedit("5", container=group0, width=4)
 	glabel(" ", container=frame1)
 	
-	# grupoT=ggroup(container=frame1, horizontal=TRUE, spacing=5)
-	# labelT=glabel("  Modelos a construir por subconjunto: ", container=grupoT)
-	# editT=gedit("2", container=grupoT, width=4)
-	# glabel(" ", container=frame1)
-	
-	# group9=ggroup(container=frame1, horizontal=TRUE, spacing=5)
-	# labelI=glabel("  Cantidad de intentos por subconjunto:", container=group9)
-	# editI=gedit("4", container=group9, width=4)
-	# glabel(" ", container=frame1)
-	
 	group1=ggroup(horizontal = FALSE, container=frame1, spacing=10) #seleccionar metodo
 	#glabel("  ", container=group1)
 	group11=ggroup(horizontal=TRUE, container=group1, spacing=5)
@@ -72,7 +62,7 @@ ventana_fase_dos=function(archivo){
 	# str3="(Se utilizará junto con Stacking de Weka) "
 	# str3=iconv(str3, from="UTF-8", to="UTF-8")
 	# label3=glabel(str3, container=group11)
-	radio1 = gradio(c("RandomCommittee","RandomForest", "REPTree"), container=group1, 
+	radio1 = gradio(c("RandomCommittee","RandomForest"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)
 							#print(valor)
@@ -114,10 +104,7 @@ ventana_fase_dos=function(archivo){
 						}else{
 							if(valor=="RandomForest"){
 								metodoSF<<-"RF"
-							}else{
-								metodoSF<<-"RP"
-							}
-							  
+							} 
 						}
 						if(svalue(editS)==0){
 							gmessage("La cantidad de subconjuntos debe ser mayor a 0", icon=error)
@@ -160,10 +147,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	
 	g=1
 	for(i in 1:iteras){
-		
-		#cargo maes en grafico
-		#pri=(i-1)*10+1
-		#ult=(i-1)*10+10
 		ult=g+10
 		colu=1
 		while(colu<11){
@@ -181,8 +164,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		write(individuo, salida, append=TRUE)
 		
 		modelo=construirModelo(IF ,metodoSF)
-		
-		
+				
 		if(clase=="numeric"){
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF)
 			corcoef=evalF2$details[1]
@@ -191,8 +173,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			grafico[g, 2]=mae
 			grafico[g,3]="S"
 			g=g+1
-			# print("grafico")
-			# print(grafico)
 			print("---------------------")
 			str1=iconv("Coeficiente de Correlación", from="UTF-8", to="UTF-8")
 			print(str1)
@@ -276,16 +256,9 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 
 #construirModelo(datos)
 construirModelo=function(datos, metodo){
-	# print("dim de datos")
-	# print(dim(datos))
 	largo=dim(datos)[2]
-	# print(largo)
 	ultimo=names(datos)[largo]
-	# print("ultimo nombre")
-	# print(ultimo)
 	elemu=datos[1,largo]
-	# print("ultimo elemento")
-	# print(elemu)
 	names(datos)[1]="V0"
 	fmla=as.formula(paste(ultimo,"~."))
 	
@@ -308,7 +281,6 @@ construirModelo=function(datos, metodo){
 
 #ordenar(soluciones, valores_soluciones)
 ordenar=function(sols, resus){
-
 	cols=ncol(sols)
 	filas=nrow(sols)
 	ordenados=matrix(0,filas,cols )
@@ -330,13 +302,9 @@ ordenar=function(sols, resus){
 		claves[j,2]=mayor
 		ordenados[j,]=sols[indice_mayor, ]
 	}
-	
-	
 	resultado=list()
 	resultado$individuos_ordenados=ordenados
 	resultado$valores_ordenados=claves
 	
 	resultado
-	
-
 }

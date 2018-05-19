@@ -94,13 +94,9 @@ seteo=function(datos, codigo){
 				handler=function(h, ...){
 					#maxSelectVars<<-svalue(obj_gedit44)
 				} )
-	
 	 
 	group_43=ggroup(container=group_4, horizontal=TRUE, width=500)
-	#glabel("grupo 43", container=group_43)
 	group_431=ggroup(container=group_43, horizontal=FALSE, width=250)
-	#glabel("grupo 431", container=group_431)
-	#glabel("grupo 432", container=group_432)
 	
 	label431=glabel("Function:", container=group_431)
 	radio431 = gradio(c("Regression","Classification"), container=group_431, 
@@ -118,11 +114,11 @@ seteo=function(datos, codigo){
 					
 	group_432=ggroup(container=group_43, horizontal=FALSE, anchor=250, value=5)
 	layout1=glayout(homogeneus=FALSE, spacing=10, container=group_432)
-	regresion=c("Linear Regression", "Multilayer Perceptron", "k-Nearest Neighbours", "Random Forest", "Random Committee")
-	clasificacion=c("Multilayer Perceptron", "Random Forest", "Random Committee")
+	regresion=c("Linear Regression", "Multilayer Perceptron", "k-Nearest Neighbours", "Random Forest", "Random Committee", "Regression Tree")
+	clasificacion=c("Multilayer Perceptron", "Random Forest", "Random Committee", "k-Nearest Neighbours", "Decision Trees")
 	label432=glabel(" ")
-	combobox4321=gcombobox(regresion, selected=3, editable=FALSE)
-	combobox4322=gcombobox(clasificacion, selected=1, editable=FALSE)
+	combobox4321=gcombobox(regresion, selected=4, editable=FALSE)
+	combobox4322=gcombobox(clasificacion, selected=2, editable=FALSE)
 #	add(layout1, combobox4321, fill = 'x', anchor = 100)
 #	add(layout1, combobox4322, fill = 'x', anchor = 100)
 	layout1[1,1]<-label432
