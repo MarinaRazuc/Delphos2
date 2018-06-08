@@ -335,7 +335,7 @@ comenzar_calculo=function(archivo, cod){
 		clase<<-"nom"
 	}
 
-	 
+	nromet=8
 	if(metodo=="Linear Regression"){
 		nromet=1
 	}else{

@@ -163,7 +163,12 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		write("---", salida, append=TRUE)
 		write(individuo, salida, append=TRUE)
 		
-		modelo=construirModelo(IF ,metodoSF)
+		modelo=tryCatch(construirModelo(IF ,metodoSF), 
+					error=function(e){
+						gmessage("Error al calcular el modelo. ", icon="error")
+						stop()
+					}
+				)
 				
 		if(clase=="numeric"){
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF)

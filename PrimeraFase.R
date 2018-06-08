@@ -38,9 +38,13 @@ calcular_maes=function(archivo, metodo, interna, soluciones){
 	cant=nrow(soluciones)
 	num=length(soluciones[1,])-1
 	
+	print("interna")
+	print(interna[1])
+	print(class(interna[1]))
+	
 	for(i in 1:cant){
 		datos=filtrar(interna, soluciones[i,])
-						 
+		print(class(datos[i]))	 
 		if(metodo==1){ #speedglm
 			for(j in 1:10){
 				partes=partir(datos, 0.75, j)

@@ -42,7 +42,8 @@ construir_modelo=function(metodo, datos){
 							}else{
 								if(metodo==8){
 									B=proc.time()
-									resultado=randomForest(datos)
+									#resultado=randomForest(datos)
+									resultado=randomForestStacking(datos)
 									print(proc.time()-B)
 								}else{
 									if(metodo==9){
@@ -71,6 +72,22 @@ construir_modelo=function(metodo, datos){
 	
 	resultado
 
+}
+
+
+
+randomForestStacking=function(datos){
+	print("Random Forest Stacking")
+	modelo=Stacking(formula=V1~., data=datos, 
+					control=Weka_control(
+								M="weka.classifiers.trees.RandomTree",
+								X=10,
+								S=2,
+								B="weka.classifiers.trees.RandomForest", #B="weka.classifiers.lazy.IBk",
+								num_slots=2
+							)
+					)
+	modelo
 }
 
 multilayer=function(datos){

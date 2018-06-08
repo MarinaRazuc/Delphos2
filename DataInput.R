@@ -122,86 +122,138 @@ data_input=function(cod){
 
 #carga_y_control
 carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){ 
-	bandera=TRUE
+	bandera<<-FALSE
+	print(A1)
+	print(A2)
+	print(A3)
 	
-	if(A2!="Ingrese archivo"){
+	if(A2!="Ingrese archivo" && A2!=""){
 		if(length(c2!=0)){
 			sep=";"
 		}else{
 			sep=" "
 		}
 		
-		propi=read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=",")
-		clase=class(propi[1,1])
-		
-		if(clase=="numeric"){
-			propiedad<<-read.csv(A2, sep, header=FALSE, dec=deci, stringsAsFactors=FALSE) #dec=",",
-		}else{
-			if(clase=="character"){
-				propiedad<<-read.csv(A2, sep, header=FALSE)
+		propi=tryCatch(read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=","), 
+						error=function(e){
+							print("Error en la lectura del archivo")
+							print(e)
+							bandera<<-TRUE
+							gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+						}
+					)
+		if(!bandera){
+			clase=class(propi[1,1])
+			
+			if(clase=="numeric"){
+				propiedad<<-tryCatch(read.csv(A2, sep, header=FALSE, dec=deci, stringsAsFactors=FALSE), 
+								error=function(e){
+									print("Error en la lectura del archivo")
+									print(e)
+									bandera<<-TRUE
+									gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+								}
+							) 
 			}else{
-				
-			}
-		}
-				
-		if(A1!="Ingrese archivo"){
-			if(length(c1)!=0){
-				sep=";"
-			}else{
-				sep=" "
-			} 
-			descriptores<<-read.csv(A1, sep, dec=deci, header=FALSE, stringsAsFactors=FALSE) #stringsAsFactors=FALSE ---> VER
-			if(A3!="Ingrese archivo"){
-				if(length(c3)!=0){
-					sep=";"
-				}else{
-					sep=" "
+				if(clase=="character"){
+					propiedad<<-tryCatch(read.csv(A2, sep, header=FALSE), 
+								error=function(e){
+									print("Error en la lectura del archivo")
+									print(e)
+									bandera<<-TRUE
+									gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+								}
+							)
 				}
-				nombresD<<-read.csv(A3, sep, header=FALSE)
-			}else{
-				nombresD<<-data.frame()
 			}
-		}else{
-			gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
-			bandera=FALSE
+			if(!bandera){
+				if(A1!="Ingrese archivo" && A1!=""){
+					if(length(c1)!=0){
+						sep=";"
+					}else{
+						sep=" "
+					} 
+					descriptores<<-tryCatch(read.csv(A1, sep, dec=deci, header=FALSE, stringsAsFactors=FALSE), 
+										error=function(e){
+											print("Error en la lectura del archivo")
+											print(e)
+											gmessage("Error, ingrese archivo con los valores correspondientes a los descriptores.", icon="error")
+											bandera<<-TRUE
+										}
+								)
+					if(!bandera){
+						if(A3!="Ingrese archivo" && A3!=""){
+							if(length(c3)!=0){
+								sep=";"
+							}else{
+								sep=" "
+							}
+							nombresD<<-tryCatch(read.csv(A3, sep, header=FALSE), 
+											error=function(e){
+												print(e)
+												nombresD<<-data.frame()
+											}
+										)
+						}
+					}else{
+						nombresD<<-data.frame()
+					}
+				}
+			}else{
+				gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+				bandera<<-TRUE
+			}
 		}
 	}else{
 			gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
-			bandera=FALSE
+			bandera<<-TRUE
 	}
 
 	#	dataframes: descriptores, propiedad, nombresD y nombresP
 	# 	nombresD y nombresP tal vez no estén, no son necesarios
 
-	dims=c()
-	
-	dims[1]=dim(descriptores)[1] #filas
-	dims[2]=dim(descriptores)[2] #columnas
-	
-	dims[3]=dim(propiedad)[1]
-	dims[4]=dim(propiedad)[2] #1 o 0
-	
-	dims[5]=dim(nombresD)[1]
-	dims[6]=dim(nombresD)[2] #1 o 0
-	
-	if(dims[1] != dims[3]){
-		gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores")
-		bandera=FALSE
-	}else{ #todo ok
-		if(dims[5]!=0){ #hay algo en el df nombresD
-			if(dims[2]!=dims[5]){
-				bandera=FALSE
-				gmessage("Error, la cantidad de nombres de descriptores no coincide con la cantidad de descriptores disponibles.", icon="error")
-			}else{
-				if(dims[6]!=1){
-					gmessage("Error en el formato del vector de nombres de descriptores.", icon="error")
-					bandera=FALSE
+	if(!bandera){
+		dims=c()
+		
+		dims[1]=dim(descriptores)[1] #filas
+		dims[2]=dim(descriptores)[2] #columnas
+		
+		dims[3]=dim(propiedad)[1]
+		dims[4]=dim(propiedad)[2] #1 o 0
+		
+		dims[5]=dim(nombresD)[1]
+		dims[6]=dim(nombresD)[2] #1 o 0
+		
+		print("dimensiones")
+		print("descriptores")
+		print(dims[1])
+		print(dims[2])
+		print("propiedad")
+		print(dims[3])
+		print(dims[4])
+		print("nombres")
+		print(dims[5])
+		print(dims[6])
+		
+		if(dims[1] != dims[3]){
+			gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores", icon="error")
+			bandera=TRUE
+		}else{ #todo ok
+			if(dims[5]!=0){ #hay algo en el df nombresD
+				if(dims[2]!=dims[5]){
+					bandera=TRUE
+					gmessage("Error, la cantidad de nombres de descriptores no coincide con la cantidad de descriptores disponibles.", icon="error")
+				}else{
+					if(dims[6]!=1){
+						gmessage("Error en el formato del vector de nombres de descriptores.", icon="error")
+						bandera=TRUE
+					}
 				}
 			}
+			if(!bandera){
+				cartel_data_loaded(win2, dims, cod)
+			}	
 		}
-		if(bandera){
-			cartel_data_loaded(win2, dims, cod)
-		}	
 	}
 }
 	

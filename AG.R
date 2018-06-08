@@ -73,15 +73,12 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 		ERRORES<<-ERRORES +1
 		resu_F2=1000  #numero grande porque marca el error
 		if(ERRORES>3){
-			return
+			gmessage("Error en la construcción del modelo.", icon="error")
+			stop()
 		}
 	}
 	resu_F2
- #	write(eval$string, file=paste0('Resultados_',N))
- 	#scan(file = 'Resultado_LR.txt', what = 'char', sep = "\n")
 }
-
-
 
 
 F2_clasif=function(modelo, datosTfiltro){
@@ -140,9 +137,11 @@ F2=function(P, testeoFiltrado){
 
 fitness1=function(individuo, ...){
 	resultado<-fitness_real(individuo, metodoG, entrenamientoG, testeoG, alphaG, pmG)
+	if(resultado==1000){
+		return
+	}	
 
 	PromFit<<-PromFit+resultado
-		
 	resultado
 }
 
@@ -156,7 +155,11 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 		FAG=0.000001 #probando
 	}else{
 		efe2<-precision_2(metodo, entrenamiento, testeo, individuo)
-		
+		if(efe2==1000){
+			FAG=1000
+			print("Error")
+			return
+		}
 		#FAG=aF2+(1-a)F2F1/pm
 		frac=efe1/pm
 		FAG=alpha*efe2+(1-alpha)*efe2*frac
@@ -179,34 +182,20 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 # cada individuo tiene nro_desc cantidad de cromosomas
 # cada individuo tiene max cantidad de cromosomas seteados a 1
 generar_poblacion_inicial=function(nro_desc, popSize, maximo ){ 
-	
-#	print("Generar población")
 	pop=matrix(nrow=popSize, ncol=nro_desc)
-
 	for (i in 1:popSize){
-		
 		ind=runif(nro_desc, 0, 1)
 		ind=round(ind)
-		
 		if(cardinalidad(ind) > maximo){
 			ind=ajustar(ind, maximo)
 		}
-		
 		if(nro_desc==maximo){
 			if(cardinalidad(ind)>(nro_desc/2)){
-				
 				ind=ajustar(ind, maximo)		#MM
 			}
 		}
-		#print(ind)
-		#ind[nro_desc+1]=1 #para tomar la propiedad
 		pop[i,]=ind
-		#print("Nuevo individuo")
 	} 
-	#print(proc.time()-gp)
-	#print("Ya genere la poblacion.")
-#	write("poblacion inicial", file="poblaciones.csv", append=TRUE)
-#	write.table(pop, file="poblaciones.csv", append=TRUE)
 	pop
 }
 
@@ -340,7 +329,6 @@ comparar_individuos=function(individuoA, individuoB){
 			cant=cant+1
 		}
 	}
-
 	cant
 }
 
@@ -350,16 +338,13 @@ realizar_torneo=function(torneo, fit_vals){
 	indice=1
 	mejor=0 #ver
 	largo=length(torneo)
-	
 	for(i in 1:largo){
 		valor=fit_vals[torneo[i]]
-		
 		if(valor>mejor){
 			mejor=valor
 			indice=torneo[i]
 		}
 	}
-
 	indice
 }
 
