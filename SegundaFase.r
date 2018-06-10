@@ -39,12 +39,8 @@ ventana_fase_dos=function(archivo){
 	
 	group200=ggroup(horizontal=TRUE, container=frame1, spacing=15)#experiment i of n 
 	lay0=glayout(container=group200)
-	#stri=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
-	#label0=glabel(stri, width=10)
-	#lay0[1:3, 25:30]=label0
 	ggroup(container=frame1)
 	
-	#ggroup(container=frame1)
 	glabel(" ", container=frame1)
 	group0=ggroup(horizontal=TRUE, container=frame1, spacing=5) #max cant subconjs
 	
@@ -54,14 +50,10 @@ ventana_fase_dos=function(archivo){
 	glabel(" ", container=frame1)
 	
 	group1=ggroup(horizontal = FALSE, container=frame1, spacing=10) #seleccionar metodo
-	#glabel("  ", container=group1)
 	group11=ggroup(horizontal=TRUE, container=group1, spacing=5)
 	str2="  Seleccione método para la segunda fase: "
 	str2=iconv(str2, from="UTF-8", to="UTF-8")
 	label1=glabel(str2 , container=group11)
-	# str3="(Se utilizará junto con Stacking de Weka) "
-	# str3=iconv(str3, from="UTF-8", to="UTF-8")
-	# label3=glabel(str3, container=group11)
 	radio1 = gradio(c("RandomCommittee","RandomForest"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)

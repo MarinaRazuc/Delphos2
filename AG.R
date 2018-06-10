@@ -62,7 +62,6 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 		if(funcionFitnessG=="num"){
 		#	p <- proc.time()
 			resu_F2<-F2(modelo, datosTfiltro)
-			
 			#print(proc.time()-p)
 		}else{
 		#	p <- proc.time()
@@ -137,10 +136,6 @@ F2=function(P, testeoFiltrado){
 
 fitness1=function(individuo, ...){
 	resultado<-fitness_real(individuo, metodoG, entrenamientoG, testeoG, alphaG, pmG)
-	if(resultado==1000){
-		return
-	}	
-
 	PromFit<<-PromFit+resultado
 	resultado
 }
@@ -155,11 +150,6 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 		FAG=0.000001 #probando
 	}else{
 		efe2<-precision_2(metodo, entrenamiento, testeo, individuo)
-		if(efe2==1000){
-			FAG=1000
-			print("Error")
-			return
-		}
 		#FAG=aF2+(1-a)F2F1/pm
 		frac=efe1/pm
 		FAG=alpha*efe2+(1-alpha)*efe2*frac

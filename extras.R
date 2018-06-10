@@ -250,15 +250,13 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			bandera=TRUE
 		}
 		i=i+1
-		
 		svalue(barra)<-svalue(barra)+1
 	}
 	if(i>=largo){
 		print("ERROR. Fin de archivo.")
-		return
+		stop()
 	}
 	#aca debería leer las poblaciones
-
 	banderaSEP=FALSE
 	poblacion=data.frame()
 	colus=length(nombres)
@@ -267,7 +265,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	while(!banderaSEP){
 		#arranca una nueva poblacion
 		cols=1
-		contadorERR=contadorERR+1
 		while(cols<=colus){
 			elem=as.numeric(scan2[i])
 			poblacion[fils, cols]=elem
@@ -282,7 +279,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			write.table(poblacion, salida, append=TRUE)
 		}else{
 			pos=grep("V", elem)
-			
 			if(length(pos)!=0){ #comienza una nueva poblacion
 				write.table(poblacion, salida, append=TRUE)
 				write("---", salida, append=TRUE)
@@ -291,21 +287,20 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 				i=i+colus+1
 				fils=1
 				cols=1
-			}else{#comienza un nuevo individuo
+			}else{#comienza un nuevo individuo de la poblacion
 				fils=fils+1
 				i=i+1#salteo numeracion
 				cols=1
 			}
 		}
 		svalue(barra)<-svalue(barra)+5
-		if(contadorERR==1000000){
-			ERROR=TRUE
-			print("ERROR")
-			return
+		if(i>largo){
+			print("ERROR 1")
+			stop()
 		}
 	}
-	if(ERROR)
-		return
+	if(i>largo)
+		stop()
 	i=i+1
 	
 	#debo buscar los maes
@@ -329,14 +324,13 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 		}else{ #maes de otro individuo
 			f=f+1
 		}
-		if(contadorERR==1000000){
-			ERROR=TRUE
-			print("ERROR")
-			return
+		if(i>largo){
+			print("ERROR 2")
+			stop()
 		}
 	}
-	if(ERROR)
-		return
+	#print("maes")
+	#print(maes)
 	individuos=matrix(0, 20, length(nombres))#ver
 	if(bandera){#ahora busco los individuos
 		j=1
@@ -360,7 +354,8 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			}
 			i=i+1
 		}
-		
+		#print("individuos")
+		#print(individuos)
 		if(bandera){
 			bandera=FALSE
 			cant=length(individuos[1,])+1 #+1 por la propiedad
@@ -370,6 +365,8 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 				i=i+1
 				h=h+1
 			}
+			#print("nombres")
+			#print(nombres)
 			valores=data.frame()
 			valor_propiedad=c()
 			i=i+1 #para saltear la numeracion
@@ -554,7 +551,7 @@ buscar_individuos=function(scan1){
 		}
 		if(i>=len_scan){
 			print("ERROR. Fin de archivo.")
-			return
+			stop()
 		}
 	}
 	fin=FALSE
@@ -576,7 +573,7 @@ buscar_individuos=function(scan1){
 				
 				if(i>=len_scan){
 					print("ERROR. Fin de archivo.")
-					return
+					stop()
 				}
 			}
 			if(bandera){
@@ -598,7 +595,7 @@ buscar_individuos=function(scan1){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 		}
 		I_inicial=i
@@ -622,7 +619,7 @@ buscar_individuos=function(scan1){
 				}
 				if(i>=len_scan){
 					print("ERROR. Fin de archivo.")
-					return
+					stop()
 				}
 			}
 		}
@@ -679,7 +676,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 			porcentaje[j]=scan1[i]
 			i=i+1
@@ -688,7 +685,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 			mae[j]=scan1[i]
 			i=i+1
@@ -697,7 +694,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 			i=i+2
 			elem=scan1[i]
@@ -709,7 +706,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 			r=r+1
 		}else{#numerico
@@ -718,7 +715,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 			coefi[j]=scan1[i]
 			i=i+1
@@ -727,7 +724,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 			}
 			if(i>=len_scan){
 				print("ERROR. Fin de archivo.")
-				return
+				stop()
 			}
 			#print(scan1[i])
 			mae[j]=scan1[i]
@@ -743,7 +740,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 		}
 		if(i>=len_scan){
 			print("ERROR. Fin de archivo.")
-			return
+			stop()
 		}
 	}
 	
@@ -789,7 +786,7 @@ nombres_descriptores=function(scan1, cant, ipobl){
 	}
 	if(i>=len_scan){
 		print("ERROR. Fin de archivo.")
-		return
+		stop()
 	}
 	todos_maes=data.frame()
 	#buscar maes

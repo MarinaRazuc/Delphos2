@@ -38,13 +38,8 @@ calcular_maes=function(archivo, metodo, interna, soluciones){
 	cant=nrow(soluciones)
 	num=length(soluciones[1,])-1
 	
-	print("interna")
-	print(interna[1])
-	print(class(interna[1]))
-	
 	for(i in 1:cant){
 		datos=filtrar(interna, soluciones[i,])
-		print(class(datos[i]))	 
 		if(metodo==1){ #speedglm
 			for(j in 1:10){
 				partes=partir(datos, 0.75, j)
@@ -84,7 +79,7 @@ calcular_maes=function(archivo, metodo, interna, soluciones){
 			modelo=construir_modelo(metodo, datos)
 			for(j in 1:10){
 				eval1=evaluate_Weka_classifier(object=modelo, numFolds=10, seed=j)
-				mae=eval1$details[2]
+				mae=as.numeric(eval1$details[2])
 				write("-", archivo ,append=TRUE)
 				write(mae, archivo, append=TRUE)
 			}
