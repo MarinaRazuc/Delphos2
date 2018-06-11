@@ -37,7 +37,6 @@ iniciar=function(){
 	#obj_gedit=gedit(c(1), container = group1, width=3, coerce.with =as.numeric, handler=function(h,...){ cantExp(svalue(obj_gedit)) })
 	#lay1[2,1:5]=group1
 	
-	
 	group2=ggroup(horizontal = FALSE, spacing=15)
 	lay2=glayout(container=group2)
 	

@@ -171,9 +171,9 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 					if(length(c1)!=0){
 						sep=";"
 					}else{
-						sep=" "
+						sep=","
 					} 
-					descriptores<<-tryCatch(read.csv(A1, sep, dec=deci, header=FALSE, stringsAsFactors=FALSE), 
+					descriptores<<-tryCatch(read.csv(file=A1, sep=sep, dec=deci, header=FALSE, stringsAsFactors=FALSE), 
 										error=function(e){
 											print("Error en la lectura del archivo")
 											print(e)
@@ -217,7 +217,9 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 		
 		dims[1]=dim(descriptores)[1] #filas
 		dims[2]=dim(descriptores)[2] #columnas
-		
+		print("_________")
+		print(class(descriptores[1,1]))
+		print("_________")
 		dims[3]=dim(propiedad)[1]
 		dims[4]=dim(propiedad)[2] #1 o 0
 		

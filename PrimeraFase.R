@@ -27,12 +27,12 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 		soluciones[i,]=algogenet$individuo	
 	}
 	
-	calcular_maes(archivo, metodo, interna, soluciones)	
+	calcular_maes(archivo, metodo, interna, soluciones, clase_propiedad)	
 	print(proc.time()-m)
 	soluciones
 }
 
-calcular_maes=function(archivo, metodo, interna, soluciones){
+calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 	print("Calculando errores...")
 	
 	cant=nrow(soluciones)
@@ -79,7 +79,12 @@ calcular_maes=function(archivo, metodo, interna, soluciones){
 			modelo=construir_modelo(metodo, datos)
 			for(j in 1:10){
 				eval1=evaluate_Weka_classifier(object=modelo, numFolds=10, seed=j)
-				mae=as.numeric(eval1$details[2])
+				if(clase_propiedad=="numeric"){
+					mae=as.numeric(eval1$details[2])
+				}else{
+					mae=as.numeric(eval1$details[5])
+				}
+				print(mae)
 				write("-", archivo ,append=TRUE)
 				write(mae, archivo, append=TRUE)
 			}

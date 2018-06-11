@@ -42,8 +42,8 @@ construir_modelo=function(metodo, datos){
 							}else{
 								if(metodo==8){
 									B=proc.time()
-									#resultado=randomForest(datos)
-									resultado=randomForestStacking(datos)
+									resultado=randomForest(datos)
+									#resultado=randomForestStacking(datos)
 									print(proc.time()-B)
 								}else{
 									if(metodo==9){
@@ -133,17 +133,11 @@ arbolDeDecision2=function(datos){
 }
 
 arbolDeDecision=function(datos){
-	#CONTROLAR QUE EL VALOR DE LA PROPIEDAD SEA NOMINAL
 	str1=iconv("Árbol de Decisión", from="UTF-8", to="UTF-8")
 	print(str1)
 	modelo=J48(formula=V1~., data=datos, control=Weka_control(M=10)) #mínimo de instancias por hoja, VER!
-	#evalAD=evaluate_Weka_classifier(modelo, numfolds=10, seed=2)
-	#print(evalAD)
-	#write(evalAD, file=paste0("evaluacion_", ene))
-	ene<<-ene+1
 	
 	modelo
-
 }
 
 

@@ -31,9 +31,6 @@ filtrar<-function( dataset, indicador ){
 	}
 
 	cols<-c(cols, largo+1)  #para que tome la columna correspondiente a la propiedad
-
-	#print(cols)
-	
 	newdataset<-dataset[,cols]
 	newdataset
 }#FIN filtrar
@@ -242,8 +239,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	while(i<largo && !bandera){
 		elem=scan2[i]
 		pos=grep("V", elem)
-		# print("I")
-		# print(i)
 		if(length(pos)!=0){ #es un nombre V*
 			nombres=c(nombres, elem)
 		}else{#llegue a las poblaciones
@@ -252,6 +247,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 		i=i+1
 		svalue(barra)<-svalue(barra)+1
 	}
+	#print(nombres)
 	if(i>=largo){
 		print("ERROR. Fin de archivo.")
 		stop()
@@ -299,8 +295,6 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			stop()
 		}
 	}
-	if(i>largo)
-		stop()
 	i=i+1
 	
 	#debo buscar los maes
@@ -329,8 +323,8 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 			stop()
 		}
 	}
-	#print("maes")
-	#print(maes)
+	# print("maes")
+	# print(maes)
 	individuos=matrix(0, 20, length(nombres))#ver
 	if(bandera){#ahora busco los individuos
 		j=1
@@ -454,7 +448,7 @@ procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
 	names(valores)=nombres_desc
 	names(externa)=nombres_desc
 	maes=acomodar(maes)	
-	
+	#print(maes)
 	resultados=list()
 	resultados$nombres=nombres #no se si es necesario
 	resultados$individuos=individuos
@@ -827,7 +821,6 @@ mostrar_resultados=function(archivo){
 	cant_desc=proceso1$largo
 	ipobl=proceso1$I
 	
-	
 	proceso2=nombres_descriptores(scan1, cant_desc, ipobl)
 	nombres_desc=proceso2$nombres
 	valores=proceso2$valores
@@ -1062,12 +1055,6 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	glabel(" ", container=grupo5)
 	
 	visible(win1)=TRUE	
-	
-	#VER LO DE LAS MATRICES DE CONFUSION
-	#por cada individuo
-		#obtener_matriz_confusion(i)
-		#hacer grafico con ella
-
 }
 
 ventana_card=function(cardis){
@@ -1105,12 +1092,12 @@ ventana_coef=function(coefis){
 }
 
 ventana_mae=function(todos, maes){
-	 nuevomae=data.frame()
-	 cant=length(maes)
-	 for(i in 1:cant){
-		 nuevomae[i,1]=i
-		 nuevomae[i,2]=maes[i]
-	 }
+	nuevomae=data.frame()
+	cant=length(maes)
+	for(i in 1:cant){
+		nuevomae[i,1]=i
+		nuevomae[i,2]=maes[i]
+	}
 	names(todos)=c("subconjunto", "MAE")
 	names(nuevomae)=c("subconjunto", "MAE")
 	x11(width=80, height=50, title="MAE")
@@ -1274,15 +1261,3 @@ generar_particiones=function(ndfr4, pex, pin){
 		resultados
 }	
 
-
-	
-
-prueba=function(){
-	plot(sin,-2*pi, 2*pi, col="red" , xlab="", ylab="")
-	par(new=TRUE)
-	plot(cos, -2*pi, 2*pi, col="blue" , xlab="", ylab="",  axes=FALSE) 
-	title(main="Gráficas del seno y coseno")
-	abline(a=0, b=0)
-
-
-}

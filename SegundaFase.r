@@ -120,14 +120,15 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 
 	procesado=procesar(scan3, salida)
 			
-	soluciones=procesado$individuos
+	soluciones=as.matrix(procesado$individuos)
 	interna=procesado$interna
 	externa=procesado$externa
-	maes_primera=procesado$maes
+	maes_primera=as.matrix(procesado$maes)
 	
-	print("dim maes")
-	print(dim(maes_primera))
-	
+	if(dim(maes_primera)[2]==1){
+		maes_primera=t(maes_primera)
+		soluciones=t(soluciones)
+	}
 	cols=ncol(externa)
 	clase=class(externa[,cols])
 		
@@ -185,12 +186,13 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			
 			resultados[i]=as.numeric(corcoef)	
 		}else{ 
+			niveles=length(levels(externa[1,cols]))
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
 			correctos=evalF2$details[1]
 			mae=evalF2$details[5]
 			matriz=evalF2$confusionMatrix
 			rocarea=c()
-			for(j in 1:3){
+			for(j in 1:niveles){
 				rocarea[j]=evalF2$detailsClass[j,6]
 			}
 			print("---------------------")
@@ -220,10 +222,23 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			
 			resultados[i]=correctos/100
 		}
-			
 		
-		# grafico[i,1]=i
-		# grafico[i,2]=mae
+		##-----------------------------------------------------------
+		# nuevomae=data.frame()
+		# cant=length(maes)
+		# for(i in 1:cant){
+			# nuevomae[i,1]=i
+			# nuevomae[i,2]=maes[i]
+		# }
+		# names(todos)=c("subconjunto", "MAE")
+		# names(nuevomae)=c("subconjunto", "MAE")
+		# x11(width=80, height=50, title="MAE")
+		# mayor=buscar_mayor(todos, maes)
+		
+		# boxplot(MAE~subconjunto,  data=todos, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(nuevomae[,1])+1), ylim=c(0,mayor+0.3))
+		# par(new=TRUE)
+		# plot(nuevomae, axes=FALSE, col="blue", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(0,mayor+0.3), main="MAE - Primera y Segunda Fase")
+		##-----------------------------------------------------------
 		if(i!=1){ #no es el primero
 			 tryCatch(dev.off(), 
 						 error=function(e){
@@ -250,6 +265,8 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	write("---", salida, append=TRUE)
 	write.table(grafico, salida, append=TRUE)
 }
+
+
 
 #construirModelo(datos)
 construirModelo=function(datos, metodo){
