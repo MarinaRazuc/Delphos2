@@ -837,7 +837,8 @@ mostrar_resultados=function(archivo){
 	# print("ELEMENTO")
 	# print(elem)
 	clase=class(elem)
-	
+	print("maes")
+	print(maes)
 	if(clase=="numeric"){
 		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores, todos_maes)
 	}else{
@@ -913,7 +914,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 			
 		}
 		str2=paste(str2, "  ")
-		print(str2)
+		#print(str2)
 		glabel(str2, container=gtemp)
 	}
 	lay2[1:15, 1:100]=grupo2

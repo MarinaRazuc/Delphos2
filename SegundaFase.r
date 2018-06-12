@@ -116,6 +116,7 @@ ventana_fase_dos=function(archivo){
 segunda_fase=function(archivo, metodoSF, salida, maxCant){ 
 	print("Segunda Fase")
 	grafico=data.frame()
+	auxiliar=data.frame()
 	scan3=scan(archivo, what="numeric")
 
 	procesado=procesar(scan3, salida)
@@ -124,21 +125,26 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	interna=procesado$interna
 	externa=procesado$externa
 	maes_primera=as.matrix(procesado$maes)
-	
+	SUPERMAES<<-maes_primera
 	if(dim(maes_primera)[2]==1){
 		maes_primera=t(maes_primera)
 		soluciones=t(soluciones)
 	}
+	SUPERMAES2<<-maes_primera
+	
 	cols=ncol(externa)
 	clase=class(externa[,cols])
-		
+	print(cols)
 	iteras=nrow(soluciones)
+	print("iteras")
+	print(iteras)
 	resultados=c(1:iteras)
 	
 	if(iteras>maxCant)
 		iteras=maxCant
 	
 	g=1
+	param=1
 	for(i in 1:iteras){
 		ult=g+10
 		colu=1
@@ -192,6 +198,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			mae=evalF2$details[5]
 			matriz=evalF2$confusionMatrix
 			rocarea=c()
+			print(evalF2$detailsClass)
 			for(j in 1:niveles){
 				rocarea[j]=evalF2$detailsClass[j,6]
 			}
@@ -222,23 +229,9 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			
 			resultados[i]=correctos/100
 		}
-		
-		##-----------------------------------------------------------
-		# nuevomae=data.frame()
-		# cant=length(maes)
-		# for(i in 1:cant){
-			# nuevomae[i,1]=i
-			# nuevomae[i,2]=maes[i]
-		# }
-		# names(todos)=c("subconjunto", "MAE")
-		# names(nuevomae)=c("subconjunto", "MAE")
-		# x11(width=80, height=50, title="MAE")
-		# mayor=buscar_mayor(todos, maes)
-		
-		# boxplot(MAE~subconjunto,  data=todos, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(nuevomae[,1])+1), ylim=c(0,mayor+0.3))
-		# par(new=TRUE)
-		# plot(nuevomae, axes=FALSE, col="blue", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(0,mayor+0.3), main="MAE - Primera y Segunda Fase")
-		##-----------------------------------------------------------
+		auxiliar[param, 1]=i
+		auxiliar[param, 2]=mae
+		param=param+1
 		if(i!=1){ #no es el primero
 			 tryCatch(dev.off(), 
 						 error=function(e){
@@ -247,26 +240,59 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 										 }
 						 )
 		}else{
-			 names(grafico)=c("Subconjunto", "MAE", "Fase")
+			names(grafico)=c("Subconjunto", "MAE", "Fase")
+			names(auxiliar)=c("Subconjunto", "MAE")
 		}
-		dev.flush()
-		x11(width=55, height=50, title="Segunda Fase", xpos=18, ypos=15)
-		print(boxplot(MAE~Subconjunto,  data=grafico,boxwex = 0.25, main = "MAEs de cada subconjunto, primera y segunda fase", xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
-		# x11(width=200, height=100, title="Segunda Fase");print(ggplot(grafico, aes(x=individuo, y=MAE))+ geom_point(aes(colour=MAE), size=4))
+		elems=buscar_mayor_y_menor(grafico, auxiliar)
+		mayor=elems$mayor
+		menor=elems$menor
+		x11(width=80, height=50, title="MAE")
+		boxplot(MAE~Subconjunto,  data=grafico, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02))
+		par(new=TRUE)
+		plot(auxiliar, axes=FALSE, col="blue", type="p", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
+		
+		# dev.flush()
+		# x11(width=55, height=50, title="Segunda Fase", xpos=18, ypos=15)
+		# print(boxplot(MAE~Subconjunto,  data=grafico,boxwex = 0.25, main = "MAEs de cada subconjunto, primera y segunda fase", xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
 	}
 	
-	x11(width=55, height=50, title="Segunda Fase", xpos=702, ypos=15)
-	print(ggplot(grafico, aes(x=Subconjunto, y=MAE)) + geom_point(aes(colour=Fase), size=3))
-
+	#x11(width=55, height=50, title="Segunda Fase", xpos=702, ypos=15)
+	#print(ggplot(grafico, aes(x=Subconjunto, y=MAE)) + geom_point(aes(colour=Fase), size=3))
+	print("ANTES DE ESCRIBIR")
 	write("---", salida, append=TRUE)
 	completo=rbind(interna, externa)
 	write.table(completo, salida, append=TRUE)
-	
+	print("DESPUES DE ESCRIBIR")
 	write("---", salida, append=TRUE)
 	write.table(grafico, salida, append=TRUE)
 }
 
-
+buscar_mayor_y_menor=function(grafico, auxiliar){
+	print(grafico)
+	print(auxiliar)
+	mayor=grafico[1,2]
+	menor=mayor
+	largo=dim(grafico)[1]
+	for(i in 2:largo){
+		elem=grafico[i,2]
+		if(elem>mayor)
+			mayor=elem
+		if(elem<menor)
+			menor=elem
+	}
+	largo=dim(auxiliar)[1]
+	for(i in 1:largo){
+		elem=auxiliar[i, 2]
+		if(elem>mayor)
+			mayor=elem
+		if(elem<menor)
+			menor=elem
+	}
+	elems=list()
+	elems$mayor=mayor
+	elems$menor=menor
+	elems
+}
 
 #construirModelo(datos)
 construirModelo=function(datos, metodo){
