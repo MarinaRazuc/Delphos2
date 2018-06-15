@@ -21,7 +21,7 @@ pmut=0.2
 nroGens=100
 stallGens=10
 umbral=0.000001
-archivoUno="FirstPhase.csv"
+archivoUno="FirstPhase.RData"
 dataframe0=NULL
 salida=NULL
 INTERNA=NULL
@@ -30,7 +30,6 @@ clase="num"
 
 
 seteo=function(datos, codigo){
-	#print("SETEO")
 	dataframe0<<-datos
 	win1=gwindow(title="FirstPhase",  visible=FALSE, width=300, height=400, parent=c(470,50))
 	group_1=ggroup(horizontal = FALSE, container=win1) #principal
@@ -39,12 +38,7 @@ seteo=function(datos, codigo){
 	group_11=ggroup(horizontal=FALSE, container=frame1)
 	
 	group_2=ggroup(horizontal=TRUE, container=group_11) #label experiment i of n
-	#print(expActual)
-	#print(nroExp)
-	#str1=paste0(paste(paste0("Experiment ", expActual), "of "), nroExp)
-#	label3=glabel("                             ", container=group_2)
 	label2=glabel("                             ", container=group_2)
-	#label1=glabel(str1, container=group_2, width=5)
 	
 	group_3=ggroup(horizontal=FALSE, container=group_11) #general settings
 	frame2=gframe(text="General Settings", pos=0, container=group_3, horizontal=FALSE , spacing=5)
@@ -188,7 +182,7 @@ seteo=function(datos, codigo){
 				} )
 	
 	group_A=ggroup(container=frame45, horizontal=TRUE)
-	labelA=glabel(" Guardar resultados como... (archivo csv) ", container=group_A)
+	labelA=glabel(" Guardar resultados como... (archivo .RData) ", container=group_A)
 	textA=gedit(archivoUno, container=group_A, font.attr=list(style="bold"), width=20)
 	buttonA=gbutton("Browse...", container=group_A, 
 					handler=function(h,...){
@@ -318,16 +312,8 @@ seteo=function(datos, codigo){
 
 
 comenzar_calculo=function(archivo, cod){
-	#print("Llamar primera fase")
-	#print(archivo)
-	#print(dim(dataframe0))
-	partes=partir(dataframe0, 1-valExterna, seed) #ver valInterna y valExterna
-
-	#INTERNA<<-partes$it
-	#EXTERNA<<-partes$et
-	
+	partes=partir(dataframe0, 1-valExterna, seed) #ver valInterna y valExterna	
 	largo=length(partes$it[1,])
-	#print(largo)
 	
 	if(class(partes$it[,largo])=="numeric"){
 		clase<<-"num"
@@ -371,16 +357,19 @@ comenzar_calculo=function(archivo, cod){
 	
 	resultados=primera_fase(archivo, nromet, partes$it, trials, clase, alpha, maxSelectVars, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens,umbral, valInterna)
 
-	write("---", archivo, append=TRUE)
-	write.table(resultados, archivo, append=TRUE)#ver
-	write("---", archivo, append=TRUE)
+	# write("---", archivo, append=TRUE)
+	# write.table(resultados, archivo, append=TRUE)#ver
+	# write("---", archivo, append=TRUE)
 	#write.table(dataframe0, archivo, append=TRUE)
-	write.table(partes$it, archivo, append=TRUE)
-	write("---", archivo, append=TRUE)
-	write.table(partes$et, archivo, append=TRUE)
-	write("---", archivo, append=TRUE)
+	interna=partes$it
+	externa=partes$et
+	# write.table(partes$it, archivo, append=TRUE)
+	# write("---", archivo, append=TRUE)
+	# write.table(partes$et, archivo, append=TRUE)
+	# write("---", archivo, append=TRUE)
 	
-	
+	load(archivo)
+	save(maes_primero, resultados, externa, interna, file=archivo) #---------------------------------------SAVE
 	
 	if(cod=="PS"){
 		ventana_fase_dos(archivo)

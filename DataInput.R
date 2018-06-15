@@ -20,9 +20,6 @@ data_input=function(cod){
 	group_4=ggroup(horizontal=TRUE, container=group_2)
 	group_5=ggroup(horizontal=TRUE, container=group_2)
 	group_6=ggroup(horizontal=TRUE, container=group_2)
-	#group_7=ggroup(horizontal=TRUE, container=group_2)
-
-	#lay=glayout(homogeneus=FALSE, spacing=5, container=group_2, horizontal=TRUE)
 
 	check4=gcheckboxgroup(c("CSV file with separator semicolon"), container=group_4, checked=TRUE)
 	label4in=glabel(" ", container=group_4, width=5)
@@ -217,25 +214,11 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 		
 		dims[1]=dim(descriptores)[1] #filas
 		dims[2]=dim(descriptores)[2] #columnas
-		print("_________")
-		print(class(descriptores[1,1]))
-		print("_________")
 		dims[3]=dim(propiedad)[1]
 		dims[4]=dim(propiedad)[2] #1 o 0
 		
 		dims[5]=dim(nombresD)[1]
 		dims[6]=dim(nombresD)[2] #1 o 0
-		
-		print("dimensiones")
-		print("descriptores")
-		print(dims[1])
-		print(dims[2])
-		print("propiedad")
-		print(dims[3])
-		print(dims[4])
-		print("nombres")
-		print(dims[5])
-		print(dims[6])
 		
 		if(dims[1] != dims[3]){
 			gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores", icon="error")

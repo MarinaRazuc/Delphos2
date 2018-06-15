@@ -281,7 +281,7 @@ calcular_promedio=function(valores){
 	suma=0
 	for(i in 1:largo){
 		val=valores[i]
-		write(val, "fitnesis.txt",append=TRUE)
+		#write(val, "fitnesis.txt",append=TRUE)
 		suma=suma+valores[i]
 	}
 	resu=suma/largo
@@ -425,7 +425,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	filas=nrow(entrenamiento)
 	if(pm==0 || pm>numcols){
 		#pm<-numcols-1 #debería ser proporción del tamaño del individuo
-		pm<-round((numcols-1)*0.70)
+		pm<-round((numcols-1)*0.25)
 	}
 	# <3 
 	
@@ -439,12 +439,10 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	poblacion_actual<<-generar_poblacion_inicial(numcols-1,  popSize, pm) #ver si esta bien ese -1
 	fit_vals=c()
 	
-	
 	promfit=c()
 	promfit[1]=0
 	promfit[2]=0
 	bandera=FALSE
-	
 	
 	nueva_poblacion=matrix(0, popSize, numcols-1) #no considero propiedad
 		
@@ -452,7 +450,6 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	G=1
 		
 	while(i<=nroGens && !bandera){
-		
 		#tomar poblacion
 		#calcular fitness de cada uno
 		for(j in 1:popSize){
@@ -479,21 +476,18 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			bandera=TRUE
 			str2=paste(paste0("No hubo mejora significativa del fitness en ", stallGens), "generaciones.")
 			print(str2)
-			write.table(poblacion_actual, archivo, append=TRUE)
+			#write.table(poblacion_actual, archivo, append=TRUE)
 		}
 		
 		if(!bandera){
-			
 			#elegir los mejores eliteSize individuos y ponerlos en la nueva población
 			valores=fit_vals
 			for(k in 1:eliteSize){
 				mejor=determinar_mejor_individuo(valores)
 				nueva_poblacion[k,]=mejor$individuo
-				
 				if(k==1){
 					MejorFitness<<-valores[mejor$indice]
 				}
-				
 				valores[mejor$indice]=0
 			}
 		
@@ -519,9 +513,6 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 					names(grafico)=c("generaciones", "referencias", "fitness")
 				}
 				dev.flush()
-				#print(grafico)
-				
-				# grafiquitos(grafico)
 				x11(width=2000, height=1000, title="Primera Fase");print(ggplot(grafico, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=referencias, group=referencias)) + geom_point(aes(colour=referencias), size=3))
 				
 			}
@@ -581,8 +572,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 				}
 				k=k+1
 			}
-			#print(proc.time()-npop)
-			
+			#print(proc.time()-npop)	
 		}
 		poblacion_actual=nueva_poblacion
 		i=i+1
@@ -593,9 +583,7 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 		resultado=determinar_mejor_individuo(fit_vals) 
 		#devuelvo el mejor individuo de la poblacion vieja
 		#que seria el primero de la nueva ya que fue elegido por elitismo
-		
-		
-		write.table(nueva_poblacion, archivo, append=TRUE)
+		#write.table(nueva_poblacion, archivo, append=TRUE)
 	}
 	
 	forget(mfitness) 

@@ -37,6 +37,7 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 	
 	cant=nrow(soluciones)
 	num=length(soluciones[1,])-1
+	maes_primero=data.frame()
 	
 	for(i in 1:cant){
 		datos=filtrar(interna, soluciones[i,])
@@ -72,8 +73,9 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 					suma=suma+cuad
 				}
 				mae=suma/m2
-				write("-", archivo ,append=TRUE)
-				write(mae, archivo, append=TRUE)
+				maes_primero[i,j]=mae
+				#write("-", archivo ,append=TRUE)
+				#write(mae, archivo, append=TRUE)
 			}
 		}else{ #metodo de weka
 			modelo=construir_modelo(metodo, datos)
@@ -84,10 +86,12 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 				}else{
 					mae=as.numeric(eval1$details[5])
 				}
-				print(mae)
-				write("-", archivo ,append=TRUE)
-				write(mae, archivo, append=TRUE)
+				maes_primero[i,j]=mae
+				#write("-", archivo ,append=TRUE)
+				#write(mae, archivo, append=TRUE)
 			}
 		}
 	}
+	
+	save(maes_primero, file=archivo) #----------------------------------------------------------------SAVE
 }

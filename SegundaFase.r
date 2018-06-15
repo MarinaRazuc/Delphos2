@@ -72,12 +72,12 @@ ventana_fase_dos=function(archivo){
 	glabel("  ", container=group4)
 	group2=ggroup(horizontal=TRUE, container=frame1, spacing=15)#guardar como
 	label2=glabel(" Guardar como... ", container=group2)
-	texto2=gedit("SecondPhase.csv", container=group2)
+	texto2=gedit("SecondPhase.RData", container=group2)
 	boton2=gbutton("Browse", container=group2,
 					handler=function(h,...){
 						file4=gfile("Guardar como...", type="save")
 						if(is.na(file4)){
-							svalue(texto2)="SecondPhase.csv"
+							svalue(texto2)="SecondPhase.RData"
 						}else{
 							svalue(texto2)=file4
 						}
@@ -117,50 +117,58 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	print("Segunda Fase")
 	grafico=data.frame()
 	auxiliar=data.frame()
-	scan3=scan(archivo, what="numeric")
-
-	procesado=procesar(scan3, salida)
-			
-	soluciones=as.matrix(procesado$individuos)
-	interna=procesado$interna
-	externa=procesado$externa
-	maes_primera=as.matrix(procesado$maes)
-	SUPERMAES<<-maes_primera
-	if(dim(maes_primera)[2]==1){
-		maes_primera=t(maes_primera)
-		soluciones=t(soluciones)
-	}
-	SUPERMAES2<<-maes_primera
+	corr_coefs=c()
+	maes_segundo=c()
+	correctos=c()
+	
+	#scan3=scan(archivo, what="numeric")
+	#procesado=procesar(scan3, salida)
+	#soluciones=as.matrix(procesado$individuos)
+	#interna=procesado$interna
+	#externa=procesado$externa
+	#maes_primera=as.matrix(procesado$maes)
+	#SUPERMAES<<-maes_primera
+	# if(dim(maes_primera)[2]==1){
+		# maes_primera=t(maes_primera)
+		# soluciones=t(soluciones)
+	# }
+	load(archivo)
+	individuos=matrix(0,nrow(resultados), ncol(resultados))
+	SUPERMAES2<<-maes_primero
+	SUPERIND<<-resultados
 	
 	cols=ncol(externa)
 	clase=class(externa[,cols])
-	print(cols)
-	iteras=nrow(soluciones)
-	print("iteras")
-	print(iteras)
-	resultados=c(1:iteras)
+	#print(cols)
+	iteras=nrow(resultados)
+	#print("iteras")
+	#print(iteras)
+	niveles=length(levels(externa[1,cols]))
+	ROCareaS=matrix(0,iteras,niveles)
+	confusion=matrix(0, iteras*niveles, niveles)
 	
 	if(iteras>maxCant)
 		iteras=maxCant
 	
 	g=1
 	param=1
+	filac=1
 	for(i in 1:iteras){
 		ult=g+10
 		colu=1
 		while(colu<11){
 			grafico[g,1]=i
-			grafico[g,2]=maes_primera[i,colu]
+			grafico[g,2]=maes_primero[i,colu]
 			grafico[g,3]="P"
 			colu=colu+1
 			g=g+1
 		}
 		
-		individuo=soluciones[i,]
+		individuo=resultados[i,]
 		IF=filtrar(interna, individuo)
 		EF=filtrar(externa, individuo) 
-		write("---", salida, append=TRUE)
-		write(individuo, salida, append=TRUE)
+		#write("---", salida, append=TRUE)
+		##write(individuo, salida, append=TRUE)
 		
 		modelo=tryCatch(construirModelo(IF ,metodoSF), 
 					error=function(e){
@@ -173,10 +181,13 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF)
 			corcoef=evalF2$details[1]
 			mae=evalF2$details[2]
+			maes_segundo[i]=mae
+			corr_coefs[i]=corcoef
 			grafico[g,1]=i
 			grafico[g, 2]=mae
 			grafico[g,3]="S"
 			g=g+1
+			
 			print("---------------------")
 			str1=iconv("Coeficiente de Correlación", from="UTF-8", to="UTF-8")
 			print(str1)
@@ -185,21 +196,28 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("Mean Absolute Error: ")
 			print(mae)
 			print("---------------------")
-			write(str1, salida, append=TRUE)
-			write(corcoef, salida, append=TRUE)
-			write("Mean Absolute Error: ", salida, append=TRUE)
-			write(mae, salida, append=TRUE)
 			
-			resultados[i]=as.numeric(corcoef)	
+			# write(str1, salida, append=TRUE)
+			# write(corcoef, salida, append=TRUE)
+			# write("Mean Absolute Error: ", salida, append=TRUE)
+			# write(mae, salida, append=TRUE)
+				
 		}else{ 
-			niveles=length(levels(externa[1,cols]))
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
-			correctos=evalF2$details[1]
-			mae=evalF2$details[5]
+			#correctos=evalF2$details[1]
+			correctos[i]=evalF2$details[1]
+			mae=maes_segundo[i]=evalF2$details[5]
 			matriz=evalF2$confusionMatrix
+			for(h in 1:nrow(matriz)){
+				for(k in 1:ncol(matriz)){
+					confusion[filac, k]=matriz[h,k]
+				}
+				filac=filac+1
+			}
 			rocarea=c()
-			print(evalF2$detailsClass)
+			#print(evalF2$detailsClass)
 			for(j in 1:niveles){
+				ROCareaS[i,j]=evalF2$detailsClass[j,6]
 				rocarea[j]=evalF2$detailsClass[j,6]
 			}
 			print("---------------------")
@@ -216,18 +234,15 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("ROC Area")
 			print(rocarea)
 			print("---------------------")
-			str1=paste0("Porcentaje de Casos clasificados correctamente: ", correctos)
-			write(str1, salida, append=TRUE)
 			
-			str1=paste0("Mean Absolute Error: ", mae)
-			write(str1, salida, append=TRUE)
-			
-			write(str2, salida ,append=TRUE)
-			write.table(matriz, salida ,append=TRUE)
-			write("ROC Area: ", salida ,append=TRUE)
-			write(rocarea, salida ,append=TRUE)
-			
-			resultados[i]=correctos/100
+			# str1=paste0("Porcentaje de Casos clasificados correctamente: ", correctos)
+			# write(str1, salida, append=TRUE)
+			# str1=paste0("Mean Absolute Error: ", mae)
+			# write(str1, salida, append=TRUE)
+			# write(str2, salida ,append=TRUE)
+			# write.table(matriz, salida ,append=TRUE)
+			# write("ROC Area: ", salida ,append=TRUE)
+			# write(rocarea, salida ,append=TRUE)
 		}
 		auxiliar[param, 1]=i
 		auxiliar[param, 2]=mae
@@ -256,20 +271,16 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		# print(boxplot(MAE~Subconjunto,  data=grafico,boxwex = 0.25, main = "MAEs de cada subconjunto, primera y segunda fase", xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
 	}
 	
-	#x11(width=55, height=50, title="Segunda Fase", xpos=702, ypos=15)
-	#print(ggplot(grafico, aes(x=Subconjunto, y=MAE)) + geom_point(aes(colour=Fase), size=3))
-	print("ANTES DE ESCRIBIR")
-	write("---", salida, append=TRUE)
+	# write("---", salida, append=TRUE)
 	completo=rbind(interna, externa)
-	write.table(completo, salida, append=TRUE)
-	print("DESPUES DE ESCRIBIR")
-	write("---", salida, append=TRUE)
-	write.table(grafico, salida, append=TRUE)
+	# write.table(completo, salida, append=TRUE)
+	# write("---", salida, append=TRUE)
+	# write.table(grafico, salida, append=TRUE)
+	
+	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, file=salida)
 }
 
 buscar_mayor_y_menor=function(grafico, auxiliar){
-	print(grafico)
-	print(auxiliar)
 	mayor=grafico[1,2]
 	menor=mayor
 	largo=dim(grafico)[1]
@@ -317,34 +328,4 @@ construirModelo=function(datos, metodo){
 		}				
 	}
 	modelo
-}
-
-#ordenar(soluciones, valores_soluciones)
-ordenar=function(sols, resus){
-	cols=ncol(sols)
-	filas=nrow(sols)
-	ordenados=matrix(0,filas,cols )
-	claves=matrix(0, filas, 2)
-	
-	indice_mayor=0
-	
-	for(j in 1:filas){
-		mayor=0
-		#me quedo con el mayor
-		for(i in 1:filas){
-			if(resus[i]>=0 && resus[i]>mayor){
-				mayor=resus[i]
-				indice_mayor=i
-			}
-		}
-		resus[indice_mayor]=-1
-		claves[j,1]=indice_mayor
-		claves[j,2]=mayor
-		ordenados[j,]=sols[indice_mayor, ]
-	}
-	resultado=list()
-	resultado$individuos_ordenados=ordenados
-	resultado$valores_ordenados=claves
-	
-	resultado
 }
