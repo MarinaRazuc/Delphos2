@@ -1057,14 +1057,11 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 ventana_card=function(cardis){
 	datos=data.frame()
 	cant=length(cardis)
-	
 	for(i in 1:cant){
 		datos[i,1]=i
 		datos[i,2]=cardis[i]
 	}
-
 	names(datos)=c("Subconjuntos", "Cardinalidad")
-
 	x11(width=2000, height=1000, title="Cardinalidad de los subconjuntos");
 	#print(plot(datos, colour="purple"))
 	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
@@ -1104,7 +1101,8 @@ ventana_mae=function(todos, maes){
 	
 	boxplot(MAE~subconjunto,  data=todos, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02))
 	par(new=TRUE)
-	plot(nuevomae, axes=FALSE, col="blue", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
+	plot(nuevomae, axes=FALSE, col="red", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
+	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.4, pch="o")
 }
 
 buscarMayorMenor=function(pri, seg){
