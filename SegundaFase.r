@@ -134,8 +134,8 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	# }
 	load(archivo)
 	individuos=matrix(0,nrow(resultados), ncol(resultados))
-	SUPERMAES2<<-maes_primero
-	SUPERIND<<-resultados
+	#SUPERMAES2<<-maes_primero
+	#SUPERIND<<-resultados
 	
 	cols=ncol(externa)
 	clase=class(externa[,cols])
@@ -207,6 +207,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			#correctos=evalF2$details[1]
 			correctos[i]=evalF2$details[1]
 			mae=maes_segundo[i]=evalF2$details[5]
+			# confusion=evalF2$confusionMatrix
 			matriz=evalF2$confusionMatrix
 			for(h in 1:nrow(matriz)){
 				for(k in 1:ncol(matriz)){
@@ -214,6 +215,11 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 				}
 				filac=filac+1
 			}
+			
+			noms=row.names(matriz)
+			confusion=as.data.frame(confusion)
+			names(confusion)=noms
+			
 			rocarea=c()
 			#print(evalF2$detailsClass)
 			for(j in 1:niveles){
@@ -234,15 +240,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("ROC Area")
 			print(rocarea)
 			print("---------------------")
-			
-			# str1=paste0("Porcentaje de Casos clasificados correctamente: ", correctos)
-			# write(str1, salida, append=TRUE)
-			# str1=paste0("Mean Absolute Error: ", mae)
-			# write(str1, salida, append=TRUE)
-			# write(str2, salida ,append=TRUE)
-			# write.table(matriz, salida ,append=TRUE)
-			# write("ROC Area: ", salida ,append=TRUE)
-			# write(rocarea, salida ,append=TRUE)
 		}
 		auxiliar[param, 1]=i
 		auxiliar[param, 2]=mae
@@ -264,11 +261,8 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		x11(width=80, height=50, title="MAE")
 		boxplot(MAE~Subconjunto,  data=grafico, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02))
 		par(new=TRUE)
-		plot(auxiliar, axes=FALSE, col="blue", type="p", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
-		
-		# dev.flush()
-		# x11(width=55, height=50, title="Segunda Fase", xpos=18, ypos=15)
-		# print(boxplot(MAE~Subconjunto,  data=grafico,boxwex = 0.25, main = "MAEs de cada subconjunto, primera y segunda fase", xlab = "Subconjunto",ylab = "MAE", col="lightblue"))
+		plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
+		legend(x=iteras+0.5, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.4, pch="o")
 	}
 	
 	# write("---", salida, append=TRUE)

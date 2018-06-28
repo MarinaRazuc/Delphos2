@@ -802,43 +802,30 @@ filtrar_nombres=function(nombres_desc, individuos){
 ##
 ##
 mostrar_resultados=function(archivo){
-	#scan1=scan(archivo, what="numeric")
-	#procesado=procesar_SF(scan1)
-	#proceso1=buscar_individuos(scan1)
-	#individuos=proceso1$indis
 	load(archivo)
 	individuos=resultados
-	#cant_desc=proceso1$largo
 	cant_desc=length(individuos[1,]) #-1?
-	#ipobl=proceso1$I
-	#proceso2=nombres_descriptores(scan1, cant_desc, ipobl)
-	#nombres_desc=proceso2$nombres
 	nombres_desc=names(completo)
-	#valores=proceso2$valores
 	valores=completo
-	#coefis=proceso2$coefi
 	coefis=corr_coefs
-	#maes=proceso2$mae
 	maes=maes_segundo
-	#porcentaje=	proceso2$porcentaje
 	porcentaje=correctos
-	#rocarea=proceso2$rocarea
 	rocarea=ROCareaS
-	#todos_maes=proceso2$todos_maes
-	todos_maes=grafico #----------------????????????
+	todos_maes=grafico 
+	this_confu=confusion
+	
+	print("MATRIZ")
+	print(confusion)
 	
 	largo=dim(valores)[2]
-	# print(largo)
 	elem=valores[1,largo]
-	# print("ELEMENTO")
-	# print(elem)
 	clase=class(elem)
 	print("maes")
 	print(maes)
 	if(clase=="numeric"){
 		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores, todos_maes)
 	}else{
-		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos_maes)
+		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos_maes, this_confu)
 	}
 	
 	
@@ -947,14 +934,14 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	lay3[1:3, 16:21]=botoncard
 	
 	lay3[1:3, 24:29]=botonFilt
-	lay3[1:3, 75:80]=botonSal
+	lay3[1:3, 70:75]=botonSal
 	glabel(" ", container=grupo5)
 	
 	visible(win1)=TRUE	
 }
 
 #
-mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos){
+mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos, confusion){
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
@@ -966,7 +953,6 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 		maes[j]=signif(h, digits=6)
 	}
 	
-	
 	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
 	glabel(" ", container=grupomayor)
@@ -974,7 +960,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	
 	etiq=paste(paste(paste0(" Individuos seleccionados: ( ", cols), "descriptores"),")")
 	glabel(etiq, container=grupo0)
-	
+		
 	lay=glayout(container=grupomayor)
 	grupo1=ggroup(horizontal = FALSE, spacing = 5, width=500, height=200, use.scrollwindow = TRUE)
 	names(individuos)=nombres_desc
@@ -990,7 +976,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 		glabel(str1, container=grupo1)
 	}
 	lay[1:15, 1:100]=grupo1
-	
+		
 	grupo4=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
 	glabel(" Descriptores elegidos por individuo: ", container=grupo4)
 	
@@ -1012,7 +998,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 		glabel(str2, container=gtemp)
 	}
 	lay2[1:15, 1:100]=grupo2
-	
+		
 	grupo5=ggroup(container=grupomayor, horizontal=FALSE, spacing=5)
 	glabel(" ", container=grupo5)
 	grupo3=ggroup(container=grupo5, horizontal=TRUE, spacing=20) #botones
@@ -1027,6 +1013,10 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
 										})
+	str9=iconv(" Ver Matriz de Confusión ", from="UTF-8", to="UTF-8")
+	botonconfusion=gbutton(str9, handler=function(h,...){
+											 ventana_confusion(confusion, cant)
+										 })
 	botoncasos=gbutton(" Ver Porcentaje Correctos ", handler=function(h, ...){
 											ventana_casos(porcentaje)
 										})									
@@ -1034,7 +1024,6 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 											ventana_card(card)
 										})
 	 
-	
 	botonFilt=gbutton("  Filtrar  ",  
 					handler=function(h,...){
 						ventana_filtrado(individuos, valores)
@@ -1045,12 +1034,12 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 					})
 	lay3[1:3, 1:5]=botonmae
 	lay3[1:3, 8:13]=botonrocarea
-	lay3[1:3, 16:21]=botoncasos
-	lay3[1:3, 24:29]=botoncard
-	lay3[1:3, 32:37]=botonFilt
-	lay3[1:3, 70:75]=botonSal
+	lay3[1:3, 16:21]=botonconfusion
+	lay3[1:3, 24:29]=botoncasos
+	lay3[1:3, 32:37]=botoncard
+	lay3[1:3, 40:45]=botonFilt
+	lay3[1:3, 60:65]=botonSal
 	glabel(" ", container=grupo5)
-	
 	visible(win1)=TRUE	
 }
 
@@ -1067,7 +1056,12 @@ ventana_card=function(cardis){
 	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
 }
 
+ventana_confusion=function(confusion, cant){
+	print(confusion)
+	print(cant)
 
+
+}
 #
 ventana_coef=function(coefis){
 	nuevo=data.frame()
@@ -1107,7 +1101,7 @@ ventana_mae=function(todos, maes){
 
 buscarMayorMenor=function(pri, seg){
 	mayor=0
-	menor=0
+	menor=1000
 	largo=length(pri[,2])
 	for(i in 1:largo){
 		elem=pri[i,2]
