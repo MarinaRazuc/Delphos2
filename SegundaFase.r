@@ -19,13 +19,21 @@ obtener_archivo_entrada=function(){
 						print(file1)
 					}, width=15)	
 	button2=gbutton("OK", container=group2, handler=function(h, ...){
-											if(svalue(text1)!="Ingrese archivo"){
+												bandera<<-FALSE
 												archivo_ent=svalue(text1)
-												ventana_fase_dos(archivo_ent)
-												dispose(win1)
-											}else{
-												gmessage("Ingrese un archivo para ejecutar la segunda fase.", icon="error")
-											}
+												tryCatch(load(archivo_ent), 
+														error=function(e){
+															bandera<<-TRUE
+														}
+												)
+												if(!bandera){
+													ventana_fase_dos(archivo_ent)
+													dispose(win1)
+												}else{
+													msg=iconv("El archivo seleccionado no es válido.", from="UTF-8", to="UTF-8")
+													gmessage(msg, icon="error")
+												}
+											
 												
 											}, width=5)  
 					
@@ -120,18 +128,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	corr_coefs=c()
 	maes_segundo=c()
 	correctos=c()
-	
-	#scan3=scan(archivo, what="numeric")
-	#procesado=procesar(scan3, salida)
-	#soluciones=as.matrix(procesado$individuos)
-	#interna=procesado$interna
-	#externa=procesado$externa
-	#maes_primera=as.matrix(procesado$maes)
-	#SUPERMAES<<-maes_primera
-	# if(dim(maes_primera)[2]==1){
-		# maes_primera=t(maes_primera)
-		# soluciones=t(soluciones)
-	# }
 	load(archivo)
 	individuos=matrix(0,nrow(resultados), ncol(resultados))
 	#SUPERMAES2<<-maes_primero
@@ -167,9 +163,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		individuo=resultados[i,]
 		IF=filtrar(interna, individuo)
 		EF=filtrar(externa, individuo) 
-		#write("---", salida, append=TRUE)
-		##write(individuo, salida, append=TRUE)
-		
+
 		modelo=tryCatch(construirModelo(IF ,metodoSF), 
 					error=function(e){
 						gmessage("Error al calcular el modelo. ", icon="error")
@@ -196,12 +190,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("Mean Absolute Error: ")
 			print(mae)
 			print("---------------------")
-			
-			# write(str1, salida, append=TRUE)
-			# write(corcoef, salida, append=TRUE)
-			# write("Mean Absolute Error: ", salida, append=TRUE)
-			# write(mae, salida, append=TRUE)
-				
 		}else{ 
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
 			#correctos=evalF2$details[1]

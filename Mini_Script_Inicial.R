@@ -13,9 +13,5 @@ generar_data_frame_mini=function(){
 
 	dataframe2
 }
-##set.seed(seed) #por parametro
-##indices4=createDataPartition(dataframe2$V1, p=0.75, list=FALSE) #p por parametro (validacion externa)
-#V1 porque se supone que tengo el nombre de los descriptores, pero NO el de la propiedad, que queda como V1
-##externa=dataframe2[-indices4, ]
-##interna=dataframe2[indices4, ]
+
 

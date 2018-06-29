@@ -103,9 +103,19 @@ ver_resultados=function(){
 	lay3=glayout(container=group2)
 	#glabel("            ", container=group3)
 	buttonok=gbutton("OK",handler=function(h,...){
-												
-												mostrar_resultados(svalue(text1))
-												dispose(win)
+												bandera<<-FALSE
+												tryCatch(load(svalue(text1)), 
+														error=function(e){
+																	print(e)
+																	str1=iconv("El archivo seleccionado no es válido.", from="UTF-8", to="UTF-8")
+																	gmessage(str1, icon="error")
+																	bandera<<-TRUE
+														}
+												)
+												if(!bandera){
+													mostrar_resultados(svalue(text1))
+													dispose(win)
+												}
 											})
 	#glabel("                                                                    ", container=group3)
 	

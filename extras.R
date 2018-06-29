@@ -81,20 +81,8 @@ imprimir_error=function(modelo, datos){#funcion para mi
 	for(i in 1:filas){
 		yi=datos[i, cols]
 		xi=datos[i,1:colsmenosuno]
-
-#		pred=predict(modelo, xi)
-
-		#speedglm
-		#aparente// response mas rapido q link
-		#pred=predict(modelo, newdata=xi, type="response") #type link o response
-		#speedlm
 		ypredict=predict(modelo, newdata=xi, fitted=FALSE) #fitted->TRUE o FALSE
-		#weka
-		#pred=predict(modelo, newdata=xi)
-		#pred=predict(modelo, newdata=xi, type="probability") #type->class o probability #punto de demora 
-
 		error=abs(yi-unname(pred))
-		#print(pred)
 		print(error)
 	}
 	
@@ -204,252 +192,6 @@ filtrado_columnas=function(A){
 	nuevoA
 }
 
-## procesar archivo de la primera fase
-#procesar(archivo_leido, archivo_de_salida)
-# procesar=function(scan2, salida){ #salida para escribir las poblaciones alli
-	# ERROR=FALSE
-	# print("Procesando archivo...")
-	# win1=gwindow(visible=FALSE, title="Espere...", height=100, width=250, parent=c(550, 150))
-	# grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
-	# glabel(" ", container=grupo1)
-	# glabel("  Espere mientras se procesa el archivo...  ", container=grupo1)
-	# glabel(" ", container=grupo1)
-	# barra=gprogressbar(container=grupo1)
-	# visible(win1)=TRUE
-
-	# nombres=c()
-	# nombres_desc=c()
-	
-	# largo=length(scan2)#todos los caracteres digamos
-	# svalue(barra)<-1
-	
-	# bandera=FALSE
-	# i=1
-	# while(i<largo && !bandera){
-		# elem=scan2[i]
-		# pos=grep("V", elem)
-		# if(length(pos)!=0){ #es un nombre V*
-			# nombres=c(nombres, elem)
-		# }else{#llegue a las poblaciones
-			# bandera=TRUE
-		# }
-		# i=i+1
-		# svalue(barra)<-svalue(barra)+1
-	# }
-	# #print(nombres)
-	# if(i>=largo){
-		# print("ERROR. Fin de archivo.")
-		# stop()
-	# }
-	# #aca debería leer las poblaciones
-	# banderaSEP=FALSE
-	# poblacion=data.frame()
-	# colus=length(nombres)
-	# fils=1
-	# contadorERR=0
-	# while(!banderaSEP){
-		# #arranca una nueva poblacion
-		# cols=1
-		# while(cols<=colus){
-			# elem=as.numeric(scan2[i])
-			# poblacion[fils, cols]=elem
-			# cols=cols+1
-			# i=i+1
-		# }#finalice un individuo
-		# elem=scan2[i] #puede ser numeracion o -
-		
-		# pos=grep("-", elem)
-		# if(length(pos)!=0){ #es el separador
-			# banderaSEP=TRUE
-			# #write.table(poblacion, salida, append=TRUE)
-		# }else{
-			# pos=grep("V", elem)
-			# if(length(pos)!=0){ #comienza una nueva poblacion
-				# #write.table(poblacion, salida, append=TRUE)
-				# #write("---", salida, append=TRUE)
-				# #banderaPOP=TRUE
-				# #debo saltear nombres y primera numeracion
-				# i=i+colus+1
-				# fils=1
-				# cols=1
-			# }else{#comienza un nuevo individuo de la poblacion
-				# fils=fils+1
-				# i=i+1#salteo numeracion
-				# cols=1
-			# }
-		# }
-		# svalue(barra)<-svalue(barra)+5
-		# if(i>largo){
-			# print("ERROR 1")
-			# stop()
-		# }
-	# }
-	# i=i+1
-	
-	# #debo buscar los maes
-	# maes=matrix(0,20,10) #20 individuos (por poner) 10 valores de mae seguros
-	# bandera=FALSE
-	# f=1
-	
-	# contadorERR=0
-	# while(!bandera){
-		# contadorERR=contadorERR+1
-		# for(m in 1:10){
-			# elem=as.numeric(scan2[i])
-			# maes[f,m]=elem
-			# i=i+2 #saltear -
-		# }
-		# elem=scan2[i]
-		# pos=grep("V", elem) 
-		# if(length(pos)!=0){ #llegue a individuos
-			# i=i+colus+1
-			# bandera=TRUE
-		# }else{ #maes de otro individuo
-			# f=f+1
-		# }
-		# if(i>largo){
-			# print("ERROR 2")
-			# stop()
-		# }
-	# }
-	# # print("maes")
-	# # print(maes)
-	# individuos=matrix(0, 20, length(nombres))#ver
-	# if(bandera){#ahora busco los individuos
-		# j=1
-		# k=1
-		# limitador=2 
-		# bandera=FALSE
-		# while(i<largo && !bandera){	
-			# elem=as.numeric(scan2[i])
-			# if(is.na(elem)){ #llegamos a algo q no es numero
-				# bandera=TRUE
-			# }else{
-				# pos=grep(limitador, elem)
-				# if(length(pos)==0){#sigo en el individuo 
-					# individuos[j,k]=elem
-					# k=k+1
-				# }else{ #termine con el individuo
-					# j=j+1
-					# k=1
-					# limitador=limitador+1
-				# }
-			# }
-			# i=i+1
-		# }
-		# #print("individuos")
-		# #print(individuos)
-		# if(bandera){
-			# bandera=FALSE
-			# cant=length(individuos[1,])+1 #+1 por la propiedad
-			# h=1
-			# while(h<=cant){
-				# nombres_desc=c(nombres_desc, scan2[i])
-				# i=i+1
-				# h=h+1
-			# }
-			# #print("nombres")
-			# #print(nombres)
-			# valores=data.frame()
-			# valor_propiedad=c()
-			# i=i+1 #para saltear la numeracion
-			# h=1
-			# j=1
-			# k=1
-			# bandera=FALSE
-			# nominal=FALSE
-			# while(i<largo && !bandera){
-				# while(h<=cant){
-					# if(h==cant){
-						# elem=as.numeric(scan2[i])
-						# if(is.na(elem)){
-							# elem=scan2[i]
-							# nominal=TRUE
-						# }
-						# valor_propiedad=c(valor_propiedad, elem)
-					# }else{
-						# elem=as.numeric(scan2[i])
-						# valores[j,k]=elem
-					# }
-					# h=h+1
-					# k=k+1
-					# i=i+1
-				# }
-				# elem=scan2[i]
-				# pos=grep("-", elem)
-				# if(length(pos)!=0){ #termine con interna
-					# bandera=TRUE
-				# }else{
-					# j=j+1
-					# h=1
-					# k=1
-					# i=i+1 #para saltear la numeracion
-				# }
-			# }
-			# if(nominal)
-				# valor_propiedad=as.factor(valor_propiedad)
-			# valores=cbind(valores, valor_propiedad)
-			# ###########################
-			# if(bandera){#debo leer externa
-				# i=i+cant+2 #salteo nombres, separadores y primera numeracion
-				# externa=data.frame()
-				# valor_prop=c()
-				# j=1
-				# k=1
-				# h=1
-				# bandera=FALSE
-				
-				# while(i<=largo && !bandera){
-					# while(h<=cant){
-						# elem=as.numeric(scan2[i])
-						# if(h==cant){
-							# if(is.na(elem)){
-								# elem=scan2[i]
-							# }
-							# valor_prop=c(valor_prop, elem)
-						# }else{
-							# externa[j,k]=elem
-						# }
-						# k=k+1
-						# i=i+1
-						# h=h+1
-					# }
-					# elem=scan2[i]
-					# pos=grep("-", elem)
-					# if(length(pos)!=0){
-						# bandera=TRUE
-					# }else{
-						# h=1
-						# k=1
-						# i=i+1
-						# j=j+1
-					# }
-					# svalue(barra)<-svalue(barra)+5
-				# }
-				# if(nominal)
-					# valor_prop=as.factor(valor_prop)
-				# externa=cbind(externa, valor_prop)
-			# }
-		# }
-	# }
-	
-	# individuos=acomodar(individuos)
-	# names(valores)=nombres_desc
-	# names(externa)=nombres_desc
-	# maes=acomodar(maes)	
-	# #print(maes)
-	# resultados=list()
-	# resultados$nombres=nombres #no se si es necesario
-	# resultados$individuos=individuos
-	# resultados$maes=maes
-	# resultados$nombres_desc=nombres_desc
-	# resultados$interna=valores
-	# resultados$externa=externa
-	
-	# dispose(win1)
-	
-	# resultados
-# }
 
 #
 #
@@ -512,292 +254,6 @@ filtrar_nombres=function(nombres_desc, individuos){
 	nombres
 }
 
-#
-#
-#quiero devolver una matriz con los individuos que encuentro
-# buscar_individuos=function(scan1){
-	# i=1
-	# largo=0
-	# bandera=FALSE
-	# individuos=data.frame()
-	# I_inicial=0
-	# len_scan=length(scan1)
-	
-	# while(i<=len_scan && !bandera){
-		# elem=scan1[i]
-		# pos=grep("V", elem)
-		# if(length(pos)!=0){ #es un nombre V*
-			# largo=largo+1
-			# i=i+1
-		# }else{#llegue a las poblaciones
-			# bandera=TRUE
-		# }
-		# if(i>=len_scan){
-			# print("ERROR. Fin de archivo.")
-			# stop()
-		# }
-	# }
-	# fin=FALSE
-	# popus=0
-	# if(bandera){
-		# #tengo que saltear las poblaciones
-		# bandera=FALSE
-		# while(i<=len_scan && !fin){
-			# popus=popus+1
-			# while(i<=len_scan && !bandera){
-				# i=i+largo+1 #creo
-				# elem=scan1[i]
-						
-				# pos=grep("-",elem)
-				# if(length(pos)!=0){ #se termino la poblacion
-					
-					# bandera=TRUE
-				# }
-				
-				# if(i>=len_scan){
-					# print("ERROR. Fin de archivo.")
-					# stop()
-				# }
-			# }
-			# if(bandera){
-				# elem=scan1[i+1]
-				# # print("ELEM")
-				# # print(elem)
-				# pos=grep("V",elem)
-				
-				# if(length(pos)!=0){#debo saltear la poblacion
-					# #print("debo saltear la poblacion")
-					# bandera=FALSE
-					# i=i+largo+1
-					
-				# }else{#encontre el primer individuo
-					# #print("encontre el primer individuo")
-					# i=i+1
-					# fin=TRUE
-				# }
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-		# }
-		# I_inicial=i
-		# #busco el primer individuo
-			
-		# for(k in 1:popus){
-			# for(j in 1:largo){
-				# individuos[k,j]=as.numeric(scan1[i])
-				# i=i+1
-			# }
-			# #saltear hasta la marca ---
-			# saltee=FALSE
-			# while(i<=len_scan && !saltee){
-				# elem=scan1[i]
-				# pos=grep("-",elem)
-				# if(length(pos)!=0){ #la encontre
-					# saltee=TRUE
-					# i=i+1
-				# }else{
-					# i=i+1
-				# }
-				# if(i>=len_scan){
-					# print("ERROR. Fin de archivo.")
-					# stop()
-				# }
-			# }
-		# }
-	# }
-	# resultado=list()
-	# resultado$largo=largo
-	# resultado$indis=individuos
-	# resultado$I=I_inicial
-	# resultado
-# }
-
-#quiero devolver un vector con los nombres de los descriptores
-# nombres_descriptores=function(scan1, cant, ipobl){
-
-	# win1=gwindow(visible=FALSE, title="Espere..", height=100, width=200, parent=c(550, 150))
-	# grupo1=ggroup(container=win1, horizontal=FALSE)
-	# glabel(" ", container=grupo1)
-	# glabel("  Espere mientras se procesa el archivo...  ", container=grupo1)
-	# glabel(" ", container=grupo1)
-	# barra=gprogressbar(container=grupo1)
-	# visible(win1)=TRUE
-	# len_scan=length(scan1)
-	# nombres=c()
-	# i=ipobl #parado en el primer individuo
-	# j=1
-	# porcentaje=c()
-	# bandera=FALSE
-	# mae=c()
-	# coefi=c()
-	# rocarea=data.frame()
-	# r=1
-	# p=1
-	
-	# elem=scan1[i+cant]
-	# pos=grep("P", elem)
-	# if(length(pos)!=0){ #es Porcentaje
-		# clase="nom"
-	# }else{
-		# clase="num"
-	# }
-	
-	# while(i<=len_scan && !bandera){ #hasta que no saltee todos los individuos
-		# p=1
-		# i=i+cant #me paro en coef o porc
-		
-		# svalue(barra)<-svalue(barra)+5
-		# if(clase=="nom"){
-			# #print("clase es nom")
-			# elem=as.numeric(scan1[i])
-			# #print(elem)
-			# #print(is.na(elem))
-			# while(i<=len_scan && is.na(as.numeric(scan1[i]))){
-				# i=i+1
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-			# porcentaje[j]=scan1[i]
-			# i=i+1
-			# while(i<=len_scan && is.na(as.numeric(scan1[i]))){
-				# i=i+1
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-			# mae[j]=scan1[i]
-			# i=i+1
-			# while(i<=len_scan && length(grep("ROC", scan1[i]))==0){
-				# i=i+1
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-			# i=i+2
-			# elem=scan1[i]
-			# while(i<=len_scan && length(grep("-", elem))==0){
-				# rocarea[r,p]=elem
-				# p=p+1
-				# i=i+1
-				# elem=scan1[i]
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-			# r=r+1
-		# }else{#numerico
-			# while(i<=len_scan && is.na(as.numeric(scan1[i]))){
-				# i=i+1
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-			# coefi[j]=scan1[i]
-			# i=i+1
-			# while(i<=len_scan && is.na(as.numeric(scan1[i]))){
-				# i=i+1
-			# }
-			# if(i>=len_scan){
-				# print("ERROR. Fin de archivo.")
-				# stop()
-			# }
-			# #print(scan1[i])
-			# mae[j]=scan1[i]
-			# i=i+1
-		# }
-		# i=i+1
-		# #print(scan1[i])
-		# if(is.na(as.numeric(scan1[i]))){#llegue a los nombres
-			# #♣print("llegue a los nombres")
-			# bandera=TRUE
-		# }else{
-			# j=j+1
-		# }
-		# if(i>=len_scan){
-			# print("ERROR. Fin de archivo.")
-			# stop()
-		# }
-	# }
-	
-	# #a juntar nombres
-	# for(h in 1:cant){
-		# elem=scan1[i]
-		# nombres=c(nombres,elem)
-		# i=i+1
-	# }
-	# #a juntar los valores
-	# valores=data.frame()
-	# #estoy parada en el 1 de la numeracion
-	# e=1
-	# largo=length(scan1)
-	# #print(cant)
-	# #print(scan1[i])
-	# i=i+2
-	# cant2=cant+1
-	# bandera=FALSE
-	
-	# while(i<=len_scan && !bandera){
-		# svalue(barra)<-svalue(barra)+5
-		# for(d in 1:cant2){
-			# if(d!=cant2){
-				# valores[e,d]=as.numeric(scan1[i])
-				# i=i+1
-			# }else{ # d es cant
-				# if(is.na(as.numeric(scan1[i]))){
-					# valores[e,d]=scan1[i]
-				# }else{
-					# valores[e,d]=as.numeric(scan1[i])
-				# }
-			# }
-		# }
-		
-		# i=i+2
-		# e=e+1
-		
-		# elem=as.numeric(scan1[i])
-		# if(is.na(elem)){ #llegue a "subconjunto"
-			# bandera=TRUE
-		# }
-	# }
-	# if(i>=len_scan){
-		# print("ERROR. Fin de archivo.")
-		# stop()
-	# }
-	# todos_maes=data.frame()
-	# #buscar maes
-	# nume=1
-	# i=i+4
-	# fila=1
-	# while(i<=largo){
-		# todos_maes[fila, 1]=as.numeric(scan1[i])
-		# i=i+1
-		# todos_maes[fila, 2]=as.numeric(scan1[i])
-		# i=i+3
-		# fila=fila+1
-	# }
-	
-	# resultados=list()
-	# resultados$porcentaje=porcentaje
-	# resultados$mae=mae
-	# resultados$coefi=coefi
-	# resultados$rocarea=rocarea
-	# resultados$nombres=nombres
-	# resultados$valores=valores
-	# resultados$todos_maes=todos_maes
-	
-	# dispose(win1)
-	
-	# resultados
-# }
-
 ##
 ##
 ##
@@ -814,8 +270,8 @@ mostrar_resultados=function(archivo){
 	todos_maes=grafico 
 	this_confu=confusion
 	
-	print("MATRIZ")
-	print(confusion)
+	# print("MATRIZ")
+	# print(confusion)
 	
 	largo=dim(valores)[2]
 	elem=valores[1,largo]
@@ -827,7 +283,6 @@ mostrar_resultados=function(archivo){
 	}else{
 		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos_maes, this_confu)
 	}
-	
 	
 }
 
@@ -1057,9 +512,44 @@ ventana_card=function(cardis){
 }
 
 ventana_confusion=function(confusion, cant){
+	str1=iconv("Matrices de Confusión", from="UTF-8", to="UTF-8")
+	win1=gwindow(title=str1, visible=FALSE, width=500, height=200, parent=c(200,50))
+	grupo1=grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200, use.scrollwindow = TRUE)
+	lay1=glayout(container=grupo1)
+	
 	print(confusion)
 	print(cant)
-
+	nombres=names(confusion)
+	cantnoms=length(nombres)
+	strTitulo="      "
+	for(i in 1:cantnoms){
+		strTitulo=paste(paste(strTitulo, nombres[i]), " ")
+	}
+	
+	fila=1
+	ubif=2
+	for (i in 1:cant){ #para armar todas las tablas
+		ind=iconv(paste0("Individuo nº ", i), from="UTF-8", to="UTF-8")
+		lay1[ubif, 1]=glabel(ind)
+		ubif=ubif+1
+		lay1[ubif, 1]=glabel(strTitulo)
+		ubif=ubif+1
+		for(j in 1:cantnoms){
+			temp1=paste(nombres[j]," ")
+			for(k in 1:cantnoms){
+				temp1=paste(paste(temp1,confusion[fila, k])," ")
+			}
+			lay1[ubif,1]=temp1
+			ubif=ubif+1
+			fila=fila+1
+		}
+		lay1[ubif, 1]=glabel(" ----------------- ")
+		ubif=ubif+1
+	}
+	#matriz=glabel(confusion)
+	#lay1[3, 1]=matriz
+	
+	visible(win1)=TRUE
 
 }
 #
@@ -1118,6 +608,8 @@ buscarMayorMenor=function(pri, seg){
 		elem=seg[j]
 		if(elem>mayor)
 			mayor=elem
+		if(elem<menor)
+			menor=elem
 	}
 	
 	valores=list()
