@@ -251,8 +251,8 @@ seteo=function(datos, codigo){
 							bandera=FALSE
 						}
 						tourSize<<-svalue(obj_gedit453)
-						if(tourSize<=0){
-							str1=iconv("Error, el tamaño del torneo debe ser un número positivo.", from="UTF-8", to="UTF-8")
+						if(tourSize<=1){
+							str1=iconv("Error, el tamaño del torneo debe ser mayor a 1.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
 						}else{
@@ -281,7 +281,7 @@ seteo=function(datos, codigo){
 							bandera=FALSE
 						}
 						stallGens<<-svalue(obj_gedit458)
-						if(stallGens<0){
+						if(stallGens<=0){
 							gmessage("Error, 'stallGens' debe ser mayor a 0.", icon="error")
 							bandera=FALSE
 						}
@@ -312,6 +312,7 @@ seteo=function(datos, codigo){
 
 
 comenzar_calculo=function(archivo, cod){
+	print("comienza el cálculo")
 	partes=partir(dataframe0, 1-valExterna, seed) #ver valInterna y valExterna	
 	largo=length(partes$it[1,])
 	
@@ -354,22 +355,11 @@ comenzar_calculo=function(archivo, cod){
 		}
 	}
 	
-	
 	resultados=primera_fase(archivo, nromet, partes$it, trials, clase, alpha, maxSelectVars, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens,umbral, valInterna)
-
-	# write("---", archivo, append=TRUE)
-	# write.table(resultados, archivo, append=TRUE)#ver
-	# write("---", archivo, append=TRUE)
-	#write.table(dataframe0, archivo, append=TRUE)
 	interna=partes$it
 	externa=partes$et
-	# write.table(partes$it, archivo, append=TRUE)
-	# write("---", archivo, append=TRUE)
-	# write.table(partes$et, archivo, append=TRUE)
-	# write("---", archivo, append=TRUE)
-	
 	load(archivo)
-	save(maes_primero, resultados, externa, interna, file=archivo) #---------------------------------------SAVE
+	save(maes_primero, resultados, externa, interna, file=archivo) 
 	
 	if(cod=="PS"){
 		ventana_fase_dos(archivo)

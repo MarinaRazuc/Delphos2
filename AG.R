@@ -157,8 +157,6 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 		FAG=1/FAG
 	}
 	
-	# print(efe1)
-	# print(efe2)
 	FAG 
 }
 
@@ -172,21 +170,49 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 # cada individuo tiene nro_desc cantidad de cromosomas
 # cada individuo tiene max cantidad de cromosomas seteados a 1
 generar_poblacion_inicial=function(nro_desc, popSize, maximo ){ 
-	pop=matrix(nrow=popSize, ncol=nro_desc)
+	pop=matrix(0, nrow=popSize, ncol=nro_desc)
 	for (i in 1:popSize){
-		ind=runif(nro_desc, 0, 1)
-		ind=round(ind)
-		if(cardinalidad(ind) > maximo){
-			ind=ajustar(ind, maximo)
-		}
-		if(nro_desc==maximo){
-			if(cardinalidad(ind)>(nro_desc/2)){
-				ind=ajustar(ind, maximo)		#MM
-			}
-		}
-		pop[i,]=ind
+		indi=crear_individuo(runif(nro_desc, 0, 0), maximo)
+		pop[i,]=indi
+		
+		# ind=runif(nro_desc, 0, 1)
+		# ind=round(ind)
+		# if(cardinalidad(ind) > maximo){
+			# ind=ajustar2(ind, maximo)
+		# }
+		# if(nro_desc==maximo){
+			# if(cardinalidad(ind)>(nro_desc/2)){
+				# ind=ajustar2(ind, maximo)		#MM
+			# }
+		# }
+		# pop[i,]=ind
 	} 
 	pop
+}
+crear_individuo=function(ind, maximo){
+	largo=length(ind)
+	for(i in 1:maximo){
+		a=runif(1, 1,largo)
+		ind[round(a)]=1
+	}
+	
+	ind
+}
+
+ajustar2=function(ind, maximo){
+	card=cardinalidad(ind)
+	largo=length(ind)
+	while(card>maximo){
+		dif=card-maximo
+		for(i in dif){
+			a=runif(1,1,largo)
+			ind[round(a)]=0
+		}
+		
+		card=cardinalidad(ind)
+	}
+	
+	ind
 }
 
 
@@ -232,23 +258,28 @@ fitness2=function(x){
 
 
 #permutación2
-permutacion2=function(padre1, padre2){
-	largo=length(padre1) #el largo es el mismo para ambos
-	punto=round(runif(1,1,largo-2)) #punto de cruce
-	h1p1= padre1[1:punto] #hijo 1 parte 1
-	h1p2= padre2[(punto+1):largo]
-	h2p1=padre2[1:punto]
-	h2p2=padre1[(punto+1):largo]
-	
-	hijo1=c(h1p1, h1p2)
-	hijo2=c(h2p1, h2p2)
-	
-	if(cardinalidad(hijo1)>pmG)
-		hijo1=ajustar(hijo1, pmG)
-	if(cardinalidad(hijo2)>pmG)
-		hijo2=ajustar(hijo2, pmG)
-	
-	children=matrix(NA, 2, largo)
+permutacion2=function(padre1, padre2, pxo){
+	if(dado(pxo)){
+		largo=length(padre1) #el largo es el mismo para ambos
+		punto=round(runif(1,1,largo-2)) #punto de cruce
+		h1p1= padre1[1:punto] #hijo 1 parte 1
+		h1p2= padre2[(punto+1):largo]
+		h2p1=padre2[1:punto]
+		h2p2=padre1[(punto+1):largo]
+		
+		hijo1=c(h1p1, h1p2)
+		hijo2=c(h2p1, h2p2)
+		
+		if(cardinalidad(hijo1)>pmG)
+			hijo1=ajustar(hijo1, pmG)
+		if(cardinalidad(hijo2)>pmG)
+			hijo2=ajustar(hijo2, pmG)
+		
+		children=matrix(NA, 2, largo)
+	}else{
+		hijo1=padre1
+		hijo2=padre2
+	}
 		
 	resultado=list()
 	resultado$hijo1=hijo1
@@ -356,10 +387,7 @@ iguales=function(indiv1, indiv2){
 generar_pool=function(tourSize, fit_vals, poblacion_actual, pxo){
 	k=1
 	parejas=ceiling(nrow(poblacion_actual)/2)
-	
-	#pool=matrix(0, parejas*2, ncol(poblacion_actual))
-	pool=c() #q sea solo los indices
-	
+	pool=c() 
 	torneo=c()
 	p=c()
 	for(i in 1:parejas){
@@ -367,13 +395,13 @@ generar_pool=function(tourSize, fit_vals, poblacion_actual, pxo){
 		while(!igls){
 			for(h in 1:2){
 				bandera=FALSE
-				while(!bandera){ #segun pxo
+				#while(!bandera){ #segun pxo
 					for(j in 1:tourSize){
 						torneo[j]=round(runif(1,1,nrow(poblacion_actual)))
 					} 
 					p[h]=realizar_torneo(torneo, fit_vals)
-					bandera=dado(pxo) #si bandera es TRUE, queda el individuo elegido, si es FALSE, se repite la elección
-				}
+					#bandera=dado(pxo) #si bandera es TRUE, queda el individuo elegido, si es FALSE, se repite la elección
+				#}
 			}
 			igls=iguales(poblacion_actual[p[1], ], poblacion_actual[p[2], ])
 		}
@@ -414,7 +442,7 @@ pertenece=function(poblacion, individuo){
 }
 
 #algoritmo genético casero
-algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens, stallThres){	
+algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens, stallThres){	
 	ERRORES<<-0
 	grafico=data.frame()
 	empeora<<-0
@@ -424,7 +452,6 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 	numcols=ncol(entrenamiento) #entrenamiento y testeo tienen el mismo nro de cols
 	filas=nrow(entrenamiento)
 	if(pm==0 || pm>numcols){
-		#pm<-numcols-1 #debería ser proporción del tamaño del individuo
 		pm<-round((numcols-1)*0.25)
 	}
 	# <3 
@@ -526,13 +553,12 @@ algoritmo_genetico_2=function(archivo, metodo, entrenamiento, testeo, clase_prop
 			k=eliteSize+1 #la siguiente posición libre en nueva_población luego de haber acomodado la elite
 			
 			while(k<=popSize){
-				 
 				p1=poblacion_actual[pool[m],]
 				#print(length(p1))
 				p2=poblacion_actual[pool[m+1],]
 				#print(length(p2))
 				m=m+2
-				hijos=permutacion2(p1,p2)
+				hijos=permutacion2(p1,p2, pxo)
 				h1=hijos$hijo1
 				h2=hijos$hijo2
 				mutar=dado(pmut)

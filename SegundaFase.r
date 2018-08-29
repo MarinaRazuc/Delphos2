@@ -130,15 +130,10 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	correctos=c()
 	load(archivo)
 	individuos=matrix(0,nrow(resultados), ncol(resultados))
-	#SUPERMAES2<<-maes_primero
-	#SUPERIND<<-resultados
-	
+
 	cols=ncol(externa)
 	clase=class(externa[,cols])
-	#print(cols)
 	iteras=nrow(resultados)
-	#print("iteras")
-	#print(iteras)
 	niveles=length(levels(externa[1,cols]))
 	ROCareaS=matrix(0,iteras,niveles)
 	confusion=matrix(0, iteras*niveles, niveles)
@@ -252,12 +247,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
 		legend(x=iteras+0.5, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.4, pch="o")
 	}
-	
-	# write("---", salida, append=TRUE)
 	completo=rbind(interna, externa)
-	# write.table(completo, salida, append=TRUE)
-	# write("---", salida, append=TRUE)
-	# write.table(grafico, salida, append=TRUE)
 	
 	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, file=salida)
 }

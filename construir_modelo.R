@@ -8,11 +8,7 @@ construir_modelo=function(metodo, datos){
 	
 	if(metodo==1){
 		B=proc.time()
-		#resultado=regresionLinealSpeedlm(datos)
-		#resultado=regresionLineal5(datos)
 		resultado=regresionLineal4(datos)
-		#resultado=regresionLineal2(datos)
-		#=resultado=regresionLineal(datos)
 		print(proc.time()-B)
 	}else{
 		if(metodo==2){
@@ -304,19 +300,8 @@ regresionLineal2=function(datos){
 regresionLineal4=function(datos){
 	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
 	print(str1)
-	
-	# print("dimension de los datos: ")
-	# print(dim(datos))
-	# print("valor")
-	# print(datos[1,1])
-	# print(names(datos)[1])
-	
 	fmla=as.formula("V1~.")
-	#write.table(datos, file="datillos.txt", append=TRUE)
-	
-	#dfr=trasponer(datos)
 	modelo=speedglm(fmla,datos, x=FALSE, y=FALSE, method="Cholesky") #maxit=25, k=2 ,  method=c('eigen','Cholesky','qr')
-	
 	
 	modelo
 }
@@ -370,7 +355,5 @@ regresionLinealSpeedlm=function(datos){
 	modelo=speedlm("V1~.", datos, method='Cholesky', fitted = FALSE)
 	
 	modelo
-
-
 }
 

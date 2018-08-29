@@ -749,3 +749,15 @@ generar_particiones=function(ndfr4, pex, pin){
 		
 		resultados
 }	
+
+
+
+
+
+generar_pop=function(nro, cant, maximo){
+	m=proc.time()
+	p1=generar_poblacion_inicial(nro, cant, maximo)
+	print(proc.time()-m)
+	
+	p1
+}

@@ -1,14 +1,10 @@
 source("AG.R")
 source("extras.R")
 require("caret")
-#require("GA")
-#require("doParallel")
-#require("iterators")
-#require("foreach")
 require("memoise")
 		 
 primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral, valInterna){
-	
+	print("Entro a la Primera Fase")
 	columnas=ncol(interna)
 	if(pm>(columnas-1)){
 		str1=iconv("Error, la cantidad máxima de descriptores a elegir es mayor a la cantidad de descriptores disponibles.", from="UTF-8", to="UTF-8")
@@ -22,8 +18,10 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 	for(i in iterwrap){
 		set.seed(i) 
 		print("Primera Fase")
+		pr=proc.time()
 		dataframe1=partir(interna, valInterna, i)
-		algogenet=algoritmo_genetico_2(archivo, metodo, dataframe1$it, dataframe1$et, clase_propiedad, alpha, pm, popSize,  tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral)	
+		print(proc.time()-pr)
+		algogenet=algoritmo_genetico_2(metodo, dataframe1$it, dataframe1$et, clase_propiedad, alpha, pm, popSize,  tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral)	
 		soluciones[i,]=algogenet$individuo	
 	}
 	
@@ -74,8 +72,6 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 				}
 				mae=suma/m2
 				maes_primero[i,j]=mae
-				#write("-", archivo ,append=TRUE)
-				#write(mae, archivo, append=TRUE)
 			}
 		}else{ #metodo de weka
 			modelo=construir_modelo(metodo, datos)
@@ -87,8 +83,6 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 					mae=as.numeric(eval1$details[5])
 				}
 				maes_primero[i,j]=mae
-				#write("-", archivo ,append=TRUE)
-				#write(mae, archivo, append=TRUE)
 			}
 		}
 	}
