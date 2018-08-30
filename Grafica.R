@@ -11,6 +11,7 @@ require("gWidgets2")
 source("DataInput.R")
 source("SegundaFase.r")
 source("AG.R")
+source("Mostrar_Resultados.R")
 
 archivo=NULL
 

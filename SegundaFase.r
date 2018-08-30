@@ -138,13 +138,14 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	ROCareaS=matrix(0,iteras,niveles)
 	confusion=matrix(0, iteras*niveles, niveles)
 	
+	#con la nueva version esto deberia comentarse
 	if(iteras>maxCant)
 		iteras=maxCant
 	
 	g=1
 	param=1
 	filac=1
-	for(i in 1:iteras){
+	for(i in 1:iteras){ #por cada subconj de la primera fase
 		ult=g+10
 		colu=1
 		while(colu<11){
@@ -249,8 +250,64 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	}
 	completo=rbind(interna, externa)
 	
+	#nueva version
+	if(iteras>maxCant){
+		#si tengo mas subconjuntos que los que me pidio el usr
+		#ordenarlos por MAE? y devolver los maxCant mejores
+		#individuos y maes_segundo
+		
+		ordenados=ordenar(individuos, maes_segundo)
+		ind_ordenados=ordenados$individuos
+		maes_ordenados=ordenados$maes_ord
+		
+		resultados=ind_ordenados[1:maxCant, ]
+	}
+	
+	
 	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, file=salida)
 }
+
+ordenar=function(ind, maes){
+	cant=nrow(ind)
+	indices=c(1:cant)
+	indices_ord=c(1:cant)
+	indis_ords=matrix(0, nrow(ind), ncol(ind))
+	maes_ords=matrix(0, nrow(ind), 2)
+	
+	for(i in 1:cant){
+		idc=buscar_mejor(indices, maes)
+		indis_ords[i,]=ind[idc, ]
+		maes_ords[i,1]=idc
+		maes_ords[i,2]=maes[idc]
+		indices[idc]=-1
+	}
+		
+	ordenados=list()
+	ordenados$individuos=indis_ords
+	ordenados$maes_ord=maes_ords
+	
+	ordenados
+}
+
+buscar_mejor=function(indices, maes){
+	largo=length(indices)
+	mejor=1000
+	idc=0
+	
+	for(i in 1:largo){
+		ind=indices[i]
+		if(ind!=-1){
+			if(maes[ind]<mejor){
+				mejor=maes[ind]
+				idc=i
+			}
+		}
+	}
+	
+	idc
+}
+
+
 
 buscar_mayor_y_menor=function(grafico, auxiliar){
 	mayor=grafico[1,2]
