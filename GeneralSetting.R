@@ -68,28 +68,31 @@ seteo=function(datos, codigo){
 				} )
 	
 	group_4=ggroup(horizontal=FALSE, container=group_11) #wrapper configuration
-	group_41=ggroup(container=group_4, horizontal=TRUE)
+	frame4=gframe(text="Wrapper Configuration", pos=0, container=group_4, horizontal=FALSE , spacing=5)
+	group_41=ggroup(container=frame4, horizontal=TRUE)
+	
+
 	label41=glabel("  Trials                                   ", container=group_41)
 	obj_gedit41=gedit(c(3), container=group_41, width=5, coerce.with=as.numeric, 
 				handler=function(h, ...){
 					#trials<<-svalue(obj_gedit41)
 				} )
 	
-	group_42=ggroup(container=group_4, horizontal=TRUE)
+	group_42=ggroup(container=frame4, horizontal=TRUE)
 	label42=glabel("  Alpha Value                       ", container=group_42)
 	obj_gedit42=gedit(c(0.6), container=group_42, width=5, coerce.with=as.numeric, 
 				handler=function(h, ...){
 					#alpha<<-svalue(obj_gedit42)
 				} )
 
-	group_44=ggroup(container=group_4, horizontal=TRUE) #maximum selected  vars
+	group_44=ggroup(container=frame4, horizontal=TRUE) #maximum selected  vars
 	label44=glabel("  Maximum Selected Vars  ", container=group_44)
 	obj_gedit44=gedit(c(0), container=group_44, width=5, coerce.with=as.numeric, 
 				handler=function(h, ...){
 					#maxSelectVars<<-svalue(obj_gedit44)
 				} )
 	 
-	group_43=ggroup(container=group_4, horizontal=TRUE, width=500)
+	group_43=ggroup(container=frame4, horizontal=TRUE, width=500)
 	group_431=ggroup(container=group_43, horizontal=FALSE, width=250)
 	
 	label431=glabel("Function:", container=group_431)
@@ -120,7 +123,7 @@ seteo=function(datos, codigo){
 	layout1[3,1:20]<-combobox4322
 	
 	
-	group_45=ggroup(container=group_4,horizontal=TRUE) #ga settings
+	group_45=ggroup(container=frame4,horizontal=TRUE) #ga settings
 	frame45=gframe(container=group_45, horizontal=FALSE, text="GA Settings", spacing=5, pos=0)
 	group_451=ggroup(container=frame45,horizontal=TRUE)
 	label451=glabel("  Pop Size                 ", container=group_451)

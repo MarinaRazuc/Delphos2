@@ -62,7 +62,7 @@ ventana_fase_dos=function(archivo){
 	str2="  Seleccione método para la segunda fase: "
 	str2=iconv(str2, from="UTF-8", to="UTF-8")
 	label1=glabel(str2 , container=group11)
-	radio1 = gradio(c("RandomCommittee","RandomForest"), container=group1, 
+	radio1 = gradio(c("RandomForest","RandomCommittee"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)
 							#print(valor)
@@ -343,14 +343,17 @@ construirModelo=function(datos, metodo){
 	fmla=as.formula(paste(ultimo,"~."))
 	
 	if(metodo=="RF"){ #randomforest
+		print("Random Forest")
 		RF=make_Weka_classifier("weka/classifiers/trees/RandomForest")
 		modelo=RF(formula=fmla, data=datos)
 	}else{
 		if(metodo=="RC"){ #randomcommittee
+			print("Random Committee")
 			RC=make_Weka_classifier("weka/classifiers/meta/RandomCommittee")
 			modelo=RC(formula=fmla, data=datos)
 		}else{#no se usa
 			if(metodo=="RP"){ #reptree
+				print("REPTree")
 				RP=make_Weka_classifier("weka/classifiers/trees/REPTree")
 				modelo=RP(formula=fmla, data=datos)
 			}
