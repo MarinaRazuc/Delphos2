@@ -138,10 +138,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	ROCareaS=matrix(0,iteras,niveles)
 	confusion=matrix(0, iteras*niveles, niveles)
 	
-	#con la nueva version esto deberia comentarse
-	if(iteras>maxCant)
-		iteras=maxCant
-	
 	g=1
 	param=1
 	filac=1
@@ -155,7 +151,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			colu=colu+1
 			g=g+1
 		}
-		
 		individuo=resultados[i,]
 		IF=filtrar(interna, individuo)
 		EF=filtrar(externa, individuo) 
@@ -188,18 +183,15 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("---------------------")
 		}else{ 
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
-			#correctos=evalF2$details[1]
 			correctos[i]=evalF2$details[1]
 			mae=maes_segundo[i]=evalF2$details[5]
-			# confusion=evalF2$confusionMatrix
 			matriz=evalF2$confusionMatrix
 			for(h in 1:nrow(matriz)){
 				for(k in 1:ncol(matriz)){
 					confusion[filac, k]=matriz[h,k]
 				}
 				filac=filac+1
-			}
-			
+			}	
 			noms=row.names(matriz)
 			confusion=as.data.frame(confusion)
 			names(confusion)=noms
@@ -250,55 +242,156 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	}
 	completo=rbind(interna, externa)
 	
-	#nueva version
+	if(clase=="numeric"){
+		ordenados=ordenarR(individuos, maes_segundo, corcoef)
+		maes_segundo=ordenados$maes_ord
+		resultados=ordenados$individuos
+		corcoef=ordenados$n_corcoef
+		
+	}else{
+		matts=calcular_matt(nrow(individuos), confusion)
+		ordenados=ordenarC(individuos, matts, maes_segundo, ROCareaS, correctos)
+		resultados=ordenados$individuos
+		maes_segundo=ordenados$maes_ord
+		matts=ordenados$matts_ord
+		ROCareaS=ordenados$rocas
+		correctos=ordenados$correctos
+	}
+	
 	if(iteras>maxCant){
-		#si tengo mas subconjuntos que los que me pidio el usr
-		#ordenarlos por MAE? y devolver los maxCant mejores
-		#individuos y maes_segundo
-		
-		ordenados=ordenar(individuos, maes_segundo)
-		ind_ordenados=ordenados$individuos
-		maes_ordenados=ordenados$maes_ord
-		
-		resultados=ind_ordenados[1:maxCant, ]
+		#tengo mas subconjs de los que me pidieron
+		resultados=resultados[1:maxCant, ]
+		maes_segundo=maes_segundo[1:maxCant]
+		if(clase=="numeric"){
+			corcoef=corcoef[1:maxCant]
+		}else{
+			matts=matts[1:maxCant]
+			ROCareaS=ROCareaS[1:maxCant, ]
+			correctos=correctos[1:maxCant]
+		}
 	}
 	
 	
-	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, file=salida)
+	
+	
+	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, matts, file=salida)
 }
 
-ordenar=function(ind, maes){
+ordenarR=function(individuos, maes_segundo, corcoef){
+	
+	nuevos_individuos=matrix(0, nrow(ind), ncol(ind))
 	cant=nrow(ind)
 	indices=c(1:cant)
-	indices_ord=c(1:cant)
-	indis_ords=matrix(0, nrow(ind), ncol(ind))
+	indis_ords=c(1:cant)
 	maes_ords=matrix(0, nrow(ind), 2)
+	nuevo_corcoef=c(1:cant)
 	
 	for(i in 1:cant){
-		idc=buscar_mejor(indices, maes)
-		indis_ords[i,]=ind[idc, ]
+		idc=buscar_mejor(indices, corcoef)
+		nuevos_individuos[i,]=ind[idc, ]
 		maes_ords[i,1]=idc
 		maes_ords[i,2]=maes[idc]
+		nuevo_corcoef[i]=corcoef[idc]
 		indices[idc]=-1
 	}
 		
 	ordenados=list()
-	ordenados$individuos=indis_ords
+	ordenados$individuos=nuevos_individuos
 	ordenados$maes_ord=maes_ords
+	ordenados$n_corcoef=nuevo_corcoef
+		
+	ordenados
+}
+
+
+calcular_matt=function(largo, confusion){
+	cantCaract=length(names(confusion))
+	fila=1
+	matts=c(1:largo)
+	
+	for(i in 1:largo){ #por cada individuo
+		FNT=FPT=TNT=TPT=0 #valores totales
+		for(j in 1:cantCaract){ #por cada clase -> una tabla
+			FN=FP=TN=TP=0
+			TP=TP+confusion[fila+j-1, j] #TP es solo pos (j,j)
+			for(k in 1:cantCaract){ #FN es fila j sin pos (j,j)
+				if(k!=j){
+					FN=FN+confusion[fila+j-1, k]
+				}
+			}
+			for(k in 1:cantCaract){ #FP es columna j sin pos (j,j)
+				if(k!=j){
+					FP=FP+confusion[fila+k-1, j]
+				}
+			}
+			for(k in 1:cantCaract){
+				for(h in fila:(fila+cantCaract-1)){ #TN es toda la matriz sin pos j
+					if(k!=j && h!=(j+cantCaract)){
+						TN=TN+confusion[h,k]
+					}
+				}
+			}
+			FNT=FNT+FN
+			FPT=FPT+FP
+			TNT=TNT+TN
+			TPT=TPT+TP
+		}
+		fila=fila+cantCaract
+		matts[i]=cuenta(FNT, FPT, TNT, TPT)
+	}
+	matts
+}
+
+cuenta=function(FN, FP, TN, TP){
+	nominador=TP*TN - FP*FN
+	denominador=sqrt((TP+FP)*(TP+FN)*(TN+FP)*(TN+FN))
+	resultado=nominador/denominador
+	
+	resultado
+}
+
+ordenarC=function(ind, matts, maes, RA, correctos){
+	nuevos_individuos=matrix(0, nrow(ind), ncol(ind))
+	cant=nrow(ind)
+	indices=c(1:cant)
+	indis_ords=c(1:cant)
+	maes_ords=matrix(0, nrow(ind), 2)
+	matt_ord=c(1:cant)
+	nuevo_RA=matrix(0, cant, 3)
+	nuevo_correctos=c(1:cant)
+	
+	for(i in 1:cant){
+		idc=buscar_mejor(indices, matts)
+		nuevos_individuos[i,]=ind[idc, ]
+		maes_ords[i,1]=idc
+		maes_ords[i,2]=maes[idc]
+		matt_ord[i]=matts[idc]
+		nuevo_RA[i, ]=RA[idc,]
+		nuevo_correctos[i]=correctos[idc]
+		indices[idc]=-1
+	}
+		
+	ordenados=list()
+	ordenados$individuos=nuevos_individuos
+	ordenados$maes_ord=maes_ords
+	ordenados$matts_ords=matt_ord
+	ordenados$rocas=nuevo_RA
+	ordenados$correctos=nuevos_correctos
 	
 	ordenados
 }
 
-buscar_mejor=function(indices, maes){
+
+buscar_mejor=function(indices, matt){
 	largo=length(indices)
-	mejor=1000
+	mejor=0
 	idc=0
 	
 	for(i in 1:largo){
 		ind=indices[i]
 		if(ind!=-1){
-			if(maes[ind]<mejor){
-				mejor=maes[ind]
+			if(matt[ind]>mejor){
+				mejor=matt[ind]
 				idc=i
 			}
 		}

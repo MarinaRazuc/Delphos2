@@ -213,9 +213,10 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
 										})
-	str9=iconv(" Ver Matriz de Confusión ", from="UTF-8", to="UTF-8")
+	str9=iconv(" Ver Coef. Matthews ", from="UTF-8", to="UTF-8")
 	botonconfusion=gbutton(str9, handler=function(h,...){
-											 ventana_confusion(confusion, cant)
+											ventana_matts(matts, cant)
+											 #ventana_confusion(confusion, cant)
 										 })
 	botoncasos=gbutton(" Ver Porcentaje Correctos ", handler=function(h, ...){
 											ventana_casos(porcentaje)
@@ -255,6 +256,17 @@ ventana_card=function(cardis){
 	#print(plot(datos, colour="purple"))
 	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
 }
+ventana_matts=function(matts, cant){
+	datos=data.frame()
+	for(i in 1:cant){
+		datos[i, 1]=i
+		datos[i, 2]=matts[i]
+	}
+	
+	names(datos)=c("Subconjuntos", "Coef.Matthews")
+	x11(width=2000, height=1000, title="Coeficiente de Matthews de los subconjuntos");
+	print(ggplot(datos, aes(x=Subconjuntos, y=Coef.Matthews))   + geom_point(aes(colour=Coef.Matthews), size=4, color="purple"))
+}
 
 ventana_confusion=function(confusion, cant){
 	str1=iconv("Matrices de Confusión", from="UTF-8", to="UTF-8")
@@ -262,9 +274,13 @@ ventana_confusion=function(confusion, cant){
 	grupo1=grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200, use.scrollwindow = TRUE)
 	lay1=glayout(container=grupo1)
 	
+	print("matriz de confusion")
 	print(confusion)
+	print("cant")
 	print(cant)
 	nombres=names(confusion)
+	print("nombres")
+	print(nombres)
 	cantnoms=length(nombres)
 	strTitulo="      "
 	for(i in 1:cantnoms){
