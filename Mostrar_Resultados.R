@@ -13,7 +13,7 @@ mostrar_resultados=function(archivo){
 	rocarea=ROCareaS
 	todos_maes=grafico 
 	this_confu=confusion
-	
+	matts=matts
 	# print("MATRIZ")
 	# print(confusion)
 	
@@ -25,7 +25,7 @@ mostrar_resultados=function(archivo){
 	if(clase=="numeric"){
 		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores, todos_maes)
 	}else{
-		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos_maes, this_confu)
+		mostrar_nominales(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos_maes, this_confu, matts)
 	}
 	
 }
@@ -140,7 +140,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 }
 
 #
-mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos, confusion){
+mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, valores, todos, confusion, matts){
 	cant=dim(individuos)[1] #filas
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)

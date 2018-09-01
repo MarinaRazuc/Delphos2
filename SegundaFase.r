@@ -137,6 +137,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	niveles=length(levels(externa[1,cols]))
 	ROCareaS=matrix(0,iteras,niveles)
 	confusion=matrix(0, iteras*niveles, niveles)
+	matts=c()
 	
 	g=1
 	param=1
@@ -238,30 +239,37 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		boxplot(MAE~Subconjunto,  data=grafico, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02))
 		par(new=TRUE)
 		plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
-		legend(x=iteras+0.5, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.4, pch="o")
+		legend(x=iteras+0.1, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.3, pch="o")
 	}
 	completo=rbind(interna, externa)
 	
 	if(clase=="numeric"){
-		ordenados=ordenarR(individuos, maes_segundo, corcoef)
+		ordenados=ordenarR(resultados, maes_segundo, corcoef)
 		maes_segundo=ordenados$maes_ord
 		resultados=ordenados$individuos
 		corcoef=ordenados$n_corcoef
 		
 	}else{
 		matts=calcular_matt(nrow(individuos), confusion)
-		ordenados=ordenarC(individuos, matts, maes_segundo, ROCareaS, correctos)
+		print("maes_Segundo")
+		print(maes_segundo)
+		ordenados=ordenarC(resultados, matts, maes_segundo, ROCareaS, correctos)
 		resultados=ordenados$individuos
 		maes_segundo=ordenados$maes_ord
 		matts=ordenados$matts_ord
 		ROCareaS=ordenados$rocas
 		correctos=ordenados$correctos
 	}
+	print("iteras")
+	print(iteras)
+	print("maxCant")
+	print(maxCant)
 	
-	if(iteras>maxCant){
+	if(iteras < maxCant){
+		print("Devolver menos subconjuntos-----------------------------------------------------")
 		#tengo mas subconjs de los que me pidieron
 		resultados=resultados[1:maxCant, ]
-		maes_segundo=maes_segundo[1:maxCant]
+		maes_segundo=maes_segundo[1:maxCant, ]
 		if(clase=="numeric"){
 			corcoef=corcoef[1:maxCant]
 		}else{
@@ -270,9 +278,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			correctos=correctos[1:maxCant]
 		}
 	}
-	
-	
-	
 	
 	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, matts, file=salida)
 }
@@ -289,7 +294,7 @@ ordenarR=function(individuos, maes_segundo, corcoef){
 	for(i in 1:cant){
 		idc=buscar_mejor(indices, corcoef)
 		nuevos_individuos[i,]=ind[idc, ]
-		maes_ords[i,1]=idc
+		maes_ords[i,1]=i
 		maes_ords[i,2]=maes[idc]
 		nuevo_corcoef[i]=corcoef[idc]
 		indices[idc]=-1
@@ -363,20 +368,23 @@ ordenarC=function(ind, matts, maes, RA, correctos){
 	for(i in 1:cant){
 		idc=buscar_mejor(indices, matts)
 		nuevos_individuos[i,]=ind[idc, ]
-		maes_ords[i,1]=idc
+		maes_ords[i,1]=i
 		maes_ords[i,2]=maes[idc]
 		matt_ord[i]=matts[idc]
 		nuevo_RA[i, ]=RA[idc,]
 		nuevo_correctos[i]=correctos[idc]
 		indices[idc]=-1
 	}
+	
+	print("maes_ords")
+	print(maes_ords)
 		
 	ordenados=list()
 	ordenados$individuos=nuevos_individuos
 	ordenados$maes_ord=maes_ords
 	ordenados$matts_ords=matt_ord
 	ordenados$rocas=nuevo_RA
-	ordenados$correctos=nuevos_correctos
+	ordenados$correctos=nuevo_correctos
 	
 	ordenados
 }
