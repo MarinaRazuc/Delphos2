@@ -80,19 +80,19 @@ primerasegunda=function(){ #PS primera y segunda fase
 
 #cargar_archivo
 ver_resultados=function(){
-	win=gwindow(title="Ver Resultados", visible=FALSE, width=200,  height=70, parent=c(200,200))
+	win=gwindow(title="View Results", visible=FALSE, width=200,  height=70, parent=c(200,200))
 	
 	group2=ggroup(container=win, spacing=15, horizontal=FALSE)
 	group1=ggroup(container=group2, spacing=10, horizontal=TRUE)
 	#glabel("  ", container=group1)
-	label1=glabel(" Ingrese archivo...(Resultado Fase Dos)", container=group1)
-	text1=gedit("Ingrese archivo", container=group1, width=20)
+	label1=glabel(" Load File... (Second Phase file)", container=group1)
+	text1=gedit("Load file", container=group1, width=20)
 	button5=gbutton("Browse...", container=group1, 
 					handler=function(h,...){
 						file5=gfile(type="open")
 						if(length(file5)>0){
 							if(is.na(file5)){
-								svalue(text1)="Ingrese archivo"
+								svalue(text1)="Load file"
 							}else{
 								svalue(text1)=file5
 							}

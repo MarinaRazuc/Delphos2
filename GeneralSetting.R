@@ -185,7 +185,7 @@ seteo=function(datos, codigo){
 				} )
 	
 	group_A=ggroup(container=frame45, horizontal=TRUE)
-	labelA=glabel(" Guardar resultados como... (archivo .RData) ", container=group_A)
+	labelA=glabel(" Save results as... (.RData file) ", container=group_A)
 	textA=gedit(archivoUno, container=group_A, font.attr=list(style="bold"), width=20)
 	buttonA=gbutton("Browse...", container=group_A, 
 					handler=function(h,...){

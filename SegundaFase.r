@@ -2,16 +2,16 @@ source("extras.R")
 metodoSF<<-"RF"
 
 obtener_archivo_entrada=function(){
-	win1=gwindow(title="Cargar archivo...", visible=FALSE, width=300, height=100, parent=c(500,230))
+	win1=gwindow(title="Load file...", visible=FALSE, width=300, height=100, parent=c(500,230))
 	group2=ggroup(horizontal=FALSE, container=win1, spacing=15)
 	group1=ggroup(horizontal=TRUE, container=group2, spacing=15)
-	text1=gedit("Ingrese archivo", container=group1, width=30)
+	text1=gedit("Load file", container=group1, width=30)
 	button1=gbutton("Browse...", container=group1, 
 					handler=function(h,...){
 						file1=gfile(type="open")
 						if(length(file1)>0){
 							if(is.na(file1)){
-								svalue(text1)="Ingrese archivo"
+								svalue(text1)="Load file"
 							}else{
 								svalue(text1)=file1
 							}
@@ -52,14 +52,14 @@ ventana_fase_dos=function(archivo){
 	glabel(" ", container=frame1)
 	group0=ggroup(horizontal=TRUE, container=frame1, spacing=5) #max cant subconjs
 	
-	stringS=iconv("  Máxima cantidad de subconjuntos:", from="UTF-8", to="UTF-8")
+	stringS=iconv("  Maximum number of subsets:", from="UTF-8", to="UTF-8")
 	labelC=glabel(stringS, container=group0)
 	editS=gedit("5", container=group0, width=4)
 	glabel(" ", container=frame1)
 	
 	group1=ggroup(horizontal = FALSE, container=frame1, spacing=10) #seleccionar metodo
 	group11=ggroup(horizontal=TRUE, container=group1, spacing=5)
-	str2="  Seleccione método para la segunda fase: "
+	str2="  Select function for the second phase: "
 	str2=iconv(str2, from="UTF-8", to="UTF-8")
 	label1=glabel(str2 , container=group11)
 	radio1 = gradio(c("RandomForest","RandomCommittee"), container=group1, 
@@ -79,11 +79,11 @@ ventana_fase_dos=function(archivo){
 	group4=ggroup(container=frame1, spacing=15)
 	glabel("  ", container=group4)
 	group2=ggroup(horizontal=TRUE, container=frame1, spacing=15)#guardar como
-	label2=glabel(" Guardar como... ", container=group2)
+	label2=glabel(" Save as... ", container=group2)
 	texto2=gedit("SecondPhase.RData", container=group2)
 	boton2=gbutton("Browse", container=group2,
 					handler=function(h,...){
-						file4=gfile("Guardar como...", type="save")
+						file4=gfile("Save as...", type="save")
 						if(is.na(file4)){
 							svalue(texto2)="SecondPhase.RData"
 						}else{
@@ -109,7 +109,7 @@ ventana_fase_dos=function(archivo){
 						if(svalue(editS)==0){
 							gmessage("La cantidad de subconjuntos debe ser mayor a 0", icon=error)
 						}else{
-							segunda_fase(archivo, metodoSF, svalue(texto2), svalue(editS))#, svalue(editI), svalue(editT))	
+							segunda_fase(archivo, metodoSF, svalue(texto2), as.numeric(svalue(editS)))#, svalue(editI), svalue(editT))	
 							dispose(win1)
 						}
 					} )
@@ -143,19 +143,9 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	param=1
 	filac=1
 	for(i in 1:iteras){ #por cada subconj de la primera fase
-		ult=g+10
-		colu=1
-		while(colu<11){
-			grafico[g,1]=i
-			grafico[g,2]=maes_primero[i,colu]
-			grafico[g,3]="P"
-			colu=colu+1
-			g=g+1
-		}
 		individuo=resultados[i,]
 		IF=filtrar(interna, individuo)
 		EF=filtrar(externa, individuo) 
-
 		modelo=tryCatch(construirModelo(IF ,metodoSF), 
 					error=function(e){
 						gmessage("Error al calcular el modelo. ", icon="error")
@@ -169,10 +159,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			mae=evalF2$details[2]
 			maes_segundo[i]=mae
 			corr_coefs[i]=corcoef
-			grafico[g,1]=i
-			grafico[g, 2]=mae
-			grafico[g,3]="S"
-			g=g+1
+			
 			
 			print("---------------------")
 			str1=iconv("Coeficiente de Correlación", from="UTF-8", to="UTF-8")
@@ -198,7 +185,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			names(confusion)=noms
 			
 			rocarea=c()
-			#print(evalF2$detailsClass)
 			for(j in 1:niveles){
 				ROCareaS[i,j]=evalF2$detailsClass[j,6]
 				rocarea[j]=evalF2$detailsClass[j,6]
@@ -218,71 +204,80 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print(rocarea)
 			print("---------------------")
 		}
-		auxiliar[param, 1]=i
-		auxiliar[param, 2]=mae
-		param=param+1
-		if(i!=1){ #no es el primero
-			 tryCatch(dev.off(), 
-						 error=function(e){
-											str1=iconv("No hay gráficos activos.", from="UTF-8", to="UTF-8")
-											print(str1)
-										 }
-						 )
-		}else{
-			names(grafico)=c("Subconjunto", "MAE", "Fase")
-			names(auxiliar)=c("Subconjunto", "MAE")
-		}
-		elems=buscar_mayor_y_menor(grafico, auxiliar)
-		mayor=elems$mayor
-		menor=elems$menor
-		x11(width=80, height=50, title="MAE")
-		boxplot(MAE~Subconjunto,  data=grafico, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02))
-		par(new=TRUE)
-		plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, iteras+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
-		legend(x=iteras+0.1, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.3, pch="o")
+		
 	}
 	completo=rbind(interna, externa)
-	
+		
 	if(clase=="numeric"){
-		ordenados=ordenarR(resultados, maes_segundo, corcoef)
+		ordenados=ordenarR(resultados, maes_segundo, corr_coefs, maes_primero)
 		maes_segundo=ordenados$maes_ord
 		resultados=ordenados$individuos
-		corcoef=ordenados$n_corcoef
+		corr_coefs=ordenados$n_corcoef
 		
 	}else{
 		matts=calcular_matt(nrow(individuos), confusion)
-		print("maes_Segundo")
-		print(maes_segundo)
-		ordenados=ordenarC(resultados, matts, maes_segundo, ROCareaS, correctos)
+		ordenados=ordenarC(resultados, matts, maes_segundo, ROCareaS, correctos, maes_primero)
 		resultados=ordenados$individuos
 		maes_segundo=ordenados$maes_ord
 		matts=ordenados$matts_ord
 		ROCareaS=ordenados$rocas
 		correctos=ordenados$correctos
-	}
-	print("iteras")
-	print(iteras)
-	print("maxCant")
-	print(maxCant)
+		maes_primero=ordenados$maes_primero
+	}	
 	
-	if(iteras < maxCant){
-		print("Devolver menos subconjuntos-----------------------------------------------------")
+	if(iteras > maxCant){
+		print("Devolver menos subconjuntos------------------------------------------------------------------------")
 		#tengo mas subconjs de los que me pidieron
 		resultados=resultados[1:maxCant, ]
 		maes_segundo=maes_segundo[1:maxCant, ]
 		if(clase=="numeric"){
-			corcoef=corcoef[1:maxCant]
+			corr_coefs=corr_coefs[1:maxCant]
 		}else{
 			matts=matts[1:maxCant]
 			ROCareaS=ROCareaS[1:maxCant, ]
 			correctos=correctos[1:maxCant]
 		}
+	}else{
+		maxCant=iteras
 	}
+	
+	#aca mostrar grafico
+	fila=1
+	for(i in 1:maxCant){
+		for(j in 1:10){
+			grafico[fila, 1]=i
+			grafico[fila, 2]=maes_primero[i, j]
+			grafico[fila, 3]="P"
+			fila=fila+1
+		}
+		grafico[fila, 1]=i
+		grafico[fila, 2]=maes_segundo[i, 2]
+		grafico[fila, 3]="S"
+		auxiliar[i,1]=i
+		auxiliar[i,2]=maes_segundo[i,2]
+		fila=fila+1
+	}
+	names(grafico)=c("Subset", "MAE", "Phase")
+	names(auxiliar)=c("Subset", "MAE")
+	
+	# print("grafico")
+	# print(grafico)
+	# print("auxiliar")
+	# print(auxiliar)
+	
+	elems=buscar_mayor_y_menor(grafico, auxiliar)
+	mayor=elems$mayor
+	menor=elems$menor
+	x11(width=80, height=50, title="MAE")
+	boxplot(MAE~Subset,  data=grafico, boxwex = 0.25, xlab = "Subset",ylab = "MAE", col="lightblue", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02))
+	par(new=TRUE)
+	plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
+	legend(x=maxCant+0.1, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.2, pch="o")
 	
 	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, matts, file=salida)
 }
 
-ordenarR=function(individuos, maes_segundo, corcoef){
+ordenarR=function(ind, maes_segundo, corcoef, maes_primero){
 	
 	nuevos_individuos=matrix(0, nrow(ind), ncol(ind))
 	cant=nrow(ind)
@@ -290,13 +285,16 @@ ordenarR=function(individuos, maes_segundo, corcoef){
 	indis_ords=c(1:cant)
 	maes_ords=matrix(0, nrow(ind), 2)
 	nuevo_corcoef=c(1:cant)
+	nuevo_grafico=matrix(0, nrow(maes_primero), ncol(maes_primero))
+	maes_primero=as.matrix(maes_primero)
 	
 	for(i in 1:cant){
 		idc=buscar_mejor(indices, corcoef)
 		nuevos_individuos[i,]=ind[idc, ]
 		maes_ords[i,1]=i
-		maes_ords[i,2]=maes[idc]
+		maes_ords[i,2]=maes_segundo[idc]
 		nuevo_corcoef[i]=corcoef[idc]
+		nuevo_grafico[i, ]=maes_primero[idc, ]
 		indices[idc]=-1
 	}
 		
@@ -304,6 +302,7 @@ ordenarR=function(individuos, maes_segundo, corcoef){
 	ordenados$individuos=nuevos_individuos
 	ordenados$maes_ord=maes_ords
 	ordenados$n_corcoef=nuevo_corcoef
+	ordenados$maes_primero=nuevo_grafico
 		
 	ordenados
 }
@@ -355,7 +354,7 @@ cuenta=function(FN, FP, TN, TP){
 	resultado
 }
 
-ordenarC=function(ind, matts, maes, RA, correctos){
+ordenarC=function(ind, matts, maes, RA, correctos, maes_primero){
 	nuevos_individuos=matrix(0, nrow(ind), ncol(ind))
 	cant=nrow(ind)
 	indices=c(1:cant)
@@ -364,6 +363,8 @@ ordenarC=function(ind, matts, maes, RA, correctos){
 	matt_ord=c(1:cant)
 	nuevo_RA=matrix(0, cant, 3)
 	nuevo_correctos=c(1:cant)
+	nuevo_grafico=matrix(0, nrow(maes_primero), ncol(maes_primero))
+	maes_primero=as.matrix(maes_primero)
 	
 	for(i in 1:cant){
 		idc=buscar_mejor(indices, matts)
@@ -373,11 +374,9 @@ ordenarC=function(ind, matts, maes, RA, correctos){
 		matt_ord[i]=matts[idc]
 		nuevo_RA[i, ]=RA[idc,]
 		nuevo_correctos[i]=correctos[idc]
+		nuevo_grafico[i, ]=maes_primero[idc, ]
 		indices[idc]=-1
 	}
-	
-	print("maes_ords")
-	print(maes_ords)
 		
 	ordenados=list()
 	ordenados$individuos=nuevos_individuos
@@ -385,6 +384,7 @@ ordenarC=function(ind, matts, maes, RA, correctos){
 	ordenados$matts_ords=matt_ord
 	ordenados$rocas=nuevo_RA
 	ordenados$correctos=nuevo_correctos
+	ordenados$maes_primero=nuevo_grafico
 	
 	ordenados
 }

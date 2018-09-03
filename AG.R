@@ -241,8 +241,6 @@ ajustar=function(ind, maximo){
 				}
 			}
 		}
-		#print(cardinalidad(ind))
-		#print(max)
 	}
 	ind
 }
@@ -520,11 +518,11 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 		
 			if(i%%3==0 || i==1 ||i==nroGens){
 				grafico[G,1]=i
-				grafico[G,2]="promedio"
+				grafico[G,2]="average"
 				grafico[G,3]=promfit[2]
 				G=G+1
 				grafico[G,1]=i
-				grafico[G,2]="mejor"
+				grafico[G,2]="best"
 				grafico[G,3]=MejorFitness
 				G=G+1
 				
@@ -537,10 +535,10 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 						)
 					 
 				}else{
-					names(grafico)=c("generaciones", "referencias", "fitness")
+					names(grafico)=c("generations", "refs", "fitness")
 				}
 				dev.flush()
-				x11(width=2000, height=1000, title="Primera Fase");print(ggplot(grafico, aes(x=generaciones, y=fitness)) +  geom_line(aes(colour=referencias, group=referencias)) + geom_point(aes(colour=referencias), size=3))
+				x11(width=2000, height=1000, title="First Phase");print(ggplot(grafico, aes(x=generations, y=fitness)) +  geom_line(aes(colour=refs, group=refs)) + geom_point(aes(colour=refs), size=3))
 				
 			}
 			
@@ -554,9 +552,7 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 			
 			while(k<=popSize){
 				p1=poblacion_actual[pool[m],]
-				#print(length(p1))
 				p2=poblacion_actual[pool[m+1],]
-				#print(length(p2))
 				m=m+2
 				hijos=permutacion2(p1,p2, pxo)
 				h1=hijos$hijo1
@@ -598,7 +594,6 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 				}
 				k=k+1
 			}
-			#print(proc.time()-npop)	
 		}
 		poblacion_actual=nueva_poblacion
 		i=i+1

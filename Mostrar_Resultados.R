@@ -4,7 +4,6 @@ source("extras.R")
 mostrar_resultados=function(archivo){
 	load(archivo)
 	individuos=resultados
-	cant_desc=length(individuos[1,]) #-1?
 	nombres_desc=names(completo)
 	valores=completo
 	coefis=corr_coefs
@@ -14,14 +13,10 @@ mostrar_resultados=function(archivo){
 	todos_maes=grafico 
 	this_confu=confusion
 	matts=matts
-	# print("MATRIZ")
-	# print(confusion)
-	
 	largo=dim(valores)[2]
 	elem=valores[1,largo]
 	clase=class(elem)
-	print("maes")
-	print(maes)
+	
 	if(clase=="numeric"){
 		mostrar_numericos(individuos, nombres_desc, coefis, maes, valores, todos_maes)
 	}else{
@@ -44,12 +39,12 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 		maes[j]=signif(h, digits=6)
 	}
 	
-	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
+	win1=gwindow(title="Results", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
 	glabel(" ", container=grupomayor)
 	grupo0=ggroup(horizontal = TRUE, spacing = 10,   container = grupomayor)
 	
-	etiq=paste(paste(paste0(" Individuos seleccionados: ( ", cols), "descriptores"),")")
+	etiq=paste(paste(paste0(" Selected subsets: ( ", cols), "descriptors"),")")
 	glabel(etiq, container=grupo0)
 	
 	lay=glayout(container=grupomayor)
@@ -69,7 +64,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	lay[1:15, 1:100]=grupo1
 	
 	grupo4=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
-	glabel(" Descriptores elegidos por individuo: ", container=grupo4)
+	glabel(" Descriptors selected by subset: ", container=grupo4)
 	
 	lay2=glayout(container=grupomayor)
 	grupo2=ggroup(horizontal=FALSE, spacing=5, width=500, height=200, use.scrollwindow = TRUE)
@@ -80,8 +75,6 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	for(i in 1:num){
 		indices=paste(paste0(indices, i), "		 ")
 	}
-	#gtemp=ggroup(container=grupo2, horizontal=TRUE)
-	#glabel(indices, container=gtemp)
 	
 	card=c()
 	for(i in 1:cant){
@@ -96,7 +89,6 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 			
 		}
 		str2=paste(str2, "  ")
-		#print(str2)
 		glabel(str2, container=gtemp)
 	}
 	lay2[1:15, 1:100]=grupo2
@@ -108,23 +100,23 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	
 	lay3=glayout(container=grupo3)
 	
-	botonmae=gbutton(" Ver MAE ",
+	botonmae=gbutton(" MAE ",
 					handler=function(h,...){
 						ventana_mae(todos, maes)
 					}, width=15)
-	botoncoef=gbutton(" Ver Coef.Corr. ", handler=function(h, ...){
+	botoncoef=gbutton(" Corr.Coef. ", handler=function(h, ...){
 											ventana_coef(coefs)
 										})
-	botoncard=gbutton(" Ver Cardinalidad ", handler=function(h, ...){
+	botoncard=gbutton(" Cardinality ", handler=function(h, ...){
 											ventana_card(card)
 										})
 	 
 	
-	botonFilt=gbutton("  Filtrar  ",  
+	botonFilt=gbutton("  Filter  ",  
 					handler=function(h,...){
 						ventana_filtrado(individuos, valores)
 					}, width=15)
-	botonSal=gbutton("  Salir  ",  
+	botonSal=gbutton("  Close  ",  
 					handler=function(h,...){
 						dispose(win1)
 					}, width=15)
@@ -145,19 +137,19 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	cols=dim(individuos)[2]
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
 	names(valores)=nombres_desc
-	
-	maxj=length(maes)
+
+	maxj=nrow(maes)
 	for(j in 1:maxj){
-		h=as.numeric(maes[j])
-		maes[j]=signif(h, digits=6)
+		h=as.numeric(maes[j, 2])
+		maes[j, 2]=signif(h, digits=6)
 	}
 	
-	win1=gwindow(title="Resultados", visible=FALSE, width=500, height=200, parent=c(200,50))
+	win1=gwindow(title="Results", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
 	glabel(" ", container=grupomayor)
 	grupo0=ggroup(horizontal = TRUE, spacing = 10,   container = grupomayor)
 	
-	etiq=paste(paste(paste0(" Individuos seleccionados: ( ", cols), "descriptores"),")")
+	etiq=paste(paste(paste0(" Selected subsets: ( ", cols), "descriptors"),")")
 	glabel(etiq, container=grupo0)
 		
 	lay=glayout(container=grupomayor)
@@ -177,7 +169,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	lay[1:15, 1:100]=grupo1
 		
 	grupo4=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
-	glabel(" Descriptores elegidos por individuo: ", container=grupo4)
+	glabel(" Descriptors selected by subset: ", container=grupo4)
 	
 	lay2=glayout(container=grupomayor)
 	grupo2=ggroup(horizontal=FALSE, spacing=5, width=500, height=200, use.scrollwindow = TRUE)
@@ -206,30 +198,30 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	
 	lay3=glayout(container=grupo3)
 	
-	botonmae=gbutton(" Ver MAE ",
+	botonmae=gbutton(" MAE ",
 					handler=function(h,...){
 						ventana_mae(todos, maes)
 					})
-	botonrocarea=gbutton(" Ver ROC Area ", handler=function(h, ...){
+	botonrocarea=gbutton(" ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
 										})
-	str9=iconv(" Ver Coef. Matthews ", from="UTF-8", to="UTF-8")
+	str9=iconv(" Matthews Coef. ", from="UTF-8", to="UTF-8")
 	botonconfusion=gbutton(str9, handler=function(h,...){
 											ventana_matts(matts, cant)
 											 #ventana_confusion(confusion, cant)
 										 })
-	botoncasos=gbutton(" Ver Porcentaje Correctos ", handler=function(h, ...){
+	botoncasos=gbutton(" % Correct ", handler=function(h, ...){
 											ventana_casos(porcentaje)
 										})									
-	botoncard=gbutton(" Ver Cardinalidad ", handler=function(h, ...){
+	botoncard=gbutton(" Cardinality ", handler=function(h, ...){
 											ventana_card(card)
 										})
 	 
-	botonFilt=gbutton("  Filtrar  ",  
+	botonFilt=gbutton("  Filter  ",  
 					handler=function(h,...){
 						ventana_filtrado(individuos, valores)
 					})
-	botonSal=gbutton("  Salir  ",  
+	botonSal=gbutton("  Close  ",  
 					handler=function(h,...){
 						dispose(win1)
 					})
@@ -251,10 +243,10 @@ ventana_card=function(cardis){
 		datos[i,1]=i
 		datos[i,2]=cardis[i]
 	}
-	names(datos)=c("Subconjuntos", "Cardinalidad")
-	x11(width=2000, height=1000, title="Cardinalidad de los subconjuntos");
-	#print(plot(datos, colour="purple"))
-	print(ggplot(datos, aes(x=Subconjuntos, y=Cardinalidad))   + geom_point(aes(colour=Cardinalidad), size=4, color="purple"))
+	names(datos)=c("Subsets", "Cardinality")
+	x11(width=2000, height=1000, title="Cardinality of the subsets");
+
+	print(ggplot(datos, aes(x=Subsets, y=Cardinality))   + geom_point(aes(colour=Cardinality), size=4, color="purple"))
 }
 ventana_matts=function(matts, cant){
 	datos=data.frame()
@@ -263,9 +255,9 @@ ventana_matts=function(matts, cant){
 		datos[i, 2]=matts[i]
 	}
 	
-	names(datos)=c("Subconjuntos", "Coef.Matthews")
-	x11(width=2000, height=1000, title="Coeficiente de Matthews de los subconjuntos");
-	print(ggplot(datos, aes(x=Subconjuntos, y=Coef.Matthews))   + geom_point(aes(colour=Coef.Matthews), size=4, color="purple"))
+	names(datos)=c("Subsets", "Matthews_Coef")
+	x11(width=2000, height=1000, title="Matthews coefficients of the subsets");
+	print(ggplot(datos, aes(x=Subsets, y=Matthews_Coef))   + geom_point(aes(colour=Matthews_Coef), size=4, color="purple"))
 }
 
 ventana_confusion=function(confusion, cant){
@@ -322,32 +314,35 @@ ventana_coef=function(coefis){
 		nuevo[i,2]=coefis[i]
 	}
 	
-	str1=iconv("Coeficientes de Correlación", from="UTF-8", to="UTF-8")
-	names(nuevo)=c("subconjuntos", "Coef_Corr")
+	str1=iconv("Correlation coefficients", from="UTF-8", to="UTF-8")
+	names(nuevo)=c("Subsets", "Coef_Corr")
 	
 	x11(width=2000, height=1000, title=str1);
-	print(ggplot(nuevo, aes(x=subconjuntos, y=Coef_Corr))   + geom_point(aes(colour=Coef_Corr), size=4))
+	print(ggplot(nuevo, aes(x=Subsets, y=Coef_Corr))   + geom_point(aes(colour=Coef_Corr), size=4))
 	 
 }
 
 ventana_mae=function(todos, maes){
 	nuevomae=data.frame()
-	cant=length(maes)
+	
+	cant=nrow(maes)
 	for(i in 1:cant){
 		nuevomae[i,1]=i
-		nuevomae[i,2]=maes[i]
+		nuevomae[i,2]=maes[i,2]
 	}
-	names(todos)=c("subconjunto", "MAE")
-	names(nuevomae)=c("subconjunto", "MAE")
+	
+	names(todos)=c("subsets", "MAE")
+	names(nuevomae)=c("subsets", "MAE")
+	
 	x11(width=80, height=50, title="MAE")
 	valores=buscarMayorMenor(todos, maes)
 	mayor=valores$mayor
 	menor=valores$menor
 	
-	boxplot(MAE~subconjunto,  data=todos, boxwex = 0.25, xlab = "Subconjunto",ylab = "MAE", col="lightblue", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02))
+	boxplot(MAE~subsets,  data=todos, boxwex = 0.25, xlab = "Subsets",ylab = "MAE", col="lightblue", xlim=c(0, nrow(nuevomae)+1), ylim=c(menor,mayor+0.02))
 	par(new=TRUE)
-	plot(nuevomae, axes=FALSE, col="red", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - Primera y Segunda Fase")
-	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="Fase Dos", col="red", text.width=0.4, pch="o")
+	plot(nuevomae, axes=FALSE, col="red", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
+	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.2, pch="o")
 }
 
 buscarMayorMenor=function(pri, seg){
@@ -364,9 +359,9 @@ buscarMayorMenor=function(pri, seg){
 		}
 	}
 	
-	largo=length(seg)
+	largo=nrow(seg)
 	for(j in 1:largo){
-		elem=seg[j]
+		elem=seg[j,2]
 		if(elem>mayor)
 			mayor=elem
 		if(elem<menor)
@@ -399,13 +394,13 @@ ventana_rocarea=function(rocarea){
 	}
 	
 	# print(rocarea)
-	print(nuevo)
-	names(nuevo)=c("subconjuntos", "ROC_Area")
+	#print(nuevo)
+	names(nuevo)=c("Subsets", "ROC_Area")
 	x11(width=2000, height=1000, title="ROC Area");
-	print(ggplot(nuevo, aes(x=subconjuntos, y=ROC_Area))   + geom_point(aes(colour=subconjuntos), size=4))
+	print(ggplot(nuevo, aes(x=Subsets, y=ROC_Area))   + geom_point(aes(colour=Subsets), size=4))
 	
 	#x11(width=2000, height=1000, title="ROC Area");
-	#print(ggplot(nuevo, aes(x=ROC_Area, y=subconjuntos))   + geom_point(aes(colour=subconjuntos), size=4))
+	#print(ggplot(nuevo, aes(x=ROC_Area, y=Subsets))   + geom_point(aes(colour=Subsets), size=4))
 
 }
 
@@ -417,36 +412,34 @@ ventana_casos=function(porc){
 		nuevo[i,1]=i
 		nuevo[i,2]=porc[i]
 	}
-	names(nuevo)=c("subconjuntos", "Porc_Casos_Correctos")
-	print(nuevo)
-	x11(width=2000, height=1000, title="Porcentaje de casos correctamente clasificados");
-	print(ggplot(nuevo, aes(x=subconjuntos, y=Porc_Casos_Correctos))   + geom_point(aes(colour=Porc_Casos_Correctos), size=4))
+	names(nuevo)=c("Subsets", "Correct_cases_perc")
+	x11(width=2000, height=1000, title="Percentage of cases correctly classified");
+	print(ggplot(nuevo, aes(x=Subsets, y=Correct_cases_perc))   + geom_point(aes(colour=Correct_cases_perc), size=4))
 }
 
 #
 ventana_filtrado=function(individuos, valores){
-	win1=gwindow(title = "Filtrar", visible=FALSE, width=300, height=120, parent=c(575,150))
+	win1=gwindow(title = "Filter", visible=FALSE, width=300, height=120, parent=c(575,150))
 	grupomayor=ggroup(horizontal=FALSE, spacing=10, container=win1)
-	grupo1=ggroup(horizontal=FALSE, spaacing=10, container=grupomayor)
+	grupo1=ggroup(horizontal=FALSE, spacing=10, container=grupomayor)
 	glabel(" ", container=grupo1)
 	lay1=glayout(container=grupo1)
-	label1=glabel("   Seleccionar subconjunto: ")
+	label1=glabel(" Select subset: ")
 	cant=dim(individuos)[1]
-	print(cant)
 	combobox1=gcombobox(c(1:cant), selected=1, editable=FALSE)
-	lay1[1:3, 2:12]=label1
-	lay1[1:3, 14:19]=combobox1
+	lay1[1:3, 2:8]=label1
+	lay1[1:3, 11:15]=combobox1
 	grupo2=ggroup(horizontal=TRUE, spacing=10, container=grupomayor)
 	#lay2=glayout(container=grupo2)
 	glabel(" ", container=grupo2)
-	label2=glabel(" Guardar como: (archivo csv)", container=grupo2)
-	edit2=gedit("Datos_filtrados.csv", container=grupo2)
+	label2=glabel("Save as: (csv file)", container=grupo2)
+	edit2=gedit("Filtered_data.csv", container=grupo2)
 	boton2=gbutton("Browse", container=grupo2,
 					handler=function(h,...){
-						file4=gfile("Guardar como...", type="save")
+						file4=gfile("Save as...", type="save")
 						if(length(file4)!=0){
 							if(is.na(file4)){
-								svalue(edit2)="Datos_filtrados.csv"
+								svalue(edit2)="Filtered_data.csv"
 							}else{
 								svalue(edit2)=file4
 							}
@@ -460,14 +453,14 @@ ventana_filtrado=function(individuos, valores){
 	lay3=glayout(container=grupo3)
 	botonok=gbutton(" OK ", handler=function(h,...){
 						filtrar2(valores, individuos[as.numeric(svalue(combobox1)), ], svalue(edit2))
-						gmessage("Filtrado finalizado.", icon="info")
+						gmessage("Filtering finished.", icon="info")
 					})
-	botonCan=gbutton(" Cancelar ",
+	botonCan=gbutton(" Cancel ",
 					handler=function(h,...){
 						dispose(win1)
 					})
 	lay3[1:3, 8:13]=botonok
-	lay3[1:3, 30:35]=botonCan
+	lay3[1:3, 20:25]=botonCan
 	glabel(" ", container=grupo3)
 	
 	visible(win1)=TRUE
@@ -476,8 +469,7 @@ ventana_filtrado=function(individuos, valores){
 
 
 filtrar2=function(valores, individuo, archivo){
-	# print("individuo")
-	# print(individuo)
+
 	largo<-length(individuo)
 	iters<-c(1:largo)
 	cols<-c()

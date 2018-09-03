@@ -24,14 +24,14 @@ data_input=function(cod){
 	check4=gcheckboxgroup(c("CSV file with separator semicolon"), container=group_4, checked=TRUE)
 	label4in=glabel(" ", container=group_4, width=5)
 	label4=glabel("(*) Matrix of values of descriptors ", container = group_4, width=70)
-	text4=gedit("Ingrese archivo", container=group_4, font.attr=list(style="bold"), width=70)
+	text4=gedit("Select File", container=group_4, font.attr=list(style="bold"), width=70)
 	label4in=glabel(" ", container=group_4, width=5)
 	button4=gbutton("Browse...", container=group_4, 
 					handler=function(h,...){
 						file4=gfile()
 						if(length(file4)>0){
 							if(is.na(file4)){
-								svalue(text4)="Ingrese archivo"
+								svalue(text4)="Select File"
 							}else{
 								svalue(text4)=file4
 							}
@@ -43,14 +43,14 @@ data_input=function(cod){
 	check5=gcheckboxgroup(c("CSV file with separator semicolon"), container=group_5, checked=TRUE)
 	label4in=glabel(" ", container=group_5, width=5)
 	label4=glabel("(*) Vector of experimental values  ", container = group_5, width=70)
-	text5=gedit("Ingrese archivo", container=group_5, font.attr=list(style="bold"), width=70)
+	text5=gedit("Select File", container=group_5, font.attr=list(style="bold"), width=70)
 	label4in=glabel(" ", container=group_5, width=5)
 	button5=gbutton("Browse...", container=group_5, 
 					handler=function(h,...){
 						file5=gfile()
 						if(length(file5)>0){
 							if(is.na(file5)){
-								svalue(text5)="Ingrese archivo"
+								svalue(text5)="Select File"
 							}else{
 								svalue(text5)=file5
 							}
@@ -61,14 +61,14 @@ data_input=function(cod){
 	check6=gcheckboxgroup(c("CSV file with separator semicolon"), container=group_6, checked=TRUE)
 	label4in=glabel(" ", container=group_6, width=5)
 	label4=glabel("    Vector of descriptors names      ", container = group_6, width=70)
-	text6=gedit("Ingrese archivo", container=group_6, font.attr=list(style="bold"), width=70)
+	text6=gedit("Select File", container=group_6, font.attr=list(style="bold"), width=70)
 	label4in=glabel(" ", container=group_6, width=5)
 	button6=gbutton("Browse...", container=group_6, 
 					handler=function(h,...){
 						file6=gfile()
 						if(length(file6)>0){
 							if(is.na(file6)){
-								svalue(text6)="Ingrese archivo"
+								svalue(text6)="Select File"
 							}else{
 								svalue(text6)=file6
 							}
@@ -86,7 +86,7 @@ data_input=function(cod){
 	glabel(container=group_3)	
 	grupo00=ggroup(spacing=10, horizontal=FALSE)
 	
-	strs2=c("',' coma decimal","'.' punto decimal")
+	strs2=c("',' decimal point","'.' decimal point")
 	radio431 = gradio(strs2, container=grupo00, 
 				handler=function(h,...){
 						valor=svalue(radio431)
@@ -124,7 +124,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 	print(A2)
 	print(A3)
 	
-	if(A2!="Ingrese archivo" && A2!=""){
+	if(A2!="Select File" && A2!=""){
 		if(length(c2!=0)){
 			sep=";"
 		}else{
@@ -164,7 +164,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 				}
 			}
 			if(!bandera){
-				if(A1!="Ingrese archivo" && A1!=""){
+				if(A1!="Select File" && A1!=""){
 					if(length(c1)!=0){
 						sep=";"
 					}else{
@@ -179,7 +179,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 										}
 								)
 					if(!bandera){
-						if(A3!="Ingrese archivo" && A3!=""){
+						if(A3!="Select File" && A3!=""){
 							if(length(c3)!=0){
 								sep=";"
 							}else{
