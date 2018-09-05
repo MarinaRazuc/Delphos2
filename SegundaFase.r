@@ -207,7 +207,11 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		
 	}
 	completo=rbind(interna, externa)
-		
+
+	print("rocarea")
+	print(ROCareaS)
+	
+	
 	if(clase=="numeric"){
 		ordenados=ordenarR(resultados, maes_segundo, corr_coefs, maes_primero)
 		maes_segundo=ordenados$maes_ord
@@ -361,7 +365,7 @@ ordenarC=function(ind, matts, maes, RA, correctos, maes_primero){
 	indis_ords=c(1:cant)
 	maes_ords=matrix(0, nrow(ind), 2)
 	matt_ord=c(1:cant)
-	nuevo_RA=matrix(0, cant, 3)
+	nuevo_RA=matrix(0, nrow(RA), ncol(RA))
 	nuevo_correctos=c(1:cant)
 	nuevo_grafico=matrix(0, nrow(maes_primero), ncol(maes_primero))
 	maes_primero=as.matrix(maes_primero)
