@@ -77,7 +77,7 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 			modelo=construir_modelo(metodo, datos)
 			for(j in 1:10){
 				eval1=evaluate_Weka_classifier(object=modelo, numFolds=10, seed=j)
-				if(clase_propiedad=="numeric"){
+				if(clase_propiedad=="num"){
 					mae=as.numeric(eval1$details[2])
 				}else{
 					mae=as.numeric(eval1$details[5])

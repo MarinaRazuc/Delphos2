@@ -174,18 +174,6 @@ generar_poblacion_inicial=function(nro_desc, popSize, maximo ){
 	for (i in 1:popSize){
 		indi=crear_individuo(runif(nro_desc, 0, 0), maximo)
 		pop[i,]=indi
-		
-		# ind=runif(nro_desc, 0, 1)
-		# ind=round(ind)
-		# if(cardinalidad(ind) > maximo){
-			# ind=ajustar2(ind, maximo)
-		# }
-		# if(nro_desc==maximo){
-			# if(cardinalidad(ind)>(nro_desc/2)){
-				# ind=ajustar2(ind, maximo)		#MM
-			# }
-		# }
-		# pop[i,]=ind
 	} 
 	pop
 }
