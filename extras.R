@@ -110,7 +110,7 @@ generar_data_frame=function(val, prop, nomD){#data frames
 	win1=gwindow(visible=FALSE, title="Espere...", height=100, width=250, parent=c(550, 150))
 	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
 	glabel(" ", container=grupo1)
-	glabel("  Espere mientras se cargan los datos...  ", container=grupo1)
+	glabel("  Loading data...  ", container=grupo1)
 	glabel(" ", container=grupo1)
 	barra=gprogressbar(container=grupo1)
 	visible(win1)=TRUE
@@ -130,8 +130,6 @@ generar_data_frame=function(val, prop, nomD){#data frames
 	if(length(nomD)==0){
 		svalue(barra)<-70
 		ultimo=dim(dataframe1)[2] #el nro de la ultima columna
-	#	print("ultimo es:")
-	#	print(ultimo)
 		svalue(barra)<-80
 		nombreUlt=names(dataframe1)[ultimo-1]  #el nombre del ultimo descriptor (ultimo-1 porque ultimo es la propiedad, que se llama V1)
 		svalue(barra)<-90
@@ -162,7 +160,6 @@ filtrado_columnas=function(A){
 		
 		while(i<=nfils){
 			elem=A[i,j]
-			#print(elem)
 			if(elem==0){
 				contador=contador+1
 			}
@@ -183,9 +180,7 @@ filtrado_columnas=function(A){
 	h=k-1
 	while(h>0){
 		colnula=columnas[h]
-		#print(colnula)
 		nuevoA=nuevoA[, -colnula]
-		#nuevoA[,colnula]=NULL
 		h=h-1
 	}
 	

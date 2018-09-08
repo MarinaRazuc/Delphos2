@@ -299,11 +299,7 @@ ventana_confusion=function(confusion, cant){
 		lay1[ubif, 1]=glabel(" ----------------- ")
 		ubif=ubif+1
 	}
-	#matriz=glabel(confusion)
-	#lay1[3, 1]=matriz
-	
 	visible(win1)=TRUE
-
 }
 #
 ventana_coef=function(coefis){
@@ -392,16 +388,9 @@ ventana_rocarea=function(rocarea){
 		}
 		i=i+1
 	}
-	
-	# print(rocarea)
-	#print(nuevo)
 	names(nuevo)=c("Subsets", "ROC_Area")
 	x11(width=2000, height=1000, title="ROC Area");
 	print(ggplot(nuevo, aes(x=Subsets, y=ROC_Area))   + geom_point(aes(colour=Subsets), size=4))
-	
-	#x11(width=2000, height=1000, title="ROC Area");
-	#print(ggplot(nuevo, aes(x=ROC_Area, y=Subsets))   + geom_point(aes(colour=Subsets), size=4))
-
 }
 
 ventana_casos=function(porc){

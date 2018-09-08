@@ -30,7 +30,7 @@ obtener_archivo_entrada=function(){
 													ventana_fase_dos(archivo_ent)
 													dispose(win1)
 												}else{
-													msg=iconv("El archivo seleccionado no es válido.", from="UTF-8", to="UTF-8")
+													msg=iconv("The selected file is not valid.", from="UTF-8", to="UTF-8")
 													gmessage(msg, icon="error")
 												}
 											
@@ -107,7 +107,7 @@ ventana_fase_dos=function(archivo){
 							} 
 						}
 						if(svalue(editS)==0){
-							gmessage("La cantidad de subconjuntos debe ser mayor a 0", icon=error)
+							gmessage("The number of final subsets must be greater than 0.", icon=error)
 						}else{
 							segunda_fase(archivo, metodoSF, svalue(texto2), as.numeric(svalue(editS)))#, svalue(editI), svalue(editT))	
 							dispose(win1)
@@ -148,7 +148,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		EF=filtrar(externa, individuo) 
 		modelo=tryCatch(construirModelo(IF ,metodoSF), 
 					error=function(e){
-						gmessage("Error al calcular el modelo. ", icon="error")
+						gmessage("Error creating the model.", icon="error")
 						stop()
 					}
 				)
@@ -208,10 +208,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	}
 	completo=rbind(interna, externa)
 
-	print("rocarea")
-	print(ROCareaS)
-	
-	
 	if(clase=="numeric"){
 		ordenados=ordenarR(resultados, maes_segundo, corr_coefs, maes_primero)
 		maes_segundo=ordenados$maes_ord
@@ -230,7 +226,6 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	}	
 	
 	if(iteras > maxCant){
-		print("Devolver menos subconjuntos------------------------------------------------------------------------")
 		#tengo mas subconjs de los que me pidieron
 		resultados=resultados[1:maxCant, ]
 		maes_segundo=maes_segundo[1:maxCant, ]
@@ -263,12 +258,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	}
 	names(grafico)=c("Subset", "MAE", "Phase")
 	names(auxiliar)=c("Subset", "MAE")
-	
-	# print("grafico")
-	# print(grafico)
-	# print("auxiliar")
-	# print(auxiliar)
-	
+
 	elems=buscar_mayor_y_menor(grafico, auxiliar)
 	mayor=elems$mayor
 	menor=elems$menor

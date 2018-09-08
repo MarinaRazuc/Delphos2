@@ -72,7 +72,7 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 		ERRORES<<-ERRORES +1
 		resu_F2=1000  #numero grande porque marca el error
 		if(ERRORES>3){
-			gmessage("Error en la construcción del modelo.", icon="error")
+			gmessage("Error creating the model.", icon="error")
 			stop()
 		}
 	}
@@ -119,7 +119,7 @@ F2=function(P, testeoFiltrado){
 			#ypredict=predict(P, newdata=xi, type="response") #type link o response
 			ypredict=predict(P, newdata=xi, fitted=FALSE) #fitted->TRUE o FALSE
 		}else{#alguno de weka
-			ypredict=predict(P, newdata=xi, type="class")  #------------------------------VER
+			ypredict=predict(P, newdata=xi, type="class")  
 		}
 		diferencia=yi-ypredict
 		cuad=diferencia^2 #ver si funciona
@@ -183,7 +183,6 @@ crear_individuo=function(ind, maximo){
 		a=runif(1, 1,largo)
 		ind[round(a)]=1
 	}
-	
 	ind
 }
 
@@ -196,19 +195,12 @@ ajustar2=function(ind, maximo){
 			a=runif(1,1,largo)
 			ind[round(a)]=0
 		}
-		
 		card=cardinalidad(ind)
 	}
-	
 	ind
 }
 
-
-
-
 ajustar=function(ind, maximo){
-	#se podrian hacer muchos if, viendo si la cardinalidad es multiplo de x de max, y de ahi decidir cuantos bits poner a 0
-	#print(ind)
 	
 	while(cardinalidad(ind) > maximo){
 		i=runif(1, 1, length(ind))
@@ -233,15 +225,10 @@ ajustar=function(ind, maximo){
 	ind
 }
 
-
-
-
 fitness2=function(x){
 	resul=cardinalidad(x)/length(x)
 	resul
 }
-
-
 
 #permutación2
 permutacion2=function(padre1, padre2, pxo){
@@ -271,7 +258,6 @@ permutacion2=function(padre1, padre2, pxo){
 	resultado$hijo1=hijo1
 	resultado$hijo2=hijo2
 	resultado
-
 }
 
 #Mutación 2
@@ -298,18 +284,16 @@ calcular_promedio=function(valores){
 	suma=0
 	for(i in 1:largo){
 		val=valores[i]
-		#write(val, "fitnesis.txt",append=TRUE)
 		suma=suma+valores[i]
 	}
 	resu=suma/largo
 	 
 	resu
-	
 }
 
 #tengo que devolver una lista conteniendo al individuo y al indice
 determinar_mejor_individuo=function(fit_vals){
-	#mientras mas pequeño el valor de fitness mejor
+	#mientras mas grande el valor de fitness mejor
 	largo=length(fit_vals)
 	mejor=0 #ver
 	indice=1
@@ -381,13 +365,10 @@ generar_pool=function(tourSize, fit_vals, poblacion_actual, pxo){
 		while(!igls){
 			for(h in 1:2){
 				bandera=FALSE
-				#while(!bandera){ #segun pxo
-					for(j in 1:tourSize){
-						torneo[j]=round(runif(1,1,nrow(poblacion_actual)))
-					} 
-					p[h]=realizar_torneo(torneo, fit_vals)
-					#bandera=dado(pxo) #si bandera es TRUE, queda el individuo elegido, si es FALSE, se repite la elección
-				#}
+				for(j in 1:tourSize){
+					torneo[j]=round(runif(1,1,nrow(poblacion_actual)))
+				} 
+				p[h]=realizar_torneo(torneo, fit_vals)
 			}
 			igls=iguales(poblacion_actual[p[1], ], poblacion_actual[p[2], ])
 		}
@@ -487,9 +468,8 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 		if(empeora==stallGens){
 			resultado=determinar_mejor_individuo(fit_vals)
 			bandera=TRUE
-			str2=paste(paste0("No hubo mejora significativa del fitness en ", stallGens), "generaciones.")
+			str2=paste(paste0("There was no significant improvement of fitness in ", stallGens), "generations.")
 			print(str2)
-			#write.table(poblacion_actual, archivo, append=TRUE)
 		}
 		
 		if(!bandera){
@@ -517,7 +497,7 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 				if(i!=1){ #no es la primera generación a dibujar
 					tryCatch(dev.off(), 
 						error=function(e){
-											str1=iconv("No hay gráficos activos.", from="UTF-8", to="UTF-8")
+											str1=iconv("No active graphics.", from="UTF-8", to="UTF-8")
 											print(str1)
 										}
 						)
@@ -570,7 +550,6 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 					p=1
 					salgo=FALSE
 					while(!salgo && pertenece(nueva_poblacion, h2)){
-						 
 						h2=mutacion2(h2)
 						p=p+1
 						if(p==10){
@@ -588,7 +567,7 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 	}#FIN WHILE
 	
 	if(!bandera){ #se ejecutaron todas las generaciones
-		print("Se ejecutaron todas las generaciones.")
+		print("All generations have been executed.")
 		resultado=determinar_mejor_individuo(fit_vals) 
 		#devuelvo el mejor individuo de la poblacion vieja
 		#que seria el primero de la nueva ya que fue elegido por elitismo

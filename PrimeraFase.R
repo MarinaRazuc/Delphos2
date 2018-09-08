@@ -4,10 +4,9 @@ require("caret")
 require("memoise")
 		 
 primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral, valInterna){
-	print("Entro a la Primera Fase")
 	columnas=ncol(interna)
 	if(pm>(columnas-1)){
-		str1=iconv("Error, la cantidad máxima de descriptores a elegir es mayor a la cantidad de descriptores disponibles.", from="UTF-8", to="UTF-8")
+		str1=iconv("Error, the maximum number of descriptors must be less or equal than the total number of descriptors.", from="UTF-8", to="UTF-8")
 		gmessage(str1, icon="error")
 		return
 	}
@@ -87,5 +86,5 @@ calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
 		}
 	}
 	
-	save(maes_primero, file=archivo) #----------------------------------------------------------------SAVE
+	save(maes_primero, file=archivo) 
 }

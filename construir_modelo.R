@@ -15,10 +15,7 @@ construir_modelo=function(metodo, datos){
 			resultado=regresionNoLineal(datos)
 		}else{
 			if(metodo==3){
-				#B=proc.time()
 				resultado=arbolDeRegresion2(datos)
-				#resultado=arbolDeRegresion(datos)
-				#print(proc.time()-B)
 			}else{
 				if(metodo==4){
 					pep=proc.time()	
@@ -52,7 +49,7 @@ construir_modelo=function(metodo, datos){
 											resultado=multilayer(datos)
 											print(proc.time()-B)
 										}else{
-											str1=iconv("No se eligió un método disponible", from="UTF-8", to="UTF-8")
+											str1=iconv("An available method has not been chosen.", from="UTF-8", to="UTF-8")
 											print(str1)
 											return
 										}										
@@ -165,35 +162,15 @@ kVecinosStacking=function(datos){
 kVecinosMasCercanos=function(datos){
 	str1=iconv("k Vecinos Más Cercanos", from="UTF-8", to="UTF-8")
 	print(str1)
-
-	# largo=dim(datos)[2]
-	# elemento=datos[1,largo]
-	# print("ELEMENTO")
-	# print(elemento)
-	# print("CLASE")
-	# print(class(elemento))
-	
-	
-	modelo=IBk(formula=V1~., data=datos, control=Weka_control(K=3, F=TRUE, A="weka.core.neighboursearch.KDTree")) #VER SI EL K (CANT DE VECINOS) ME LO PASAN POR PARAMETRO O COMO LO DECIDO.
-	
-	#evalKNN=evaluate_Weka_classifier(modelo, numfolds=10, seed=2)
-	#print(evalKNN)
-	#write(evalKNN, file=paste0("evaluacion_", ene))
+	modelo=IBk(formula=V1~., data=datos, control=Weka_control(K=3, F=TRUE, A="weka.core.neighboursearch.KDTree"))
 	ene<<-ene+1
-	
 	modelo
 }
 
 arbolDeRegresion=function(datos){
 	str1=iconv("Árbol de Regresión", from="UTF-8", to="UTF-8")
 	print(str1)
-
-
 	modelo=M5P(V1~., datos, control=Weka_control(R=TRUE, N=TRUE))
-	
-	#evalAR=evaluate_Weka_classifier(modelo, numfolds=10, seed=2)
-	#print(evalAR)
-	#write(evalAR, file=paste0("evaluacion_", ene))
 	ene<<-ene+1
 	
 	modelo
@@ -212,11 +189,7 @@ arbolDeRegresion2=function(datos){
 								num_slots=2
 							)
 					)
-					
-					
-	#evalAR=evaluate_Weka_classifier(modelo, numfolds=10, seed=2)
-	#print(evalAR)
-	
+
 	modelo
 }
 
@@ -249,10 +222,6 @@ regresionNoLineal=function(datos){
 	
 	print(proc.time()-nnn)
 	
-	#evalNLR=evaluate_Weka_classifier(modelo, numfolds=10, seed=2)
-	
-	#print(evalNLR)
-	#write(evalNLR, file=paste0("evaluacion_", ene))
 	ene<<-ene+1
 	modelo
 }
@@ -261,40 +230,20 @@ regresionNoLineal=function(datos){
 regresionLineal=function(datos){
 	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
 	print(str1)
-
 	LR=lm("V1~.", datos)
-	#LR=LinearRegression(fmla, data=datos)
-	
-	#print(class(LR))
 	resus=summary(LR)
-	#dump("resus", file="sumaris.txt", append=TRUE)
-	#print(summary(LR))
-	#print(proc.time()-rl)
 	LR
-	
 }
 
 
 regresionLineal2=function(datos){
 	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
 	print(str1)
-	
-	# print("dimension de los datos: ")
-	# print(dim(datos))
-	# print("valor")
-	# print(datos[1,1])
-	# print(names(datos)[1])
-	
+
 	fmla=as.formula("V1~.")
 	LR=LinearRegression(fmla, data=datos, control=Weka_control(S=2, R="1.0e-6", minimal=TRUE), options=c(model=TRUE, instances=TRUE)) #
-	#evalLR=evaluate_Weka_classifier(LR, numfolds=10, seed=2)
-	#print(evalLR)
-	#write(evalLR, file=paste0("evaluacion_", ene))
-	#ene<<-ene+1
-#	print(class(LR))
-#	print(LR)
+	
 	LR
-
 }
 
 regresionLineal4=function(datos){

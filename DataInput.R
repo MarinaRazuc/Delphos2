@@ -12,7 +12,6 @@ data_input=function(cod){
 	group_1=ggroup(horizontal = FALSE, container=win2) #el contenedor principal
 	glabel(" ", container=group_1)
 	frame1=gframe(container=group_1, text="Data", horizontal=FALSE, spacing=10, pos=0.5)
-	#glabel(" ", container=frame1)
 	lay1=glayout(container=frame1)
 	
 	group_2=ggroup(horizontal=FALSE) #para la carga de datos
@@ -39,7 +38,6 @@ data_input=function(cod){
 						print(file4)
 					}, width=15)
 	 
-
 	check5=gcheckboxgroup(c("CSV file with separator semicolon"), container=group_5, checked=TRUE)
 	label4in=glabel(" ", container=group_5, width=5)
 	label4=glabel("(*) Vector of experimental values  ", container = group_5, width=70)
@@ -76,13 +74,8 @@ data_input=function(cod){
 						print(file6)
 					}, width=15)
 					
-	
-					
-
 	lay1[2,1:10]=group_2
-	#lab=glabel(container=group_2)
 	lay1[3,10]=glabel("(*)Required")
-	#lay1[4,1]=glabel("")
 	glabel(container=group_3)	
 	grupo00=ggroup(spacing=10, horizontal=FALSE)
 	
@@ -136,8 +129,8 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 							print("Error en la lectura del archivo")
 							print(e)
 							bandera<<-TRUE
-							gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
-						}
+							gmessage("Error, enter file with the values of the property.", icon="error")
+						}			
 					)
 		if(!bandera){
 			clase=class(propi[1,1])
@@ -148,8 +141,8 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 									print("Error en la lectura del archivo")
 									print(e)
 									bandera<<-TRUE
-									gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
-								}
+									gmessage("Error, enter file with the values of the property.", icon="error")
+								}			
 							) 
 			}else{
 				if(clase=="character"){
@@ -158,7 +151,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 									print("Error en la lectura del archivo")
 									print(e)
 									bandera<<-TRUE
-									gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+									gmessage("Error, enter file with the values of the property.", icon="error")
 								}
 							)
 				}
@@ -174,9 +167,9 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 										error=function(e){
 											print("Error en la lectura del archivo")
 											print(e)
-											gmessage("Error, ingrese archivo con los valores correspondientes a los descriptores.", icon="error")
+											gmessage("Error, enter file with the values of the descriptores.", icon="error")
 											bandera<<-TRUE
-										}
+										}	
 								)
 					if(!bandera){
 						if(A3!="Select File" && A3!=""){
@@ -197,12 +190,12 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 					}
 				}
 			}else{
-				gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+				gmessage("Error, enter file with the values of the property.", icon="error")
 				bandera<<-TRUE
 			}
 		}
 	}else{
-			gmessage("Error, ingrese archivo con los valores correspondientes a la propiedad.", icon="error")
+			gmessage("Error, enter file with the values of the property.", icon="error")
 			bandera<<-TRUE
 	}
 
@@ -221,16 +214,16 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 		dims[6]=dim(nombresD)[2] #1 o 0
 		
 		if(dims[1] != dims[3]){
-			gmessage("ERROR, la cantidad de valores para la propiedad no coincide con la cantidad de observaciones correspondientes a los descriptores", icon="error")
+			gmessage("Error, the amount of values for the property does not match the number of observations corresponding to the descriptors.", icon="error")
 			bandera=TRUE
 		}else{ #todo ok
 			if(dims[5]!=0){ #hay algo en el df nombresD
 				if(dims[2]!=dims[5]){
 					bandera=TRUE
-					gmessage("Error, la cantidad de nombres de descriptores no coincide con la cantidad de descriptores disponibles.", icon="error")
+					gmessage("Error, the number of descriptor names does not match the number of available descriptors.", icon="error")
 				}else{
 					if(dims[6]!=1){
-						gmessage("Error en el formato del vector de nombres de descriptores.", icon="error")
+						gmessage("Error in the format of the descriptor's names vector.", icon="error")
 						bandera=TRUE
 					}
 				}

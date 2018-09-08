@@ -108,7 +108,7 @@ ver_resultados=function(){
 												tryCatch(load(svalue(text1)), 
 														error=function(e){
 																	print(e)
-																	str1=iconv("El archivo seleccionado no es válido.", from="UTF-8", to="UTF-8")
+																	str1=iconv("The selected file is not valid.", from="UTF-8", to="UTF-8")
 																	gmessage(str1, icon="error")
 																	bandera<<-TRUE
 														}

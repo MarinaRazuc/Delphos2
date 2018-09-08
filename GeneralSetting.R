@@ -47,10 +47,6 @@ seteo=function(datos, codigo){
 	label4=glabel("  Percentage of Internal Validation     ", container=group_31)
 	obj_gedit1=gedit(c(75), container = group_31, width=5, coerce.with =as.numeric, 
 				handler=function(h, ...){
-					# valInterna<<-svalue(obj_gedit1)/100
-					# if(valInterna<=0 || valInterna >=100){
-						# gmessage("Error, el porcentaje de validación interna debe estar entre 1 y 99", icon="error") #VER
-					# }
 				} )
 
 	group_32=ggroup(horizontal=TRUE,container=frame2)
@@ -208,84 +204,84 @@ seteo=function(datos, codigo){
 						bandera=TRUE
 						valInterna<<-svalue(obj_gedit1)/100
 						if(valInterna<=0 || valInterna >=1){
-							str1=iconv("Error, el porcentaje de validación interna debe estar entre 1 y 99.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the percentage of internal validation must be between 1 and 99.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") #VER
 							bandera=FALSE
 						}
 						valExterna <<-svalue(obj_gedit2)/100
 						if(valExterna<=0 || valExterna >=1){
-							str1=iconv("Error, el porcentaje de validación externa debe estar entre 1 y 99.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the percentage of external validation must be between 1 and 99.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") #VER
 							bandera=FALSE
 						}
 						seed<<-svalue(obj_gedit3)
 						if(seed<=0){
-							str1=iconv("Error, la semilla (seed) debe ser un número positivo.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the seed must be a positive number.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
 						}
 						trials<<-svalue(obj_gedit41)
 						if(trials<=0){
-							str1=iconv("Error, la cantidad de pruebas (trials) debe ser un número positivo.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the number of tests (trials) must be a positive number.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
 						}
 						alpha<<-svalue(obj_gedit42)
 						if(alpha<=0 || alpha>1){
-							gmessage("Error, alpha debe ser un valor entre 0 y 1", icon="error")
+							gmessage("Error, alpha must be a value between 0 and 1.", icon="error")
 							bandera=FALSE
 						}
 						maxSelectVars<<-svalue(obj_gedit44)
 						if(maxSelectVars<0 || maxSelectVars>dim(dataframe0)[2]){
-							str1=iconv("Error, la cantidad máxima de variables seleccionadas (maximum selected vars) debe estar entre 0 y la cantidad máxima de descriptores.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the maximum number of selected variables must be between 0 and the maximum number of descriptors.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
 						}
 						popSize<<-svalue(obj_gedit451)
 						if(popSize<=0){
-							str1=iconv("Error, el tamaño de la población debe ser un número positivo.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the size of the population must be a positive number.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
 						}
 						eliteSize<<-svalue(obj_gedit452)
 						if(eliteSize>popSize){
-							str1=iconv("Error, el tamaño de la elite debe ser menor que el tamaño de la población.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the size of the elite must be smaller than the size of the population.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error")
 							bandera=FALSE
 						}
 						tourSize<<-svalue(obj_gedit453)
 						if(tourSize<=1){
-							str1=iconv("Error, el tamaño del torneo debe ser mayor a 1.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the size of the tournament must be greater than 1.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
 						}else{
 							if(tourSize>popSize){
-								str1=iconv("Error, el tamaño del torneo no puede superar el tamaño de la población", from="UTF-8", to="UTF-8")
+								str1=iconv("Error, the size of the tournament can not exceed the size of the population.", from="UTF-8", to="UTF-8")
 								gmessage(str1, icon="error")
 								bandera=TRUE
 							}
 						}
 						pxo<<-svalue(obj_gedit454)
 						if(pxo<0 || pxo>1){
-							str1=iconv("Error, la probabilidad de permutación (pxo) debe estar entre 0 y 1.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the probability of permutation (pxo) must be between 0 and 1.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error")
 							bandera=FALSE
 						}
 						pmut<<-svalue(obj_gedit455)
 						if(pmut<0 || pmut>1){
-							str1=iconv("Error, la probabilidad de mutación (pmut) debe estar entre 0 y 1.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the mutation probability (pmut) must be between 0 and 1.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error")
 							bandera=FALSE
 						}
 						nroGens<<-svalue(obj_gedit457)
 						if(nroGens<=0){
-							str1=iconv("Error, el número de generaciones (nroGens) debe ser positivo.", from="UTF-8", to="UTF-8")
+							str1=iconv("Error, the number of generations (nroGens) must be positive.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error")
 							bandera=FALSE
 						}
 						stallGens<<-svalue(obj_gedit458)
 						if(stallGens<=0){
-							gmessage("Error, 'stallGens' debe ser mayor a 0.", icon="error")
+							gmessage("Error, 'stallGens' must be greater than 0.", icon="error")
 							bandera=FALSE
 						}
 						umbral<<-svalue(obj_gedit500)
@@ -293,16 +289,13 @@ seteo=function(datos, codigo){
 						valor=svalue(radio431)
 						if(valor=="Regression"){
 							 metodo<<-svalue(combobox4321)
-							 #print(metodo)
 						}else{
 							 metodo<<-svalue(combobox4322)
-							 #print(metodo)
 						}
 						
 						archivoUno<<-svalue(textA)
 						
 						if(bandera){
-							#print("IFBANDERA")
 							dispose(win1)							
 							comenzar_calculo(archivoUno, codigo)
 						}
