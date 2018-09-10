@@ -254,7 +254,7 @@ filtrar_nombres=function(nombres_desc, individuos){
 
 generar_particiones=function(ndfr4, pex, pin){
 		set.seed(2) 
-		indices4=createDataPartition(ndfr4$V1, p=pex, list=FALSE) #p por parametro (validacion externa)
+		indices4=createDataPartition(ndfr4$V1, p=(1-pex), list=FALSE) #p por parametro (validacion externa)
 		externa=ndfr4[-indices4, ]
 		interna=ndfr4[indices4, ]
 		

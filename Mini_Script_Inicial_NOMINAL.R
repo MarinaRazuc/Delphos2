@@ -2,7 +2,7 @@ require("caret")
 #require("GA")
 source("Carga_y_preparacion_de_datos.R")
 
-	generar_data_frame_C=function(){
+generar_data_frame_C=function(){
 	nombres=read.csv("nombres descriptores.csv", sep=";", header=FALSE)
 	propiedad=read.csv("valores_propiedad_logPliver_CLASIFICACION.csv", sep=";", header=FALSE)
 	dataframe1=read.csv("valores descriptores.csv", header=FALSE, sep=";", stringsAsFactors=FALSE, dec=",")  #

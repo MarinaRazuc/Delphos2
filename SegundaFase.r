@@ -2,7 +2,7 @@ source("extras.R")
 metodoSF<<-"RF"
 
 obtener_archivo_entrada=function(){
-	win1=gwindow(title="Load file...", visible=FALSE, width=300, height=100, parent=c(500,230))
+	win1=gwindow(title="Load file...", visible=FALSE, width=300, height=90, parent=c(500,230))
 	group2=ggroup(horizontal=FALSE, container=win1, spacing=15)
 	group1=ggroup(horizontal=TRUE, container=group2, spacing=15)
 	text1=gedit("Load file", container=group1, width=30)
@@ -113,7 +113,7 @@ ventana_fase_dos=function(archivo){
 							dispose(win1)
 						}
 					} )
-	lay3[1:3, 15:20]=boton3
+	lay3[1:3, 13:18]=boton3
 	
 	glabel("  ", container=frame1)
 	
@@ -266,7 +266,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	boxplot(MAE~Subset,  data=grafico, boxwex = 0.25, xlab = "Subset",ylab = "MAE", col="lightblue", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02))
 	par(new=TRUE)
 	plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
-	legend(x=maxCant+0.1, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.2, pch="o")
+	legend(x=maxCant+0.1, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.5, pch="o")
 	
 	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, matts, file=salida)
 }

@@ -120,7 +120,7 @@ ver_resultados=function(){
 											})
 	#glabel("                                                                    ", container=group3)
 	
-	lay3[1, 18:24]=buttonok
+	lay3[1, 16:22]=buttonok
 	
 	visible(win)=TRUE
 }

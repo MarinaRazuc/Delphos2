@@ -198,7 +198,7 @@ seteo=function(datos, codigo){
 					}, width=15)
 	
 	group_5=ggroup(horizontal=TRUE, container=group_11) #boton ok
-	label51=glabel("                                  ", container=group_5)
+	label51=glabel("                                                  ", container=group_5)
 	button5=gbutton("OK", container=group_5, 
 					handler=function(h,...){
 						bandera=TRUE

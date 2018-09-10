@@ -82,7 +82,8 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 
 F2_clasif=function(modelo, datosTfiltro){
 	eval2=evaluate_Weka_classifier(modelo, newdata = datosTfiltro)
-	valorint=as.numeric(eval2$details[1])	
+	#valorint=as.numeric(eval2$details[1])
+	valorint=as.numeric(eval2$details[2])	
 	resultado=valorint/100
 	
 	resultado

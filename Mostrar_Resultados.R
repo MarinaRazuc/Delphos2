@@ -125,7 +125,7 @@ mostrar_numericos=function(individuos, nombres_desc, coefs, maes, valores, todos
 	lay3[1:3, 16:21]=botoncard
 	
 	lay3[1:3, 24:29]=botonFilt
-	lay3[1:3, 70:75]=botonSal
+	lay3[1:3, 85:90]=botonSal
 	glabel(" ", container=grupo5)
 	
 	visible(win1)=TRUE	
@@ -231,7 +231,7 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	lay3[1:3, 24:29]=botoncasos
 	lay3[1:3, 32:37]=botoncard
 	lay3[1:3, 40:45]=botonFilt
-	lay3[1:3, 60:65]=botonSal
+	lay3[1:3, 77:82]=botonSal
 	glabel(" ", container=grupo5)
 	visible(win1)=TRUE	
 }
@@ -338,7 +338,7 @@ ventana_mae=function(todos, maes){
 	boxplot(MAE~subsets,  data=todos, boxwex = 0.25, xlab = "Subsets",ylab = "MAE", col="lightblue", xlim=c(0, nrow(nuevomae)+1), ylim=c(menor,mayor+0.02))
 	par(new=TRUE)
 	plot(nuevomae, axes=FALSE, col="red", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
-	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.2, pch="o")
+	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.5, pch="o")
 }
 
 buscarMayorMenor=function(pri, seg){
