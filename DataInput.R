@@ -78,29 +78,11 @@ data_input=function(cod){
 	lay1[3,10]=glabel("(*)Required")
 	glabel(container=group_3)	
 	grupo00=ggroup(spacing=10, horizontal=FALSE)
-	
-	strs2=c("',' decimal point","'.' decimal point")
-	radio431 = gradio(strs2, container=grupo00, 
-				handler=function(h,...){
-						valor=svalue(radio431)
-						print(valor)
-						if(valor==strs2[1]){
-							 dec<<-","
-							 print(dec)
-						}else{
-							 dec<<-"."
-							 print(dec)
-						}
-					})
+
 	lay1[4:6, 1:10]=grupo00
 	button8=gbutton("OK", container=group_3, width=5, 
 					handler=function(h,...){
-						if(svalue(radio431)==strs2[1]){
-							dec<<-","
-						}else{
-							dec<<-"."
-						}
-						carga_y_control(win2, svalue(text4), svalue(text5), svalue(text6), svalue(check4), svalue(check5), svalue(check6), cod, dec)
+						carga_y_control(win2, svalue(text4), svalue(text5), svalue(text6), svalue(check4), svalue(check5), svalue(check6), cod)
 					})
 	button9=gbutton("Cancel", container=group_3, width=5, 
 					handler=function(h,...){
@@ -111,20 +93,22 @@ data_input=function(cod){
 
 
 #carga_y_control
-carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){ 
+carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod){ 
 	bandera<<-FALSE
 	print(A1)
 	print(A2)
 	print(A3)
 	
 	if(A2!="Select File" && A2!=""){
-		if(length(c2!=0)){
+		if(length(c2)!=0){
 			sep=";"
+			deci=","
 		}else{
-			sep=" "
+			sep=","
+			deci="."
 		}
 		
-		propi=tryCatch(read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=","), 
+		propi=tryCatch(read.csv(A2, sep=sep, header=FALSE, stringsAsFactors=FALSE, dec=deci), 
 						error=function(e){
 							print("Error en la lectura del archivo")
 							print(e)
@@ -135,7 +119,7 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 		if(!bandera){
 			clase=class(propi[1,1])
 			
-			if(clase=="numeric"){
+			if(clase=="numeric" || clase=="integer"){
 				propiedad<<-tryCatch(read.csv(A2, sep, header=FALSE, dec=deci, stringsAsFactors=FALSE), 
 								error=function(e){
 									print("Error en la lectura del archivo")
@@ -160,14 +144,16 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 				if(A1!="Select File" && A1!=""){
 					if(length(c1)!=0){
 						sep=";"
+						deci=","
 					}else{
 						sep=","
+						deci="."
 					} 
 					descriptores<<-tryCatch(read.csv(file=A1, sep=sep, dec=deci, header=FALSE, stringsAsFactors=FALSE), 
 										error=function(e){
 											print("Error en la lectura del archivo")
 											print(e)
-											gmessage("Error, enter file with the values of the descriptores.", icon="error")
+											gmessage("Error, enter file with the values of the descriptors.", icon="error")
 											bandera<<-TRUE
 										}	
 								)
@@ -175,10 +161,12 @@ carga_y_control=function(win2, A1, A2, A3, c1, c2, c3, cod, deci){
 						if(A3!="Select File" && A3!=""){
 							if(length(c3)!=0){
 								sep=";"
+								deci=","
 							}else{
-								sep=" "
+								sep=","
+								deci="."
 							}
-							nombresD<<-tryCatch(read.csv(A3, sep, header=FALSE), 
+							nombresD<<-tryCatch(read.csv(A3, sep, header=FALSE, stringsAsFactors=FALSE), 
 											error=function(e){
 												print(e)
 												nombresD<<-data.frame()

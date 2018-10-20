@@ -2,6 +2,9 @@ source("AG.R")
 source("extras.R")
 require("caret")
 require("memoise")
+
+PROBANDO<<-0
+
 		 
 primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pMut, eliteSize, nroGens, stallGens, umbral, valInterna){
 	columnas=ncol(interna)

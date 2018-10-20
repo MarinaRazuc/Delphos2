@@ -53,6 +53,7 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 	error=function(e){
 						print("ERROR")
 						print(e)
+						print(names(datosEfiltro))
 						bandera<<-TRUE
 					}
 	)
@@ -94,7 +95,7 @@ F2_clasif=function(modelo, datosTfiltro){
 #Estima la precisión de un método de predicción cuando un dado conjunto de descriptores es usado.
 #mean square error of prediction - error medio cuadrado de la predicción
 F2=function(P, testeoFiltrado){
-		
+
 	m2=nrow(testeoFiltrado)#cantidad de filas de testeoFiltrado
 	frac=1/m2
 	suma=0
@@ -103,11 +104,11 @@ F2=function(P, testeoFiltrado){
 	t <- proc.time() 
 	for (i in 1:m2){
 		yi=testeoFiltrado[i,ncols] #valor de la propiedad para el compuesto i
-		fin=ncols-1
-		if(fin!=1)
-			xi=testeoFiltrado[ i, 1:fin] #valores de los descriptores para el compuesto i
-		else{#fin es 1
-			if(dim(testeoFiltrado)[2]!=1){
+		fin=ncols-1 #ultima columna con valor
+		if(fin!=1){
+			xi=testeoFiltrado[i, 1:fin] #valores de los descriptores para el compuesto i
+		}else{#fin es 1
+			if(ncol(testeoFiltrado)!=1){
 				xi1=testeoFiltrado[i, 1:2]
 				xi=xi1[1]
 			}else{ #tiene solo una columna
@@ -118,7 +119,9 @@ F2=function(P, testeoFiltrado){
 		#aca siempre son numericos
 		if(metodoG==1){ #por ahora  speedglm
 			#ypredict=predict(P, newdata=xi, type="response") #type link o response
-			ypredict=predict(P, newdata=xi, fitted=FALSE) #fitted->TRUE o FALSE
+			#ypredict=predict(P, newdata=xi, fitted=FALSE) #fitted->TRUE o FALSE
+			nombres=names(xi)
+			ypredict<<-predict(P, newdata=xi, fitted=FALSE)
 		}else{#alguno de weka
 			ypredict=predict(P, newdata=xi, type="class")  
 		}
@@ -411,6 +414,11 @@ pertenece=function(poblacion, individuo){
 
 #algoritmo genético casero
 algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens, stallThres){	
+	
+	# PROBANDO<<-PROBANDO + 1
+	# print("PROBANDO----------------------------------------------------------------------")
+	# print(PROBANDO)
+	
 	ERRORES<<-0
 	grafico=data.frame()
 	empeora<<-0
@@ -431,6 +439,7 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 	metodoG<<-metodo
 	funcionFitnessG<<-clase_propiedad
 	umbralFitness<<-stallThres
+	
 	poblacion_actual<<-generar_poblacion_inicial(numcols-1,  popSize, pm) #ver si esta bien ese -1
 	fit_vals=c()
 	

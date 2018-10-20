@@ -249,6 +249,7 @@ regresionLineal2=function(datos){
 regresionLineal4=function(datos){
 	str1=iconv("Regresión Lineal", from="UTF-8", to="UTF-8")
 	print(str1)
+	largo=ncol(datos)
 	fmla=as.formula("V1~.")
 	modelo=speedglm(fmla,datos, x=FALSE, y=FALSE, method="Cholesky") #maxit=25, k=2 ,  method=c('eigen','Cholesky','qr')
 	

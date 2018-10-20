@@ -213,6 +213,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		maes_segundo=ordenados$maes_ord
 		resultados=ordenados$individuos
 		corr_coefs=ordenados$n_corcoef
+		maes_primero=ordenados$maes_primero
 		
 	}else{
 		matts=calcular_matt(nrow(individuos), confusion)

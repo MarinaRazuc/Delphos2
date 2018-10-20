@@ -46,8 +46,6 @@ calcular_error=function(modelo, datos){
 	ncols=ncol(datos)
 	#t <- proc.time() 
 	for (i in 1:m2){
-		#print("i es: ")
-		#print(i)
 		yi=datos[i,ncols] #valor de la propiedad para el compuesto i
 		fin=ncols-1
 		if(fin!=1)
@@ -107,7 +105,7 @@ partir=function(datos, porcentaje, seed){# datos a ser partidos segun porcentaje
 #generar_data_frame(valores_descriptores, valores_propiedad, nombres_descriptores, nombres_compuestos)
 #
 generar_data_frame=function(val, prop, nomD){#data frames
-	win1=gwindow(visible=FALSE, title="Espere...", height=100, width=250, parent=c(550, 150))
+	win1=gwindow(visible=FALSE, title="Wait...", height=100, width=250, parent=c(550, 150))
 	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
 	glabel(" ", container=grupo1)
 	glabel("  Loading data...  ", container=grupo1)
@@ -166,12 +164,14 @@ filtrado_columnas=function(A){
 			if(elem!=referencia){
 				distintos=TRUE
 			}
+		
 			i=i+1
 		}
 		if((!distintos) ){ #debo eliminar la columna || (contador>=(.85*nfils))
 			columnas[k]=j
 			k=k+1
 		}
+		
 		j=j+1
 	}
 	
@@ -283,3 +283,32 @@ generar_pop=function(nro, cant, maximo){
 	
 	p1
 }
+
+
+filtering=function(nombres, resultados, fila){
+	
+	cols=ncol(resultados)
+	
+	for(i in 1:cols){
+		elem=resultados[fila, i]
+		
+		if(elem==1){
+			print(i)
+			print(nombres[i])
+		}
+	}
+
+}
+
+promedium=function(vec){
+	largo=length(vec)
+	suma=0
+	for(i in 1:largo){
+		suma=suma+vec[i]
+	}
+	
+	suma/largo
+}
+
+
+

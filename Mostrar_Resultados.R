@@ -338,7 +338,7 @@ ventana_mae=function(todos, maes){
 	boxplot(MAE~subsets,  data=todos, boxwex = 0.25, xlab = "Subsets",ylab = "MAE", col="lightblue", xlim=c(0, nrow(nuevomae)+1), ylim=c(menor,mayor+0.02))
 	par(new=TRUE)
 	plot(nuevomae, axes=FALSE, col="red", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
-	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.5, pch="o")
+	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.48, pch="o")
 }
 
 buscarMayorMenor=function(pri, seg){
