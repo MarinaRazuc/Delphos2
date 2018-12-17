@@ -1,4 +1,5 @@
 source("extras.R")
+source("Mostrar_Resultados.R")
 metodoSF<<-"RF"
 
 obtener_archivo_entrada=function(){
@@ -109,7 +110,9 @@ ventana_fase_dos=function(archivo){
 						if(svalue(editS)==0){
 							gmessage("The number of final subsets must be greater than 0.", icon=error)
 						}else{
-							segunda_fase(archivo, metodoSF, svalue(texto2), as.numeric(svalue(editS)))#, svalue(editI), svalue(editT))	
+							cants=as.numeric(svalue(editS))
+							#print(cants)
+							segunda_fase(archivo, metodoSF, svalue(texto2), cants)#, svalue(editI), svalue(editT))	
 							dispose(win1)
 						}
 					} )
@@ -123,6 +126,8 @@ ventana_fase_dos=function(archivo){
 
 segunda_fase=function(archivo, metodoSF, salida, maxCant){ 
 	print("Segunda Fase")
+	print("maxcant")
+	print(maxCant)
 	grafico=data.frame()
 	auxiliar=data.frame()
 	corr_coefs=c()
@@ -227,6 +232,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	}	
 	
 	if(iteras > maxCant){
+		#print("iteras es mayor a maxCant, tengo más subconjuntos de los que me pidieron, debo reducir")
 		#tengo mas subconjs de los que me pidieron
 		resultados=resultados[1:maxCant, ]
 		maes_segundo=maes_segundo[1:maxCant, ]
@@ -239,6 +245,8 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 		}
 	}else{
 		maxCant=iteras
+		# print("maxCant ahora es")
+		# print(maxCant)
 	}
 	
 	#aca mostrar grafico
@@ -260,16 +268,17 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 	names(grafico)=c("Subset", "MAE", "Phase")
 	names(auxiliar)=c("Subset", "MAE")
 
-	elems=buscar_mayor_y_menor(grafico, auxiliar)
-	mayor=elems$mayor
-	menor=elems$menor
-	x11(width=80, height=50, title="MAE")
-	boxplot(MAE~Subset,  data=grafico, boxwex = 0.25, xlab = "Subset",ylab = "MAE", col="lightblue", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02))
-	par(new=TRUE)
-	plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
-	legend(x=maxCant+0.1, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.5, pch="o")
+	# elems=buscar_mayor_y_menor(grafico, auxiliar)
+	# mayor=elems$mayor
+	# menor=elems$menor
+	# x11(width=80, height=50, title="MAE")
+	# boxplot(MAE~Subset,  data=grafico, boxwex = 0.25, xlab = "Subset",ylab = "MAE", col="lightblue", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02))
+	# par(new=TRUE)
+	# plot(auxiliar, axes=FALSE, col="red", type="p", xlim=c(0, maxCant+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
+	# legend(x=maxCant+0.1, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.5, pch="o")
 	
 	save(resultados, corr_coefs, maes_segundo, confusion, ROCareaS,correctos, completo, grafico, matts, file=salida)
+	mostrar_resultados(salida)
 }
 
 ordenarR=function(ind, maes_segundo, corcoef, maes_primero){
@@ -363,6 +372,8 @@ ordenarC=function(ind, matts, maes, RA, correctos, maes_primero){
 	
 	for(i in 1:cant){
 		idc=buscar_mejor(indices, matts)
+		# print("indice es")
+		# print(idc)
 		nuevos_individuos[i,]=ind[idc, ]
 		maes_ords[i,1]=i
 		maes_ords[i,2]=maes[idc]

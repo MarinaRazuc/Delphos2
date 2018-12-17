@@ -415,10 +415,6 @@ pertenece=function(poblacion, individuo){
 #algoritmo genético casero
 algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, alpha, pm, popSize, tourSize, pxo, pmut, eliteSize, nroGens, stallGens, stallThres){	
 	
-	# PROBANDO<<-PROBANDO + 1
-	# print("PROBANDO----------------------------------------------------------------------")
-	# print(PROBANDO)
-	
 	ERRORES<<-0
 	grafico=data.frame()
 	empeora<<-0

@@ -16,7 +16,7 @@ source("Mostrar_Resultados.R")
 archivo=NULL
 
 iniciar=function(){
-	win=gwindow(title = "DELPHOS.R", visible=FALSE, width=190, height=200, parent=c(575,150), toolkit="RGtk2")
+	win=gwindow(title = "MoDeSuS", visible=FALSE, width=190, height=200, parent=c(575,150), toolkit="RGtk2")
 	group=ggroup(horizontal = FALSE, container=win, spacing=2)
 	glabel("  ", container=group)
 	frame1=gframe(container=group, text="Experiment Design", horizontal=FALSE, spacing=5, pos=0, expand=TRUE)

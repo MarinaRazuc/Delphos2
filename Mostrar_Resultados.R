@@ -6,6 +6,7 @@ mostrar_resultados=function(archivo){
 	individuos=resultados
 	nombres_desc=names(completo)
 	valores=completo
+	
 	coefis=corr_coefs
 	maes=maes_segundo
 	porcentaje=correctos
@@ -458,15 +459,57 @@ ventana_filtrado=function(individuos, valores){
 
 
 filtrar2=function(valores, individuo, archivo){
-
+	#individuo que le paso es SIN el 1 de propiedad
 	largo<-length(individuo)
-	iters<-c(1:largo)
+	individuo[largo+1]=1
+	iters<-c(1:(largo+1))
 	cols<-c()
+	
 	for(i in iters){
 		if(individuo[i]!=0){
 			cols=c(cols,i)
 		}
 	}
 	newdataset<-valores[,cols]
-	write.table(newdataset, archivo)
+	
+	cols=ncol(newdataset)
+	fils=nrow(newdataset)
+	print("dimensiones de NEWDATASET")
+	print(dim(newdataset))
+	
+	nombres=names(newdataset)
+	print(nombres)
+	linea=nombres[1]
+	for(i in 2:cols){
+		linea=paste(paste(linea, " "), nombres[i])
+	}
+	
+	write(linea, archivo)
+	clase=class(newdataset[1,cols])
+	print("CLASE")
+	print(clase)
+	
+	for(i in 1:fils){
+		linea<-newdataset[i,1]
+		for(j in 2:(cols-1)){
+			linea<-paste0(paste(linea, ","), newdataset[i,j])
+		}
+		#propiedad
+		if(clase=="numeric"){
+			linea<-paste0(linea," ", newdataset[i,cols])
+		}else{
+			linea<-paste(linea," ", newdataset[i,cols])
+		}
+		write(linea, file=archivo, append=TRUE)
+	}
+	
+	#write.table(newdataset, archivo)
 }
+
+
+
+
+
+
+
+

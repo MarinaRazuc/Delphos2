@@ -68,8 +68,8 @@ seteo=function(datos, codigo){
 	group_41=ggroup(container=frame4, horizontal=TRUE)
 	
 
-	label41=glabel("  Trials                                   ", container=group_41)
-	obj_gedit41=gedit(c(3), container=group_41, width=5, coerce.with=as.numeric, 
+	label41=glabel("  Trials (#subsets)                ", container=group_41)
+	obj_gedit41=gedit(c(10), container=group_41, width=5, coerce.with=as.numeric, 
 				handler=function(h, ...){
 					#trials<<-svalue(obj_gedit41)
 				} )
@@ -83,7 +83,7 @@ seteo=function(datos, codigo){
 
 	group_44=ggroup(container=frame4, horizontal=TRUE) #maximum selected  vars
 	label44=glabel("  Maximum Selected Vars  ", container=group_44)
-	obj_gedit44=gedit(c(0), container=group_44, width=5, coerce.with=as.numeric, 
+	obj_gedit44=gedit(c(10), container=group_44, width=5, coerce.with=as.numeric, 
 				handler=function(h, ...){
 					#maxSelectVars<<-svalue(obj_gedit44)
 				} )
