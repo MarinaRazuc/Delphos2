@@ -312,43 +312,7 @@ ordenarR=function(ind, maes_segundo, corcoef, maes_primero){
 }
 
 
-calcular_matt=function(largo, confusion){
-	cantCaract=length(names(confusion))
-	fila=1
-	matts=c(1:largo)
-	
-	for(i in 1:largo){ #por cada individuo
-		FNT=FPT=TNT=TPT=0 #valores totales
-		for(j in 1:cantCaract){ #por cada clase -> una tabla
-			FN=FP=TN=TP=0
-			TP=TP+confusion[fila+j-1, j] #TP es solo pos (j,j)
-			for(k in 1:cantCaract){ #FN es fila j sin pos (j,j)
-				if(k!=j){
-					FN=FN+confusion[fila+j-1, k]
-				}
-			}
-			for(k in 1:cantCaract){ #FP es columna j sin pos (j,j)
-				if(k!=j){
-					FP=FP+confusion[fila+k-1, j]
-				}
-			}
-			for(k in 1:cantCaract){
-				for(h in fila:(fila+cantCaract-1)){ #TN es toda la matriz sin pos j
-					if(k!=j && h!=(j+cantCaract)){
-						TN=TN+confusion[h,k]
-					}
-				}
-			}
-			FNT=FNT+FN
-			FPT=FPT+FP
-			TNT=TNT+TN
-			TPT=TPT+TP
-		}
-		fila=fila+cantCaract
-		matts[i]=cuenta(FNT, FPT, TNT, TPT)
-	}
-	matts
-}
+
 
 cuenta=function(FN, FP, TN, TP){
 	nominador=TP*TN - FP*FN

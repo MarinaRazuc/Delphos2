@@ -83,9 +83,32 @@ precision_2<-function(metodo, datasetE, datasetT, individuo){  #preparación de F
 
 F2_clasif=function(modelo, datosTfiltro){
 	eval2=evaluate_Weka_classifier(modelo, newdata = datosTfiltro)
-	#valorint=as.numeric(eval2$details[1])
-	valorint=as.numeric(eval2$details[2])	
-	resultado=valorint/100
+	
+	cols=ncol(datosTfiltro)
+	niveles=length(levels(datosTfiltro[1,cols]))
+	confusion=matrix(0, niveles, niveles)
+	
+	#resultado debería ser algo con el MCC
+	filac=1
+	matriz=eval2$confusionMatrix
+	for(h in 1:nrow(matriz)){
+		for(k in 1:ncol(matriz)){
+			confusion[filac, k]=matriz[h,k]
+		}
+		filac=filac+1
+	}	
+	noms=row.names(matriz)
+	confusion=as.data.frame(confusion)
+	names(confusion)=noms
+	temp=matrix(0,1,1)
+	matt=calcular_matt(nrow(temp), confusion) #calcular sólo para este individuo
+	
+	resultado=2-matt
+	# write("--------", "matts.txt", append=TRUE)
+	# write(matt, "matts.txt", append=TRUE)
+	# write(resultado, "matts.txt", append=TRUE)
+	# print("resultadoMATT")
+	# print(resultado)
 	
 	resultado
 }
@@ -158,7 +181,8 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 		frac=efe1/pm
 		FAG=alpha*efe2+(1-alpha)*efe2*frac
 		
-		FAG=1/FAG
+		if(FAG!=0)
+			FAG=1/FAG
 	}
 	
 	FAG 
@@ -284,14 +308,17 @@ mutacion2=function(individuo){
 calcular_promedio=function(valores){
 	
 	largo=length(valores)
-	 
+	print("en promedio, largo es: ")
+	print(largo)
+	
 	suma=0
 	for(i in 1:largo){
 		val=valores[i]
 		suma=suma+valores[i]
 	}
 	resu=suma/largo
-	 
+	print("en promedio, resu")
+	print(resu)
 	resu
 }
 
@@ -458,8 +485,15 @@ algoritmo_genetico_2=function(metodo, entrenamiento, testeo, clase_propiedad, al
 			fit_vals[j]=mfitness(individuo)
 		}
 		
+		print("valores de fitness")
+		print(fit_vals)
+		
 		promfit[1]=promfit[2]
 		promfit[2]=calcular_promedio(fit_vals)
+		
+		print("promfits")
+		print(promfit[1])
+		print(promfit[2])
 		
 		if((abs(promfit[1]-promfit[2])<=umbralFitness)||(promfit[2]<promfit[1])){
 			#estanco o empeora
