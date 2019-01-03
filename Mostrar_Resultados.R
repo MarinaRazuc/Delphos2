@@ -1,5 +1,6 @@
 source("extras.R")
-
+require("ggrepel")
+require("calibrate")
 
 mostrar_resultados=function(archivo){
 	load(archivo)
@@ -139,11 +140,11 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	seleccionados=filtrar_nombres(nombres_desc, individuos)
 	names(valores)=nombres_desc
 
-	maxj=nrow(maes)
-	for(j in 1:maxj){
-		h=as.numeric(maes[j, 2])
-		maes[j, 2]=signif(h, digits=6)
-	}
+	# maxj=nrow(maes)
+	# for(j in 1:maxj){
+		# h=as.numeric(maes[j, 2])
+		# maes[j, 2]=signif(h, digits=6)
+	# }
 	
 	win1=gwindow(title="Results", visible=FALSE, width=500, height=200, parent=c(200,50))
 	grupomayor=ggroup(horizontal=FALSE, spacing=7, container=win1, heigth=100, width=200)
@@ -199,10 +200,10 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 	
 	lay3=glayout(container=grupo3)
 	
-	botonmae=gbutton(" MAE ",
-					handler=function(h,...){
-						ventana_mae(todos, maes)
-					})
+	# botonmae=gbutton(" MAE ",
+					# handler=function(h,...){
+						# ventana_mae(todos, maes)
+					# })
 	botonrocarea=gbutton(" ROC Area ", handler=function(h, ...){
 											ventana_rocarea(rocarea)
 										})
@@ -226,12 +227,12 @@ mostrar_nominales=function(individuos, nombres_desc, porcentaje, maes, rocarea, 
 					handler=function(h,...){
 						dispose(win1)
 					})
-	lay3[1:3, 1:5]=botonmae
+	# lay3[1:3, 1:5]=botonmae
 	lay3[1:3, 8:13]=botonrocarea
 	lay3[1:3, 16:21]=botonconfusion
 	lay3[1:3, 24:29]=botoncasos
-	lay3[1:3, 32:37]=botoncard
-	lay3[1:3, 40:45]=botonFilt
+	lay3[1:3, 1:5]=botoncard
+	lay3[1:3, 32:37]=botonFilt
 	lay3[1:3, 77:82]=botonSal
 	glabel(" ", container=grupo5)
 	visible(win1)=TRUE	
@@ -247,7 +248,13 @@ ventana_card=function(cardis){
 	names(datos)=c("Subsets", "Cardinality")
 	x11(width=2000, height=1000, title="Cardinality of the subsets");
 
-	print(ggplot(datos, aes(x=Subsets, y=Cardinality))   + geom_point(aes(colour=Cardinality), size=4, color="purple"))
+	print(ggplot(datos, aes(x=Subsets, y=Cardinality))   
+	+ geom_point(aes(colour=Cardinality), size=4, color="purple")
+	+ geom_label_repel(aes(label = Cardinality),
+                  box.padding   = 0.35, 
+                  point.padding = 0.5,
+                  segment.color = 'grey51')
+	)
 }
 ventana_matts=function(matts, cant){
 	datos=data.frame()
@@ -258,7 +265,13 @@ ventana_matts=function(matts, cant){
 	
 	names(datos)=c("Subsets", "Matthews_Coef")
 	x11(width=2000, height=1000, title="Matthews coefficients of the subsets");
-	print(ggplot(datos, aes(x=Subsets, y=Matthews_Coef))   + geom_point(aes(colour=Matthews_Coef), size=4, color="purple"))
+	print(ggplot(datos, aes(x=Subsets, y=Matthews_Coef))   
+		+ geom_point(aes(colour=Matthews_Coef), size=4, color="purple")
+		+ geom_label_repel(aes(label = round(Matthews_Coef, digits=2)),
+                  box.padding   = 0.35, 
+                  point.padding = 0.5,
+                  segment.color = 'grey51')
+		)
 }
 
 ventana_confusion=function(confusion, cant){
@@ -315,7 +328,13 @@ ventana_coef=function(coefis){
 	names(nuevo)=c("Subsets", "Coef_Corr")
 	
 	x11(width=2000, height=1000, title=str1);
-	print(ggplot(nuevo, aes(x=Subsets, y=Coef_Corr))   + geom_point(aes(colour=Coef_Corr), size=4))
+	print(ggplot(nuevo, aes(x=Subsets, y=Coef_Corr))   
+		+ geom_point(aes(colour=Coef_Corr), size=4)
+		+ geom_label_repel(aes(label = round(Coef_Corr, digits=2)),
+                  box.padding   = 0.35, 
+                  point.padding = 0.5,
+                  segment.color = 'grey51')
+		)
 	 
 }
 
@@ -336,9 +355,12 @@ ventana_mae=function(todos, maes){
 	mayor=valores$mayor
 	menor=valores$menor
 	
-	boxplot(MAE~subsets,  data=todos, boxwex = 0.25, xlab = "Subsets",ylab = "MAE", col="lightblue", xlim=c(0, nrow(nuevomae)+1), ylim=c(menor,mayor+0.02))
+	boxplot(MAE~subsets, data=todos, boxwex = 0.25, xlab = "Subsets",ylab = "MAE", col="lightblue", xlim=c(0, nrow(nuevomae)+1), ylim=c(menor,mayor+0.02))
 	par(new=TRUE)
 	plot(nuevomae, axes=FALSE, col="red", type="p", xlim=c(0, length(nuevomae[,1])+1), ylim=c(menor,mayor+0.02), main="MAE - First and Second Phase")
+
+	textxy(nuevomae[,1], nuevomae[,2], nuevomae[,2], cex=0.8 )
+	#with(nuevomae, text(MAE~subsets, labels = round(nuevomae[,2], digits=2), hjust=-0.5, vjust=0.5, size=3), pos = -5)
 	legend(x=length(nuevomae[,1])+0.5, y=mayor-0.02, legend="2nd Phase", col="red", text.width=0.48, pch="o")
 }
 
@@ -391,7 +413,20 @@ ventana_rocarea=function(rocarea){
 	}
 	names(nuevo)=c("Subsets", "ROC_Area")
 	x11(width=2000, height=1000, title="ROC Area");
-	print(ggplot(nuevo, aes(x=Subsets, y=ROC_Area))   + geom_point(aes(colour=Subsets), size=4))
+	print(ggplot(nuevo, aes(x=Subsets, y=ROC_Area))   + geom_point(aes(colour=Subsets), size=4) 
+	+ geom_label_repel(aes(label = round(ROC_Area, digits=2)),
+                  box.padding   = 0.35, 
+                  point.padding = 0.5,
+                  segment.color = 'grey51')
+	)
+
+	#+ geom_text(aes(label=round(ROC_Area, digits=2)),hjust=-0.4, vjust=0.35)	
+	
+	#geom_label_repel(aes(label = round(ROC_Area, digits=2)),
+    #              box.padding   = 0.35, 
+    #              point.padding = 0.5,
+    #              segment.color = 'grey51') +
+	#	theme_classic()
 }
 
 ventana_casos=function(porc){
@@ -404,7 +439,13 @@ ventana_casos=function(porc){
 	}
 	names(nuevo)=c("Subsets", "Correct_cases_perc")
 	x11(width=2000, height=1000, title="Percentage of cases correctly classified");
-	print(ggplot(nuevo, aes(x=Subsets, y=Correct_cases_perc))   + geom_point(aes(colour=Correct_cases_perc), size=4))
+	print(ggplot(nuevo, aes(x=Subsets, y=Correct_cases_perc))   
+		+ geom_point(aes(colour=Correct_cases_perc), size=4)
+		+ geom_label_repel(aes(label = Correct_cases_perc),
+                  box.padding   = 0.35, 
+                  point.padding = 0.5,
+                  segment.color = 'grey51')
+		)
 }
 
 #
@@ -481,7 +522,7 @@ filtrar2=function(valores, individuo, archivo){
 	print(nombres)
 	linea=nombres[1]
 	for(i in 2:cols){
-		linea=paste(paste(linea, " "), nombres[i])
+		linea=paste(paste(linea, ", "), nombres[i])
 	}
 	
 	write(linea, archivo)
@@ -492,13 +533,13 @@ filtrar2=function(valores, individuo, archivo){
 	for(i in 1:fils){
 		linea<-newdataset[i,1]
 		for(j in 2:(cols-1)){
-			linea<-paste0(paste(linea, ","), newdataset[i,j])
+			linea<-paste0(paste(linea, ", "), newdataset[i,j])
 		}
 		#propiedad
 		if(clase=="numeric"){
-			linea<-paste0(linea," ", newdataset[i,cols])
+			linea<-paste0(linea,", ", newdataset[i,cols])
 		}else{
-			linea<-paste(linea," ", newdataset[i,cols])
+			linea<-paste(linea,", ", newdataset[i,cols])
 		}
 		write(linea, file=archivo, append=TRUE)
 	}

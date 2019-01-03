@@ -33,7 +33,7 @@ primera_fase=function(archivo, metodo, interna, trials, clase_propiedad, alpha, 
 }
 
 calcular_maes=function(archivo, metodo, interna, soluciones, clase_propiedad){
-	print("Calculando errores...")
+	print("Calculating errors...")
 	
 	cant=nrow(soluciones)
 	num=length(soluciones[1,])-1

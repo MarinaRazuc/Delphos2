@@ -103,12 +103,8 @@ F2_clasif=function(modelo, datosTfiltro){
 	temp=matrix(0,1,1)
 	matt=calcular_matt(nrow(temp), confusion) #calcular sólo para este individuo
 	
-	resultado=2-matt
-	# write("--------", "matts.txt", append=TRUE)
-	# write(matt, "matts.txt", append=TRUE)
-	# write(resultado, "matts.txt", append=TRUE)
-	# print("resultadoMATT")
-	# print(resultado)
+	#newMCC = 0.5 * (MCC + 1)
+	resultado=0.5 * (matt + 1)
 	
 	resultado
 }
@@ -181,8 +177,13 @@ fitness_real<-function(individuo, metodo, entrenamiento, testeo, alpha, pm){ #..
 		frac=efe1/pm
 		FAG=alpha*efe2+(1-alpha)*efe2*frac
 		
-		if(FAG!=0)
+		
+		if(class(entrenamiento[1,ncol(entrenamiento)])=="numeric"){
+			print("NUMERICO, 1/FAG")
 			FAG=1/FAG
+		}
+		
+			
 	}
 	
 	FAG 

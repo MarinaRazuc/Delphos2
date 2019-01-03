@@ -15,7 +15,6 @@ obtener_nombres=function(individuo, nombres){
 	resus
 }
 
-
 #tomo los descriptores del dataset según me indique el indicador (valga la redundancia)
 #El indicador es de longitud igual a las columnas del dataset-1.
 #Por cada 1 en el indicador, se toma la columna del dataset que corresponda
@@ -90,6 +89,16 @@ imprimir_error=function(modelo, datos){#funcion para mi
 #partir
 partir=function(datos, porcentaje, seed){# datos a ser partidos segun porcentaje porcentaje y semilla seed
 	set.seed(seed) 
+	print("en createdatapartition")
+	print("dim datos")
+	print(dim(datos))
+	print("columnas")
+	print(ncol(datos))
+	print("filas")
+	print(nrow(datos))
+	print(datos[,ncol(datos)])
+	print(class(datos[1,ncol(datos)]))
+	
 	indices=createDataPartition(datos$V1, p=porcentaje, list=FALSE) 
 	externa_o_test=datos[-indices, ]
 	interna_o_train=datos[indices, ]
@@ -101,10 +110,31 @@ partir=function(datos, porcentaje, seed){# datos a ser partidos segun porcentaje
 	resultado
 
 }
+
+controlar=function(datos){
+	win1=gwindow(visible=FALSE, title="Wait...", height=100, width=250, parent=c(550, 150))
+	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
+	glabel(" ", container=grupo1)
+	glabel("  Processing data...  ", container=grupo1)
+	glabel(" ", container=grupo1)
+	barra=gprogressbar(container=grupo1)
+	visible(win1)=TRUE
+	
+	svalue(barra)<-20
+
+	svalue(barra)<-50
+	datos=filtrado_columnas(datos) #filtrado data frame: elimina columnas constantes
+	
+	
+	svalue(barra)<-100
+	dispose(win1)
+	datos	
+}
+
 #
 #generar_data_frame(valores_descriptores, valores_propiedad, nombres_descriptores, nombres_compuestos)
 #
-generar_data_frame=function(val, prop, nomD){#data frames
+generar_data_frame=function(val, V1, nomD){#data frames
 	win1=gwindow(visible=FALSE, title="Wait...", height=100, width=250, parent=c(550, 150))
 	grupo1=ggroup(container=win1, horizontal=FALSE, spacing=10)
 	glabel(" ", container=grupo1)
@@ -113,29 +143,45 @@ generar_data_frame=function(val, prop, nomD){#data frames
 	barra=gprogressbar(container=grupo1)
 	visible(win1)=TRUE
 	
-	if(length(nomD)>0){
-		names(val)=nomD[,1]
-	}
+	# if(length(nomD)>0){
+		# names(val)=nomD[,1]
+	# }
 	svalue(barra)<-20
 
+	names(val)=nomD
+	
+	print("dimens nomD")
+	print(dim(nomD))
+	print(length(nomD))
+	print(dim(val))
+	write.csv(val, file="valores_prueba.csv")
+	#write.csv(prop, file="propi_prueba.csv")
+	
 	val=filtrado_columnas(val) #filtrado data frame: elimina columnas constantes
 	svalue(barra)<-50
 	
 	
-	dataframe1=cbind(val,prop) #new data frame
+	dataframe1=cbind(val,V1) #new data frame
+	write.csv(dataframe1, file="dataframe1_prueba.csv")
 	svalue(barra)<-60
 	
-	if(length(nomD)==0){
-		svalue(barra)<-70
-		ultimo=dim(dataframe1)[2] #el nro de la ultima columna
-		svalue(barra)<-80
-		nombreUlt=names(dataframe1)[ultimo-1]  #el nombre del ultimo descriptor (ultimo-1 porque ultimo es la propiedad, que se llama V1)
-		svalue(barra)<-90
-		names(dataframe1)[1]=paste0(nombreUlt, "1")##le agrego un 1 para diferenciarlo del ultimo descriptor, y asi tmp se llama V1 como la prop
+	#names(dataframe1)=nomD
+	
+	
+	# if(length(nomD)==0){
+		# svalue(barra)<-70
+		# ultimo=dim(dataframe1)[2] #el nro de la ultima columna
+		# svalue(barra)<-80
+		# nombreUlt=names(dataframe1)[ultimo-1]  #el nombre del ultimo descriptor (ultimo-1 porque ultimo es la propiedad, que se llama V1)
+		# svalue(barra)<-90
+		# names(dataframe1)[1]=paste0(nombreUlt, "1")##le agrego un 1 para diferenciarlo del ultimo descriptor, y asi tmp se llama V1 como la prop
 		
-	}
+	# }
 	svalue(barra)<-100
 	dispose(win1)
+	
+	print("dim dataframe1")
+	print(dim(dataframe1))
 	dataframe1
 }
 #
@@ -150,7 +196,7 @@ filtrado_columnas=function(A){
 	#j=cols
 	j=1
 
-	while(j<=ncols){
+	while(j<ncols){
 		referencia=A[1,j] #fila 1 columna j
 		contador=1
 		distintos=FALSE

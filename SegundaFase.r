@@ -33,9 +33,7 @@ obtener_archivo_entrada=function(){
 												}else{
 													msg=iconv("The selected file is not valid.", from="UTF-8", to="UTF-8")
 													gmessage(msg, icon="error")
-												}
-											
-												
+												}	
 											}, width=5)  
 					
 	visible(win1)=TRUE
@@ -63,17 +61,17 @@ ventana_fase_dos=function(archivo){
 	str2="  Select function for the second phase: "
 	str2=iconv(str2, from="UTF-8", to="UTF-8")
 	label1=glabel(str2 , container=group11)
-	radio1 = gradio(c("RandomForest","RandomCommittee"), container=group1, 
+	radio1 = gradio(c("RandomForest","RandomCommittee", "MultilayerPerceptron"), container=group1, 
 				handler=function(h,...){
 							valor=svalue(radio1)
-							#print(valor)
+							print(valor)
 							if(valor=="RandomCommittee"){
 								 metodoSF<<-"RC"
 							}else{
 								if(valor=="RandomForest"){
 									metodoSF<<-"RF"  
 								}else{
-									metodosSF<<-"RP"
+									metodosSF<<-"MP"
 								}
 							}
 					})
@@ -101,11 +99,14 @@ ventana_fase_dos=function(archivo){
 						valor=svalue(radio1)
 						if(valor=="RandomCommittee"){
 							 metodoSF<<-"RC"
-							 
 						}else{
 							if(valor=="RandomForest"){
 								metodoSF<<-"RF"
-							} 
+							}else{
+								if(valor=="MultilayerPerceptron"){
+									metodoSF<<-"MP"
+								}
+							}
 						}
 						if(svalue(editS)==0){
 							gmessage("The number of final subsets must be greater than 0.", icon=error)
@@ -126,8 +127,11 @@ ventana_fase_dos=function(archivo){
 
 segunda_fase=function(archivo, metodoSF, salida, maxCant){ 
 	print("Segunda Fase")
-	print("maxcant")
-	print(maxCant)
+	# print("maxcant")
+	# print(maxCant)
+	print("metodo elegido:")
+	print(metodoSF)
+	
 	grafico=data.frame()
 	auxiliar=data.frame()
 	corr_coefs=c()
@@ -174,7 +178,7 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("Mean Absolute Error: ")
 			print(mae)
 			print("---------------------")
-		}else{ 
+		}else{ #nominal
 			evalF2=evaluate_Weka_classifier(modelo, newdata=EF, class=TRUE)
 			correctos[i]=evalF2$details[1]
 			mae=maes_segundo[i]=evalF2$details[5]
@@ -198,9 +202,9 @@ segunda_fase=function(archivo, metodoSF, salida, maxCant){
 			print("Porcentaje de casos clasificados correctamente: ")
 			print(correctos)
 			print("---------------------")
-			print("Mean Absolute Error")
-			print(mae)
-			print("---------------------")
+			# print("Mean Absolute Error")
+			# print(mae)
+			# print("---------------------")
 			str2=iconv("Matriz de Confusión", from="UTF-8", to="UTF-8")
 			print(str2)
 			print(matriz)
@@ -427,6 +431,12 @@ construirModelo=function(datos, metodo){
 				print("REPTree")
 				RP=make_Weka_classifier("weka/classifiers/trees/REPTree")
 				modelo=RP(formula=fmla, data=datos)
+			}else{
+				if(metodo=="MP"){ #multilayer perceptron
+					print("Multilayer Perceptron")
+					MP=make_Weka_classifier("weka/classifiers/functions/MultilayerPerceptron")
+					modelo=MP(formula=V1~., data=datos)
+				}
 			}
 		}				
 	}

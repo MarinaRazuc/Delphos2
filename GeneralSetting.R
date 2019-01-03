@@ -232,7 +232,7 @@ seteo=function(datos, codigo){
 							bandera=FALSE
 						}
 						maxSelectVars<<-svalue(obj_gedit44)
-						if(maxSelectVars<0 || maxSelectVars>dim(dataframe0)[2]){
+						if(maxSelectVars<0 || maxSelectVars>ncol(dataframe0)){
 							str1=iconv("Error, the maximum number of selected variables must be between 0 and the maximum number of descriptors.", from="UTF-8", to="UTF-8")
 							gmessage(str1, icon="error") 
 							bandera=FALSE
@@ -309,6 +309,7 @@ seteo=function(datos, codigo){
 
 comenzar_calculo=function(archivo, cod){
 	print("comienza el cálculo")
+	write.csv(dataframe0, file="datosss_1.csv")
 	partes=partir(dataframe0, 1-valExterna, seed) #ver valInterna y valExterna	
 	largo=length(partes$it[1,])
 	
